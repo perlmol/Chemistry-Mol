@@ -1,5 +1,5 @@
 package Chemistry::File;
-$VERSION = '0.21';
+$VERSION = '0.22';
 
 =head1 NAME
 
@@ -239,7 +239,7 @@ next to Chemistry::File itself.
 
 =head1 VERSION
 
-0.21
+0.22
 
 =head1 SEE ALSO
 

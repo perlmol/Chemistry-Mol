@@ -1,10 +1,10 @@
 package Chemistry::Bond;
-$VERSION = '0.21';
+$VERSION = '0.22';
 # $Id$
 
 =head1 NAME
 
-Chemistry::Bond
+Chemistry::Bond - Chemical bonds as objects in molecules
 
 =head1 SYNOPSIS
 
@@ -151,6 +151,7 @@ sub _weaken {
     for my $a (@{$self->{atoms}}) {
         weaken($a);
     }
+    weaken($self->{parent});
 }
 
 # This method is private and should only be called from $mol->delete_bond
@@ -192,7 +193,7 @@ sub parent {
 
 =head1 VERSION
 
-0.21
+0.22
 
 =head1 SEE ALSO
 

@@ -1,5 +1,5 @@
 package Chemistry::Mol;
-$VERSION = '0.21';
+$VERSION = '0.22';
 # $Id$
 
 =head1 NAME
@@ -112,6 +112,14 @@ sub add_atom {
     $_[-1];
 }
 
+sub add_atom_np {
+    my $self = shift;
+    for my $atom (@_){
+        push @{$self->{atoms}}, $atom;
+        $self->{byId}{$atom->id} = $atom;
+    }
+    $_[-1];
+}
 =item $mol->new_atom(name => value, ...)
 
 Shorthand for $mol->add_atom(Chemistry::Atom->new(name => value, ...));
@@ -170,6 +178,15 @@ sub add_bond {
         push @{$self->{bonds}}, $bond;
 	$self->{byId}{$bond->id} = $bond;
         $bond->parent($self);
+    }
+    $_[-1];
+}
+
+sub add_bond_np {
+    my $self = shift;
+    for my $bond (@_){
+        push @{$self->{bonds}}, $bond;
+	$self->{byId}{$bond->id} = $bond;
     }
     $_[-1];
 }
@@ -630,7 +647,7 @@ sub _paint {
 
 =head1 VERSION
 
-0.21
+0.22
 
 =head1 SEE ALSO
 

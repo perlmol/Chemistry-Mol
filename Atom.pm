@@ -1,10 +1,11 @@
 package Chemistry::Atom;
-$VERSION = '0.21';
+
+$VERSION = '0.22';
 # $Id$
 
 =head1 NAME
 
-Chemistry::Atom
+Chemistry::Atom - Chemical atoms as objects in molecules
 
 =head1 SYNOPSIS
 
@@ -37,10 +38,10 @@ any parameters. To set the value, use $atom->method($new_value).
 =cut
 # Considering to add the following attributes:
 # mass_number (A)
-# formal_charge
 
 use 5.006;
 use strict;
+use warnings;
 use Scalar::Util 'weaken';
 use Math::VectorReal qw(O vector);
 use Math::Trig;
@@ -228,6 +229,22 @@ sub coords {
     }
 }
 
+=item $atom->formal_charge($charge)
+
+Set or get the formal charge of the atom.
+
+=cut
+
+sub formal_charge {
+    my $self = shift;
+    if (@_) {
+        ($self->{formal_charge}) = @_;
+        return $self;
+    } else {
+        return $self->{formal_charge};
+    }
+}
+
 =item $atom->add_bond($bond)
 
 Adds a new bond to the atom, as defined by the Bond object $bond.
@@ -248,12 +265,14 @@ sub add_bond {
     }
 }
 
+# make sure the atom doesn't cause circular references
 sub _weaken {
     my $self = shift;
     for my $b (@{$self->{bonds}}) {
         weaken($b->{to});
         weaken($b->{bond});
     }
+    weaken($self->{parent});
 }
 
 # This method is private. Bonds should be deleted from the 
@@ -318,11 +337,30 @@ sub bonds {
     my @ret = ();
 
     for my $b (@{$self->{bonds}}) {
-	push @ret, $b->{bond} unless $from && $b->{to} ne $from;
+	push @ret, $b->{bond} unless $from && $b->{to} eq $from;
     }
     @ret;
 }
 
+=item $atom->bonds_neighbors([$from])
+
+Return a list of hash references, representing the bonds and neighbors from the
+atom. If an atom object $from is specified, it will be excluded from the list.
+The elements of the hash are 'to', and atom reference, and 'bond', a bond
+reference.
+
+=cut
+
+sub bonds_neighbors {
+    my $self = shift;
+    my $from = shift;
+    my @ret = ();
+
+    for my $b (@{$self->{bonds}}) {
+	push @ret, {%$b} unless $from && $b->{to} eq $from;
+    }
+    @ret;
+}
 =item ($distance, $closest_atom) = $atom->distance($obj)
 
 Returns the minimum distance to $obj, which can be an atom, a molecule, or a
@@ -433,6 +471,7 @@ sub print {
     my $self = shift;
     my ($indent) = @_;
 
+    no warnings; 
     $indent ||= 0;
     my $bonds = join " ", map {$_->id} $self->bonds;
     my $neighbors = join " ", map {$_->id} $self->neighbors;
@@ -447,6 +486,7 @@ $self->{id}:
     symbol: $self->{symbol}
     name  : $self->{name}
     $coords
+    formal_charge: $self->{formal_charge}
     bonds: "$bonds"
     neighbors: "$neighbors"
 EOF
@@ -462,7 +502,7 @@ EOF
 
 =head1 VERSION
 
-0.21
+0.22
 
 =head1 SEE ALSO
 

@@ -1,5 +1,11 @@
 Revision history for Perl extension Chemistry::Mol.
 
+0.22  Mon May 17 2004
+        - Fixed bug in bonds($from)
+        - Added add_atom_np, add_bond_np, bonds_neighbors
+        - Fixed another memory leak
+        - Added Atom::formal_charge
+
 0.21  Thu May 13 2004
         - Fixed bug where $/ was undef'ed in a nonlocal way in File.pm.
         - Added formula parser contributed by Brent Gregersen.

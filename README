@@ -1,4 +1,4 @@
-Chemistry/Mol version 0.21
+Chemistry/Mol version 0.22
 ==========================
 
 This toolkit includes basic objects and methods to describe molecules. It
@@ -11,7 +11,7 @@ such as the bond type have no intrinsic meaning. Bonds are defined as a list of
 atoms (typically two) with an arbitrary type. Atoms are defined by a symbol and
 a Z, and may have 3D coordinates (2D and internal coming soon).
 
-CHANGES SINCE VERSION 0.20
+CHANGES SINCE VERSION 0.21
         - Fixed bug where $/ was undef'ed in a nonlocal way in File.pm.
         - Added formula parser contributed by Brent Gregersen.
         - Added %j and %% formats to Formula.pm.
