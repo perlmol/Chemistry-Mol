@@ -1,5 +1,5 @@
 package Chemistry::Bond;
-$VERSION = '0.11';
+$VERSION = '0.20';
 # $Id$
 
 =head1 NAME
@@ -161,13 +161,44 @@ sub delete_atoms {
     }
 }
 
+=item $bond->delete
+
+Calls $mol->delete_bond($bond) on the bond's parent molecule. Note that a bond
+should belong to only one molecule or strange things may happen.
+
+=cut
+
+sub delete {
+    my ($self) = @_;
+    $self->{parent}->delete_bond($self);
+}
+
+sub parent {
+    my $self = shift;
+    if (@_) {
+        ($self->{parent}) = @_;
+        weaken($self->{parent});
+        $self;
+    } else {
+        $self->{parent};
+    }
+}
+
+
+
 1;
 
 =back
 
+=head1 VERSION
+
+0.20
+
 =head1 SEE ALSO
 
 L<Chemistry::Mol>, L<Chemistry::Atom>, L<Chemistry::Tutorial>
+
+The PerlMol website L<http://www.perlmol.org/>
 
 =head1 AUTHOR
 
@@ -175,7 +206,7 @@ Ivan Tubert E<lt>itub@cpan.orgE<gt>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2003 Ivan Tubert. All rights reserved. This program is free
+Copyright (c) 2004 Ivan Tubert. All rights reserved. This program is free
 software; you can redistribute it and/or modify it under the same terms as
 Perl itself.
 
