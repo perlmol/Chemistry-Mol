@@ -1,6 +1,6 @@
 package Chemistry::Atom;
 
-$VERSION = '0.31';
+$VERSION = '0.32';
 # $Id$
 
 =head1 NAME
@@ -594,7 +594,8 @@ sub distance {
 
 Returns the angle in radians between the atoms involved. $atom2 is the atom in
 the middle. Can also be called as Chemistry::Atom::angle($atom1, $atom2,
-$atom3). This function can be exported.
+$atom3). This function can be exported. Note: if you override this method,
+you may also need to override angle_deg or strange things may happen.
 
 =cut
 
@@ -610,7 +611,8 @@ sub angle {
     }
     my $v1 = $c[0] - $c[1];
     my $v2 = $c[2] - $c[1];
-    acos(($v1 . $v2) / ($v1->length * $v2->length));
+    my $l = ($v1->length * $v2->length) or return 0;
+    acos(($v1 . $v2) / $l);
 }
 
 =item $atom->angle_deg($atom2, $atom3)
@@ -620,14 +622,15 @@ Same as angle(), but returns the value in degrees. May be exported.
 =cut
 
 sub angle_deg {
-    rad2deg(shift->angle(@_));
+    rad2deg(angle(@_));
 }
 
 =item $atom->dihedral($atom2, $atom3, $atom4)
 
 Returns the dihedral angle in radians between the atoms involved.  Can also be
 called as Chemistry::Atom::dihedral($atom1, $atom2, $atom3, $atom4). May be
-exported.
+exported. Note: if you override this method, you may also need to override 
+dihedral_deg and angle or strange things may happen.
 
 =cut
 
@@ -655,7 +658,7 @@ Same as dihedral(), but returns the value in degrees. May be exported.
 =cut
 
 sub dihedral_deg {
-    rad2deg(shift->dihedral(@_));
+    rad2deg(dihedral(@_));
 }
 
 =item $atom->print
@@ -755,7 +758,7 @@ sub printf {
 
 =head1 VERSION
 
-0.31
+0.32
 
 =head1 SEE ALSO
 

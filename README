@@ -1,4 +1,4 @@
-Chemistry/Mol version 0.30
+Chemistry/Mol version 0.32
 ==========================
 
 This toolkit includes basic objects and methods to describe molecules. It
@@ -6,17 +6,10 @@ consists of several modules: Chemistry::Mol, Chemistry::Atom, Chemistry::Bond,
 and Chemistry::File. These are the core modules of the PerlMol toolkit;
 see http://www.perlmol.org/.
 
-CHANGES SINCE VERSION 0.26
-        - New Chemistry::File interface
-        - Added gzip support for reading and writing
-        - New Atom methods: sprout_hydrogens, collapse_hydrogens, mass_number
-        - New Mol methods: sprout_hydrogens, collapse_hydrogens
-        - Added support for Chemistry::Isotope
-        - Extended the Chemistry::Obj::attr method
-        - New Obj methods: new()
-        - Fixed backward compatibility bug in File/Dumper.pm
-        - Fixed inconsistency when an object id was changed
-        - Improved the testing suite
+CHANGES SINCE VERSION 0.31
+        - Fixed spurious warnings in separate().
+        - Fixed division by zero for ill-defined angles.
+        - Fixed bond deletion/addition bug #1076503.
 
 INSTALLATION
 
