@@ -1,4 +1,4 @@
-Chemistry/Mol version 0.32
+Chemistry/Mol version 0.33
 ==========================
 
 This toolkit includes basic objects and methods to describe molecules. It
@@ -6,10 +6,9 @@ consists of several modules: Chemistry::Mol, Chemistry::Atom, Chemistry::Bond,
 and Chemistry::File. These are the core modules of the PerlMol toolkit;
 see http://www.perlmol.org/.
 
-CHANGES SINCE VERSION 0.31
-        - Fixed spurious warnings in separate().
-        - Fixed division by zero for ill-defined angles.
-        - Fixed bond deletion/addition bug #1076503.
+CHANGES SINCE VERSION 0.32
+        - Fixed spurious warnings in sprout_hydrogens (bug 1157393)
+        - Added a test for incompatible Chemistry::File::SMILES versions.
 
 INSTALLATION
 

@@ -1,5 +1,5 @@
 package Chemistry::File;
-$VERSION = '0.32';
+$VERSION = '0.33';
 
 =head1 NAME
 
@@ -607,7 +607,7 @@ Unix and Windows (either Cygwin or Activestate).
 
 =head1 VERSION
 
-0.32
+0.33
 
 =head1 SEE ALSO
 

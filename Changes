@@ -1,5 +1,9 @@
 Revision history for Perl extension Chemistry::Mol.
 
+0.33  Mar 29 2005
+        - Fixed spurious warnings in sprout_hydrogens (bug 1157393)
+        - Added a test for incompatible Chemistry::File::SMILES versions.
+
 0.32  Feb 24 2005
         - Fixed spurious warnings in separate().
         - Fixed division by zero for ill-defined angles.

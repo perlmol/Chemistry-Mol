@@ -1,5 +1,5 @@
 package Chemistry::Mol;
-$VERSION = '0.32';
+$VERSION = '0.33';
 # $Id$
 
 =head1 NAME
@@ -885,7 +885,7 @@ sub collapse_hydrogens {
 
 =head1 VERSION
 
-0.32
+0.33
 
 =head1 SEE ALSO
 
