@@ -15,13 +15,14 @@ the perldoc pages for each module.
 
 The following code will read a PDB file:
 
+    use Chemistry::Mol;
     use Chemistry::File::PDB;
-    use Chemistry::Mol 'read_mol';
-    my $mol = read_mol("test.pdb");
+    my $mol = Chemistry::Mol->read("test.pdb");
 
 The first two lines (which only need to be used once in a given program) tell
 Perl that you want to C<use> the specified modules, and that you want to import
-the C<read_mol> subroutine. The third line reads the file and returns a Mol object.
+the C<read_mol> subroutine. The third line reads the file and returns a Mol
+object.
 
 To read other formats such as MDL molfiles,  you need to C<use> the
 corresponding module, such as Chemistry::File::MDLMol. Readers for other
@@ -109,9 +110,10 @@ molecules closest to a given atom.
 
 =head2 The Bond object
 
-A bond object is a list of atoms. In most cases, a bond has exactly two atoms,
-but we don't want to exclude possibilities such as three-center bonds. You can
-get the list of atoms in a bond by using the C<atoms> method.
+A bond object is a list of atoms with an associated bond order. In most cases,
+a bond has exactly two atoms, but we don't want to exclude possibilities such
+as three-center bonds. You can get the list of atoms in a bond by using the
+C<atoms> method.
 
     @atoms_in_bond = $bond->atoms;
 
@@ -170,7 +172,7 @@ allows you to specify whatever attributes you want for any object (be it
 a molecule, an atom, or a bond). This is done through the C<attr> method.
 
     $mol->attr("melting point", "273.15"); # set m.p.
-    $color $atom->attr("color"); # get atom color
+    $color = $atom->attr("color"); # get atom color
 
 The core modules store these values but they don't know what they mean and they
 don't care about them. Attributes can have whatever name you want, and they can
@@ -180,22 +182,26 @@ attributes should prefix their name with a I<namespace>, followed by a slash.
 For example, atoms created by the PDB reader module (Chemistry::File::PDB)
 have the "pdb/residue" attribute.
 
-    my $mol = read_mol("test.pdb");
+    my $mol = Chemistry::Mol->read("test.pdb");
     my $atom = $mol->atoms(1234);
     print $atom->attr("pdb/residue"); # prints "ALA123"
 
 =head2 Macromolecules
 
 So far we have assumed that we are dealing with molecules of the Mol class.
-However, one of the interesting things of object-oriented programming is that
+However, one of the interesting things about object-oriented programming is that
 classes can be extended. For dealing with macromolecules, we have the 
 MacroMol class, which extends the Mol class. This means that in practice
 you can use a MacroMol object exactly as you would use a Mol object, but with
-some added functionality. In fact, the PDB reader normally returns MacroMol,
-not Mol, objects, but in the preceding examples we assumed that they were
-Mol objects with no problem at all. Now the question is, what is the 
-"added functionality" that MacroMol objects have on top of the original 
-Mol object?
+some added functionality. In fact, the PDB reader can return MacroMol instead
+of Mol objects by just changing the first example like this:
+
+    use Chemistry::MacroMol;
+    use Chemistry::File::PDB;
+    my $macromol = Chemistry::MacroMol->read("test.pdb");
+
+Now the question is, what is the "added functionality" that MacroMol objects
+have on top of the original Mol object?
 
 =head3 The MacroMol object
 
@@ -231,6 +237,12 @@ temporary variable:
 
 The second example is a good way of selecting an atom from a PDB file when you
 know the residue number and atom name.
+
+=head2 See Also
+
+The perldoc pages for L<Chemistry::Mol>, L<Chemistry::Atom>,
+L<Chemistry::Bond>, L<Chemistry::File>, L<Chemistry::MacroMol>,
+L<Chemistry::Domain>
 
 =cut
 
