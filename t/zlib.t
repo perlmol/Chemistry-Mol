@@ -5,12 +5,11 @@ use Test::More;
 use Chemistry::Mol;
 use Chemistry::File::Dumper;
 
-eval 'use IO::Zlib';
-if ($@) {
-    plan skip_all => "You don't have IO::Zlib installed";
-} else {
+if (eval 'use Compress::Zlib; 1') {
     plan tests => 6;
     #plan 'no_plan';
+} else {
+    plan skip_all => "You don't have IO::Zlib installed";
 }
 
 my $mol;
