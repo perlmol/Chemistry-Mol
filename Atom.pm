@@ -1,5 +1,5 @@
 package Chemistry::Atom;
-$VERSION = '0.11';
+$VERSION = '0.20';
 # $Id$
 
 =head1 NAME
@@ -31,8 +31,8 @@ In addition to common attributes such as id, name, and type,
 atoms have the following attributes, which are accessed or
 modified through methods defined below: bonds, coords, Z, symbol.
 
-In general, to get the value of a property use $mol->method without
-any parameters. To set the value, use $mol->method($new_value).
+In general, to get the value of a property use $atom->method without
+any parameters. To set the value, use $atom->method($new_value).
 
 =cut
 # Considering to add the following attributes:
@@ -47,7 +47,7 @@ use Math::Trig;
 use Carp;
 use base qw(Chemistry::Obj Exporter);
 
-our @EXPORT_OK = qw(distance angle dihedral);
+our @EXPORT_OK = qw(distance angle dihedral angle_deg dihedral_deg);
 our @EXPORT = ();
 our %EXPORT_TAGS = (
       all  => [@EXPORT, @EXPORT_OK],
@@ -264,6 +264,29 @@ sub delete_bond {
     $self->{bonds} = [ grep { $_->{bond} ne $bond } @{$self->{bonds}} ];
 }
 
+=item $atom->delete
+
+Calls $mol->delete_atom($atom) on the atom's parent molecule. Note that an atom
+should belong to only one molecule or strange things may happen.
+
+=cut
+
+sub delete {
+    my ($self) = @_;
+    $self->{parent}->delete_atom($self);
+}
+
+sub parent {
+    my $self = shift;
+    if (@_) {
+        ($self->{parent}) = @_;
+        weaken($self->{parent});
+        $self;
+    } else {
+        $self->{parent};
+    }
+}
+
 =item $atom->neighbors([$from])
 
 Return a list of neighbors. If an atom object $from is specified, it will be
@@ -356,15 +379,25 @@ sub angle {
     acos(($v1 . $v2) / ($v1->length * $v2->length));
 }
 
-=item $atom->angle($atom2, $atom3)
+=item $atom->angle_deg($atom2, $atom3)
 
-Returns the angle in radians between the atoms involved. $atom2 is the atom in
-the middle. Can also be called as Chemistry::Atom::angle($atom1, $atom2, $atom3);
+Same as angle(), but returns the value in degrees.
+
+=cut
+
+sub angle_deg {
+    rad2deg(angle(@_));
+}
+
+=item $atom->dihedral($atom2, $atom3, $atom4)
+
+Returns the dihedral angle in radians between the atoms involved.  Can also be
+called as Chemistry::Atom::dihedral($atom1, $atom2, $atom3, $atom4);
 
 =cut
 
 sub dihedral {
-    @_ == 4 or croak "Chemistry::Atom::dihedral requires three atoms!\n";
+    @_ == 4 or croak "Chemistry::Atom::dihedral requires four atoms!\n";
     my @c;
     for my $a (@_) { # extract coordinates
         push @c, $a->isa("Chemistry::Atom") ? $a->coords :
@@ -378,6 +411,16 @@ sub dihedral {
     my $x2 = $v3 x $v2;
     my $abs_dih = angle($x1, O(), $x2);
     $v1 . $x2 > 0 ? $abs_dih : -$abs_dih;
+}
+
+=item $atom->dihedral_deg($atom2, $atom3, $atom4)
+
+Same as dihedral(), but returns the value in degrees.
+
+=cut
+
+sub dihedral_deg {
+    rad2deg(dihedral(@_));
 }
 
 =item $atom->print
@@ -417,10 +460,16 @@ EOF
 
 =back
 
+=head1 VERSION
+
+0.20
+
 =head1 SEE ALSO
 
 L<Chemistry::Mol>, L<Chemistry::Bond>, 
 L<Math::VectorReal>, L<Chemistry::Tutorial>
+
+The PerlMol website L<http://www.perlmol.org/>
 
 =head1 AUTHOR
 
@@ -428,7 +477,7 @@ Ivan Tubert E<lt>itub@cpan.orgE<gt>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2003 Ivan Tubert. All rights reserved. This program is free
+Copyright (c) 2004 Ivan Tubert. All rights reserved. This program is free
 software; you can redistribute it and/or modify it under the same terms as
 Perl itself.
 
