@@ -75,11 +75,11 @@ sub new {
     my $class = shift;
     my %args = @_;
     my $self = bless {
-	id => $class->nextID,
-	byId => {}, 
-	atoms => [], 
-	bonds => [], 
-	name => "",
+        id => $class->nextID,
+        byId => {}, 
+        atoms => [], 
+        bonds => [], 
+        name => "",
     }, ref $class || $class;
     $self->$_($args{$_}) for (keys %args);
     return $self;
@@ -184,7 +184,7 @@ sub add_bond {
             #croak "Duplicate ID when adding bond '$bond' to mol '$self'";
         #}
         push @{$self->{bonds}}, $bond;
-	$self->{byId}{$bond->id} = $bond;
+        $self->{byId}{$bond->id} = $bond;
         $bond->parent($self);
     }
     $_[-1];
@@ -194,7 +194,7 @@ sub add_bond_np {
     my $self = shift;
     for my $bond (@_){
         push @{$self->{bonds}}, $bond;
-	$self->{byId}{$bond->id} = $bond;
+        $self->{byId}{$bond->id} = $bond;
     }
     $_[-1];
 }
@@ -535,11 +535,11 @@ sub write {
     if ($opts{format}) {
         return $self->formats($opts{format})->write_file(@_);
     } else { # guess format
-	for my $type ($self->formats) {
+        for my $type ($self->formats) {
             if ($self->formats($type)->name_is($fname)) {
                 return $self->formats($type)->write_file(@_);
-	    }
-	}
+            }
+        }
     }
     croak "Couldn't guess format for writing file '$fname'";
 }

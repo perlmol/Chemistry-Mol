@@ -12,9 +12,9 @@ Chemistry::Atom - Chemical atoms as objects in molecules
     use Chemistry::Atom;
 
     my $atom = new Chemistry::Atom(
-	id => 'a1',
-	coords => [$x, $y, $z],
-	symbol => 'Br'
+        id => 'a1',
+        coords => [$x, $y, $z],
+        symbol => 'Br'
     );
 
     print $atom->print;
@@ -180,7 +180,7 @@ sub symbol {
     my $self = shift;
 
     if(@_) {
-	$_[0] =~ s/ //g;
+        $_[0] =~ s/ //g;
         $self->{Z} = $ELEMENTS{$_[0]};
         $self->{symbol} = $_[0];
         return $self;
@@ -460,7 +460,7 @@ sub neighbors {
     my @ret = ();
 
     for my $b (@{$self->{bonds}}) {
-	push @ret, $b->{to} unless $from && $b->{to} eq $from;
+        push @ret, $b->{to} unless $from && $b->{to} eq $from;
     }
     @ret;
 }
@@ -478,7 +478,7 @@ sub bonds {
     my @ret = ();
 
     for my $b (@{$self->{bonds}}) {
-	push @ret, $b->{bond} unless $from && $b->{to} eq $from;
+        push @ret, $b->{bond} unless $from && $b->{to} eq $from;
     }
     @ret;
 }
@@ -502,7 +502,7 @@ sub bonds_neighbors {
     my @ret = ();
 
     for my $b (@{$self->{bonds}}) {
-	push @ret, {%$b} unless $from && $b->{to} eq $from;
+        push @ret, {%$b} unless $from && $b->{to} eq $from;
     }
     @ret;
 }

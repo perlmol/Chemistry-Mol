@@ -11,9 +11,9 @@ Chemistry::Bond - Chemical bonds as objects in molecules
     use Chemistry::Bond;
 
     my $bond = new Chemistry::Bond(
-	id => "b1", 
-	type => '=', 
-	atoms => [$a1, $a2]
+        id => "b1", 
+        type => '=', 
+        atoms => [$a1, $a2]
         order => '2',
     );
     print $bond->print;
@@ -92,10 +92,10 @@ sub length {
     my $self = shift;
 
     if (@{$self->{atoms}} == 2) {
-	my $v = $self->{atoms}[1]{coords} - $self->{atoms}[0]{coords};
-	return $v->length;
+        my $v = $self->{atoms}[1]{coords} - $self->{atoms}[0]{coords};
+        return $v->length;
     } else {
-	return 0;
+        return 0;
     }
 }
 
