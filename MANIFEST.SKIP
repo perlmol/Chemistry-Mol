@@ -21,3 +21,4 @@
 ^[xyz]$
 ^pm_to_blib$
 ^testmol.pl$
+\.gz$

@@ -1,0 +1,37 @@
+=head1 PerlMol Quick Tutorial
+
+=head2 Introduction
+
+The modules in the PerlMol toolkit are designed to simplify the handling of 
+molecules from Perl programs in a general and extensible way. 
+
+=head2 How to read a molecule from a file
+
+The following code will read a PDB file:
+
+    use Chemistry::File::PDB;
+    use Chemistry::Mol 'read_mol';
+    my $mol = read_mol("test.pdb");
+
+The first two lines (which only need to be used once in a given program) tell
+perl that you want to "use" the specified modules, and that you want to import
+the read_mol subroutine. The third line reads the file and returns a Mol object.
+
+To read other formats such as MDL molfiles,  you need to "use" the
+corresponding module, such as Chemistry::File::MDLMol. Readers for other
+formats are under development.
+
+=head2 The Mol object
+
+read_mol returns a Mol object. An object is a data structure that has methods
+associated with it.
+
+=head2 Selecting atoms in a molecule
+
+You can get an array with all the atoms by calling the atoms method:
+
+    @atoms = $mol->atoms;
+
+=head2 The Atom object
+
+=cut

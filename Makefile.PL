@@ -6,6 +6,7 @@ WriteMakefile(
     'NAME'		=> 'Chemistry::Mol',
     'VERSION_FROM'	=> 'Mol.pm', # finds $VERSION
     'PREREQ_PM'		=> {
-        'Math::VectorReal' => 1.0
+        'Math::VectorReal' => 1.0,
+        'Test::Simple' => 0,
     },
 );
