@@ -477,8 +477,12 @@ sub open {
     croak "Chemistry::File::open: no file supplied" unless defined $file;
     if (ref $file eq 'SCALAR') {
         croak "decompression only supported for files" if $self->{opts}{gzip};
-        require IO::String;
-        $fh = IO::String->new($$file);
+        if ($] >= 5.008) {
+            open $fh, $mode, $file;
+        } else { 
+            require IO::String;
+            $fh = IO::String->new($$file);
+        }
     } elsif (ref $file) {
         croak "decompression only supported for files" if $self->{opts}{gzip};
         $fh = $file;
