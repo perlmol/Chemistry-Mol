@@ -1,5 +1,5 @@
 package Chemistry::File;
-$VERSION = '0.24';
+$VERSION = '0.25';
 
 =head1 NAME
 
@@ -69,8 +69,8 @@ all classes:
 
 A class or object with a C<new> method that constructs a molecule. This is 
 needed when the user want to specify a molecule subclass different from the
-default. When this option is not present, the Chemistry::Mol class may be used
-as a default.
+default. When this option is not defined, the module may use Chemistry::Mol 
+or whichever class is appropriate for that file format.
 
 =item atom_class
 
@@ -89,7 +89,7 @@ The file format being used, as registered by Chemistry::Mol->register_format.
 =head1 METHODS
 
 The methods in this class (or rather, its derived classes) are usually not
-called directly. Instead, use Chemistry::Mol->read , write, print, and parse.
+called directly. Instead, use Chemistry::Mol->read, write, print, and parse.
 
 =over 4
 
@@ -101,20 +101,19 @@ use Carp;
 # This subroutine implements the :auto functionality
 sub import {
     my $pack = shift;
-    if(@_) {
-        for (@_){
-            if ($_ eq ':auto') {
-                my ($dir) = $INC{"Chemistry/File.pm"} =~ m|^.*/|g;
-                for my $pmfile (glob "${dir}File/*.pm") {
-                    my ($pm) = $pmfile =~ m|Chemistry/File/(.*)\.pm|g;
-                    eval "use ${pack}::$pm"; die "$@" if $@;
-                }
-            } else {
-                eval "use ${pack}::$_";
-                die "$@" if $@;
+    for my $param (@_){
+        if ($param eq ':auto') {
+            for my $pmfile (map {glob "$_/Chemistry/File/*.pm"} @INC) {
+                my ($pm) = $pmfile =~ m|(Chemistry/File/.*\.pm)$|;
+                #warn "requiring $pm\n";
+                eval { require $pm }; 
+                die "Error in Chemistry::File: '$@'\n" if $@;
             }
+        } else {
+            eval "use ${pack}::$param";
+            die "$@" if $@;
         }
-    } 
+    }
 }
 
 =item $class->parse_string($s, %options)
@@ -127,7 +126,7 @@ method, so it should be provided by all derived classes.
 sub parse_string {
     my $class = shift;
     $class = ref $class || $class;
-    croak "parse() is not implemented for $class";
+    croak "parse_string() is not implemented for $class";
 }
 
 
@@ -141,7 +140,7 @@ provided by all derived classes.
 sub write_string {
     my $class = shift;
     $class = ref $class || $class;
-    croak "writestring() is not implemented for $class";
+    croak "write_string() is not implemented for $class";
 }
 
 =item $class->parse_file($fname, %options)
@@ -179,7 +178,7 @@ sub write_file {
     my %opts = @_;
 
     my $s = $self->write_string($mol, %opts);
-    open F, ">$fname" or croak "Could not open file $fname for writing";
+    open F, ">$fname" or croak "Could not open file $fname for writing: $!\n";
     print F $s;
     close F;
 }
@@ -233,13 +232,12 @@ sub file_is {
 
 =head1 CAVEATS
 
-The :auto feature only looks in one directory. If you have modules in 
-several different directories, it will only find those that are installed
-next to Chemistry::File itself.
+The :auto feature may not be entirely portable, but it is known to work under
+Unix and Windows (either Cygwin or Activestate).
 
 =head1 VERSION
 
-0.24
+0.25
 
 =head1 SEE ALSO
 

@@ -1,6 +1,6 @@
 package Chemistry::Atom;
 
-$VERSION = '0.24';
+$VERSION = '0.25';
 # $Id$
 
 =head1 NAME
@@ -22,7 +22,7 @@ Chemistry::Atom - Chemical atoms as objects in molecules
 =head1 DESCRIPTION
 
 This module includes objects to describe chemical atoms. 
-An atom is defined by its symbol and its coordinates.
+An atom is defined by its symbol and its coordinates, among other attributes.
 Atomic coordinates are described by a Math::VectorReal
 object, so that they can be easily used in vector operations.
 
@@ -30,12 +30,18 @@ object, so that they can be easily used in vector operations.
 
 In addition to common attributes such as id, name, and type, 
 atoms have the following attributes, which are accessed or
-modified through methods defined below: bonds, coords, Z, symbol.
+modified through methods defined below: bonds, coords, internal_coords,
+Z, symbol, etc.
 
-In general, to get the value of a property use $atom->method without
-any parameters. To set the value, use $atom->method($new_value).
+In general, to get the value of a property, use $atom->method without
+any parameters. To set the value, use $atom->method($new_value). When setting
+an attribute, the accessor returns the atom object, so that accessors can be
+chained:
+
+    $atom->symbol("C")->name("CA")->coords(1,2,3);
 
 =cut
+
 # Considering to add the following attributes:
 # mass_number (A)
 
@@ -49,17 +55,15 @@ use Carp;
 use base qw(Chemistry::Obj Exporter);
 
 our @EXPORT_OK = qw(distance angle dihedral angle_deg dihedral_deg);
-our @EXPORT = ();
 our %EXPORT_TAGS = (
-      all  => [@EXPORT, @EXPORT_OK],
+      all  => \@EXPORT_OK,
 );
 
 
-use vars qw(@ELEMENTS %ELEMENTS);
 
 my $N = 0; # Number of atoms created so far, used to generate default IDs.
 
-@ELEMENTS = qw(
+our @ELEMENTS = qw(
     n
     H                                                                   He
     Li  Be                                          B   C   N   O   F   Ne
@@ -74,6 +78,7 @@ my $N = 0; # Number of atoms created so far, used to generate default IDs.
             Lr  Rf  Db  Sg  Bh  Hs  Mt  Ds  Uuu Uub Uut Uuq Uup Uuh Uus Uuo
 );
 
+our %ELEMENTS;
 for (my $i = 1; $i < @ELEMENTS; ++$i){
     $ELEMENTS{$ELEMENTS[$i]} = $i;
 }
@@ -116,8 +121,7 @@ my %Atomic_masses = (
 
 =item Chemistry::Atom->new(name => value, ...)
 
-Create a new Atom object with the specified attributes. Sensible defaults
-are used when possible.
+Create a new Atom object with the specified attributes.
 
 =cut
 
@@ -158,7 +162,8 @@ sub Z {
 
     if(@_) {
         $self->{symbol} = $ELEMENTS[$_[0]];
-        return $self->{Z} = $_[0];
+        $self->{Z} = $_[0];
+        return $self;
     } else {
         return $self->{Z};
     }
@@ -177,7 +182,8 @@ sub symbol {
     if(@_) {
 	$_[0] =~ s/ //g;
         $self->{Z} = $ELEMENTS{$_[0]};
-        return $self->{symbol} = $_[0];
+        $self->{symbol} = $_[0];
+        return $self;
     } else {
         return $self->{symbol};
     }
@@ -195,6 +201,7 @@ sub mass {
     my ($self, $mass) = @_;
     if(defined $mass) {
         $self->{mass} = $mass;
+        return $self;
     } else {
         if (exists $self->{mass}) {
             $mass = $self->{mass};
@@ -205,11 +212,15 @@ sub mass {
     $mass;
 }
 
-=item $atom->coords([$x, $y, $z])
+=item $atom->coords
 
-Sets the atom's coordinates, and returns a Math::VectorReal object.
-It can take as a parameter a Math::VectorReal object, a reference to an 
-array, or the list of coordinates.
+    my $vector = $atom->coords;  # get a Math::VectorReal object
+    $atom->coords($vector);      # set a Math::VectorReal object 
+    $atom->coords([$x, $y, $z]); # also accepts array refs 
+    $atom->coords($x, $y, $z);   # also accepts lists
+
+Sets or gets the atom's coordinates. It can take as a parameter a
+Math::VectorReal object, a reference to an array, or the list of coordinates.
 
 =cut
 
@@ -218,15 +229,59 @@ sub coords {
 
     if(@_) {
         if (UNIVERSAL::isa($_[0], "Math::VectorReal")) {
-            return $self->{coords} = $_[0];
+            $self->{coords} = $_[0];
         } elsif (ref $_[0] eq "ARRAY") {
-            return $self->{coords} = vector(@{$_[0]});
+            $self->{coords} = vector(@{$_[0]});
         } else {
-            return $self->{coords} = vector(@_);
+            $self->{coords} = vector(@_);
         }
     } else {
         return $self->{coords};
     }
+    $self;
+}
+
+=item $atom->internal_coords
+
+    # get a Chemistry::InternalCoords object
+    my $ic = $atom->coords;      
+
+    # set a Chemistry::InternalCoords object 
+    $atom->coords($vic);         
+
+    # also accepts array refs 
+    $atom->coords([8, 1.54, 7, 109.47, 6, 120.0]);   
+
+    # also accepts lists
+    $atom->coords(8, 1.54, 7, 109.47, 6, 120.0);    
+
+Sets or gets the atom's internal coordinates. It can take as a parameter a
+Chemistry::InternalCoords object, a reference to an array, or the list of
+coordinates. In the last two cases, the list elements are the following: atom 
+number or reference for distance, distance, atom number or reference for angle,
+angle in degrees, atom number or reference for dihedral, dihedral in degrees.
+
+=cut
+
+sub internal_coords {
+    my $self = shift;
+
+    if(@_) {
+        if (UNIVERSAL::isa($_[0], "Chemistry::InternalCoords")) {
+            $self->{internal_coords} = $_[0];
+        } elsif (ref $_[0] eq "ARRAY") {
+            require Chemistry::InternalCoords;
+            $self->{internal_coords} = 
+                Chemistry::InternalCoords->new($self, @{$_[0]});
+        } else {
+            require Chemistry::InternalCoords;
+            $self->{internal_coords} = 
+                Chemistry::InternalCoords->new($self, @_);
+        }
+    } else {
+        return $self->{internal_coords};
+    }
+    $self;
 }
 
 =item $atom->x3, $atom->y3, $atom->z3
@@ -277,7 +332,7 @@ sub hydrogens {
 
 Set or get whether the atom is considered to be aromatic. This property may be
 set arbitrarily, it doesn't imply any kind of "intelligent aromaticity
-detection"!
+detection"! (For that, look at the L<Chemistry::Ring> module).
 
 =cut
 
@@ -294,7 +349,7 @@ sub aromatic {
 =item $atom->valence
 
 Returns the sum of the bond orders of the bonds in which the atom participates,
-including implicit hydrogens.
+including implicit hydrogens (which are assumed to have bond orders of one).
 
 =cut
 
@@ -308,7 +363,7 @@ sub valence {
 
 =item $atom->add_bond($bond)
 
-Adds a new bond to the atom, as defined by the Bond object $bond.
+Adds a new bond to the atom, as defined by the Chemistry::Bond object $bond.
 
 =cut
 
@@ -347,7 +402,7 @@ sub delete_bond {
 =item $atom->delete
 
 Calls $mol->delete_atom($atom) on the atom's parent molecule. Note that an atom
-should belong to only one molecule or strange things may happen.
+should belong to only one molecule or strange things will happen.
 
 =cut
 
@@ -367,10 +422,11 @@ sub parent {
     }
 }
 
-=item $atom->neighbors([$from])
+=item $atom->neighbors($from)
 
 Return a list of neighbors. If an atom object $from is specified, it will be
-excluded from the list.
+excluded from the list (this is useful if an atom wants to know who its 
+neighbor's neighbors are, without counting itself).
 
 =cut
 
@@ -385,10 +441,10 @@ sub neighbors {
     @ret;
 }
 
-=item $atom->bonds([$from])
+=item $atom->bonds($from)
 
-Return a list of bonds. If an atom object $from is specified, it will be
-excluded from the list.
+Return a list of bonds. If an atom object $from is specified, bonds to
+that atom will be excluded from the list.
 
 =cut
 
@@ -403,12 +459,16 @@ sub bonds {
     @ret;
 }
 
-=item $atom->bonds_neighbors([$from])
+=item $atom->bonds_neighbors($from)
 
 Return a list of hash references, representing the bonds and neighbors from the
 atom. If an atom object $from is specified, it will be excluded from the list.
 The elements of the hash are 'to', and atom reference, and 'bond', a bond
-reference.
+reference. For example, 
+
+    for my $bn ($atom->bonds_neighbors) {
+        print "bond $bn->{bond} point to atom $bn->{to}\n";
+    }
 
 =cut
 
@@ -427,7 +487,8 @@ sub bonds_neighbors {
 
 Returns the minimum distance to $obj, which can be an atom, a molecule, or a
 vector. In scalar context it returns only the distance; in list context it
-also returns the closest atom found.
+also returns the closest atom found. It can also be called as a function,
+Chemistry::Atom::distance (which can be exported).
 
 =cut
 
@@ -461,7 +522,8 @@ sub distance {
 =item $atom->angle($atom2, $atom3)
 
 Returns the angle in radians between the atoms involved. $atom2 is the atom in
-the middle. Can also be called as Chemistry::Atom::angle($atom1, $atom2, $atom3);
+the middle. Can also be called as Chemistry::Atom::angle($atom1, $atom2,
+$atom3). This function can be exported.
 
 =cut
 
@@ -481,7 +543,7 @@ sub angle {
 
 =item $atom->angle_deg($atom2, $atom3)
 
-Same as angle(), but returns the value in degrees.
+Same as angle(), but returns the value in degrees. May be exported.
 
 =cut
 
@@ -492,7 +554,8 @@ sub angle_deg {
 =item $atom->dihedral($atom2, $atom3, $atom4)
 
 Returns the dihedral angle in radians between the atoms involved.  Can also be
-called as Chemistry::Atom::dihedral($atom1, $atom2, $atom3, $atom4);
+called as Chemistry::Atom::dihedral($atom1, $atom2, $atom3, $atom4). May be
+exported.
 
 =cut
 
@@ -515,7 +578,7 @@ sub dihedral {
 
 =item $atom->dihedral_deg($atom2, $atom3, $atom4)
 
-Same as dihedral(), but returns the value in degrees.
+Same as dihedral(), but returns the value in degrees. May be exported.
 
 =cut
 
@@ -525,7 +588,7 @@ sub dihedral_deg {
 
 =item $atom->print
 
-Convert the atom to a string representation.
+Convert the atom to a string representation (used for debugging).
 
 =cut
 
@@ -620,7 +683,7 @@ sub printf {
 
 =head1 VERSION
 
-0.24
+0.25
 
 =head1 SEE ALSO
 

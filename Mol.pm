@@ -1,5 +1,5 @@
 package Chemistry::Mol;
-$VERSION = '0.24';
+$VERSION = '0.25';
 # $Id$
 
 =head1 NAME
@@ -452,7 +452,7 @@ sub printf {
     print $mol->sprintf($format);
 }
 
-=item $mol->parse($string, option => value...)
+=item Chemistry::Mol->parse($string, option => value...)
 
 Parse the molecule encoded in $string. The format should be specified
 with the the C<format> option; otherwise, it will be guessed.
@@ -777,7 +777,7 @@ sub _paint {
 
 =head1 VERSION
 
-0.24
+0.25
 
 =head1 SEE ALSO
 

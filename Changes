@@ -1,5 +1,10 @@
 Revision history for Perl extension Chemistry::Mol.
 
+0.25  Wed Jun 30 2004
+        - Fixed Chemistry::File :auto so that it looks in every @INC directory.
+        - Added internal coordinates for atoms.
+        - Updated the tutorial a little bit.
+
 0.24  Wed Jun 16 2004
         - Mol:: _weaken, sort_atoms, atom_class, bond_class
         - Atom:: sprintf, printf, hydrogens, valence

@@ -1,6 +1,8 @@
-=head1 PerlMol Quick Tutorial
+=head1 NAME
 
-=head2 Introduction
+PerlMol Quick Tutorial
+
+=head1 Introduction
 
 The modules in the PerlMol toolkit are designed to simplify the handling of 
 molecules from Perl programs in a general and extensible way. 
@@ -11,7 +13,7 @@ This document shows some of the more common methods included in the PerlMol
 toolkit, in a reasonable order for a quick introduction. For more details see
 the perldoc pages for each module.
 
-=head2 How to read a molecule from a file
+=head1 How to read a molecule from a file
 
 The following code will read a PDB file:
 
@@ -21,37 +23,44 @@ The following code will read a PDB file:
 
 The first two lines (which only need to be used once in a given program) tell
 Perl that you want to C<use> the specified modules The third line reads the
-file and returns a Mol object.
+file and returns a molecule object.
 
 To read other formats such as MDL molfiles,  you need to C<use> the
 corresponding module, such as Chemistry::File::MDLMol. Readers for several
 formats are under development.
 
-=head2 The Mol object
+=head1 The molecule object
 
-C<< Chemistry::Mol->read >> returns a Mol object. An I<object> is a data structure of a given
-I<class> that has I<methods> (i.e. subroutines) associated with it. To access
-or modify an object's properties, you call the methods through the "arrow
-syntax":
+C<< Chemistry::Mol->read >> returns a Chemistry::Mol object. An I<object> is a
+data structure of a given I<class> that has I<methods> (i.e. subroutines)
+associated with it. To access or modify an object's properties, you call the
+methods on the object through "arrow syntax":
 
     my $name = $mol->name; # return the name of the molecule
     $mol->name("water");   # set the name of the molecule to "water"
 
-A Mol object contains essentialy a list of atoms, a list of bonds, and a few
-generic properties such as name, type, and id. The atoms and bonds themselves
-are also objects.
+Note that these so-called accessor methods return the molecule object when they
+are used to set a property. A consequence of that if you want, you can "chain" 
+several methods to set several options in one line:
 
-=head2 Writing a molecule file
+    $mol->name("water")->type("wet");
+
+A Chemistry::Mol object contains essentialy a list of atoms, a list of bonds,
+and a few generic properties such as name, type, and id. The atoms and bonds
+themselves are also objects.
+
+=head1 Writing a molecule file
 
 To write a molecule to a file, just use the C<write> method:
 
-    $mol->write("test.pdb"); # see note below
+    $mol->write("test.pdb"); 
 
-Make sure you C<use>d the right module. Note: at the time of this writing,
-the Chemistry::File::PDB file does not yet implement the writing feature.
-Please stay tuned!
+Make sure you C<use>d the right file I/O module. If you want to load all the
+available file I/O modules, you can do it with
 
-=head2 Selecting atoms in a molecule
+    use Chemistry::File ':auto';
+
+=head1 Selecting atoms in a molecule
 
 You can get an array of all the atoms by calling the atoms method without
 parameters, or a specific atom by giving its index:
@@ -72,9 +81,8 @@ The C<grep> function loops through all the atoms returned by $mol->atoms,
 aliasing each to $_ at each iteration, and returns only those for which
 the expression in braces is true. 
 
-Using C<grep> is the general way of finding atoms; however, since finding
-atoms by name is very common, a convenience method is available for that
-purpose.
+Using C<grep> is a general way of finding atoms; however, since finding atoms
+by name is common, a convenience method is available for that purpose.
 
     $HB1 = $mol->atoms_by_name('HB1');
     @H_atoms = $mol->atoms_by_name('H.*'); # the name is treated as a regex
@@ -84,7 +92,7 @@ might match more than one atom. In that case, only the first one found is
 returned. In the second case, since you are asigning to an array, all matching
 atoms are returned.
 
-=head2 The Atom object
+=head1 The atom object
 
 Atoms are usually the most interesting objects in a molecule. Some of their
 main properties are Z, symbol, and coords.
@@ -93,19 +101,19 @@ main properties are Z, symbol, and coords.
     $symbol = $atom->symbol;
     $coords = $atom->coords;
 
-=head3 Atom coordinates
+=head2 Atom coordinates
 
 The coordinates returned by $atom->coords are a Math::VectorReal object. You
 can print these objects and use them to do vector algebra:
 
     $c1 = $atom1->coords;
     $c2 = $atom2->coords;
-    $dot_product = $c1 . $c2;   # returns a scalar
-    $cross_product = $c1 x $c2; # returns a vector
-    $delta = $c2 - $c1;         # returns a vector
-    $distance = $delta->length; # returns a scalar
+    $dot_product = $c1 . $c2;       # returns a scalar
+    $cross_product = $c1 x $c2;     # returns a vector
+    $delta = $c2 - $c1;             # returns a vector
+    $distance = $delta->length;     # returns a scalar
     print $c1;     # prints something like "[ 1.0E0  2.0E0  3.0E0 ]"
-    ($x, $y, $z) = $c1->array;  # set $x, $y, $z to the components of $c1
+    ($x, $y, $z) = $c1->array;      # set $x, $y, $z to the components of $c1
 
 Since one is very often interested in calculating the distance between atoms,
 Atom objects provide a C<distance> method to save some typing:
@@ -117,7 +125,12 @@ In the second case, the value obtained is the minimum distance between the atom
 and the molecule. This can be useful for things such as finding the water
 molecules closest to a given atom.
 
-=head2 The Bond object
+Atoms may also have internal coordinates, which define the position of an atom
+relative to the positions of other atoms by means of a distance, and angle,
+and a dihedral atom. Those coordinates can be accessed through the
+$atom->internal_coords method, which used L<Chemistry::InternalCoords> objects.
+
+=head1 The Bond object
 
 A bond object is a list of atoms with an associated bond order. In most cases,
 a bond has exactly two atoms, but we don't want to exclude possibilities such
@@ -136,7 +149,7 @@ In addition to these properties, Bond objects have the generic properties
 described below. The most important of these, as far as bonds are concerned,
 is C<type>.
 
-=head2 Generic properties
+=head1 Generic properties
 
 There are three generic properties that all PerlMol objects have:
 
@@ -169,7 +182,7 @@ used to specify atom types and bond orders.
 Besides these, the user can specify arbitrary attributes, as discussed in the
 next section.
 
-=head2 User-specified attributes
+=head1 User-specified attributes
 
 The core PerlMol classes define very few, very generic properties for atoms and
 molecules. This was chosen as a "minimum common denominator" because every file
@@ -195,24 +208,50 @@ have the "pdb/residue" attribute.
     my $atom = $mol->atoms(1234);
     print $atom->attr("pdb/residue"); # prints "ALA123"
 
-=head2 Macromolecules
+=head1 Molecule subclasses
 
-So far we have assumed that we are dealing with molecules of the Mol class.
-However, one of the interesting things about object-oriented programming is that
-classes can be extended. For dealing with macromolecules, we have the 
-MacroMol class, which extends the Mol class. This means that in practice
-you can use a MacroMol object exactly as you would use a Mol object, but with
-some added functionality. In fact, the PDB reader can return MacroMol instead
-of Mol objects by just changing the first example like this:
+You can do lots of interesting thing with plain molecules. However, for some
+applications you may want to extend the features of the main Chemistry::Mol
+class. There are several subclasses of Chemistry::Mol available already:
+
+=over
+
+=item L<Chemistry::MacroMol>
+
+Used for macromolecules.
+
+=item L<Chemistry::Pattern>
+
+Used for substructure matching.
+
+=item L<Chemistry::Ring>
+
+Used for representing rings (cycles) in molecules.
+
+=back
+
+As an example we'll discuss macromolecules. Future versions of this tutorial
+may also include a discussion about patterns and rings.
+
+=head1 Macromolecules
+
+So far we have assumed that we are dealing with molecules of the Chemistry::Mol
+class.  However, one of the interesting things about object-oriented
+programming is that classes can be extended. For dealing with macromolecules,
+we have the MacroMol class, which extends the Chemistry::Mol class. This means
+that in practice you can use a MacroMol object exactly as you would use a
+Chemistry::Mol object, but with some added functionality. In fact, the PDB
+reader can return MacroMol instead of Chemistry::Mol objects by just changing
+the first example like this:
 
     use Chemistry::MacroMol;
     use Chemistry::File::PDB;
     my $macromol = Chemistry::MacroMol->read("test.pdb");
 
 Now the question is, what is the "added functionality" that MacroMol objects
-have on top of the original Mol object?
+have on top of the original Chemistry::Mol object?
 
-=head3 The MacroMol object
+=head2 The MacroMol object
 
 For the purposes of this module, a macromolecule is considered to be a big
 molecule where atoms are divided in I<Domains>. A domain is just a subset of
@@ -228,11 +267,12 @@ and bonds, in this case through the C<domains> method:
     my @all_domains = $macromol->domains;
     my $domain      = $macromol->domains(57);
 
-=head3 The Domain object
+=head2 The Domain object
 
 A domain is a substructure of a larger molecule. Other than having a I<parent>
 molecule, a domain is just like a molecule. In other words, the Domain class
-extends the Mol class; it is basically a collection of atoms and bonds.
+extends the Chemistry::Mol class; it is basically a collection of atoms and
+bonds.
 
     my @atoms_in_domain = $domain->atoms;
     my $atom5_in_domain = $domain->atoms(5);
@@ -249,9 +289,9 @@ know the residue number and atom name.
 
 =head1 VERSION
 
-0.24
+0.25
 
-=head2 See Also
+=head1 SEE ALSO
 
 The perldoc pages for L<Chemistry::Mol>, L<Chemistry::Atom>,
 L<Chemistry::Bond>, L<Chemistry::File>, L<Chemistry::MacroMol>,
