@@ -4,5 +4,6 @@ Changes
 MANIFEST
 Makefile.PL
 Mol.pm
+Obj.pm
 README
 t/1.t

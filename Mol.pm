@@ -1,8 +1,9 @@
 package Chemistry::Mol;
+$VERSION = '0.05';
 
 =head1 NAME
 
-Chemistry::Mol - Molecule object core library
+Chemistry::Mol - Molecule object toolkit
 
 =head1 SYNOPSIS
 
@@ -14,111 +15,72 @@ Chemistry::Mol - Molecule object core library
 
     print $mol->print;
 
-    $mol2 = Chemistry::Mol::read_mol("file.pdb", "pdb");
-    print $mol2->print;
-
 =head1 DESCRIPTION
 
 This package, along with Chemistry::Atom and Chemistry::Bond, includes basic
 objects and methods to describe molecules. 
 
-The core methods try not to commit to a particular convention, therefore fields
-such as the bond type have no intrinsic meaning. Bonds are defined as a list of
-atoms (typically two) with an arbitrary type. Atoms are defined by a symbol and
-a Z, and may have 3D coordinates (2D and internal coming soon).
-
-Constructors receive an optional list of named parameters.
-
-=head2 Common Attributes
-
-There are some common attributes that may be found in molecules, bonds, and 
-atoms, such as id, name, and type.
-
-=over 4
-
-=item id
-
-Objects should have a unique ID. The user has the responsibility for uniqueness
-if he assigns ids; otherwise a unique ID is assigned sequentially.
-
-=item name
-
-An arbitrary name for an object. The name doesn't need to be unique.
-
-=item type
-
-The interpretation of this attribute is not specified here, but it's typically 
-used for bond orders and atom types.
-
-=back
-
-=head2 Mol attributes
-
-This basic Mol elements should be considered read only! To add or delete atoms
-and bonds, use the corresponding methods.
-
-=over 4
-
-=item atoms
-
-An array of the atom objects in the molecule.
-
-=item bonds
-
-An array of bonds.
-
-=item byId
-
-A hash of the atoms and bonds in the molecule, using their id as the key.
-
-=back
+The core methods try not to enforce a particular convention.  This means that
+only a minimal set of attributes is provided by default, and some attributes
+have very loosely defined meaning. This is because each program and file type
+has different idea of what each concept (such as bond and atom type) means.
+Bonds are defined as a list of atoms (typically two) with an arbitrary type.
+Atoms are defined by a symbol and a Z, and may have 3D coordinates (2D and
+internal coming soon).
 
 =cut
 
-
+use strict;
 use Chemistry::Atom;
 use Chemistry::Bond;
 use Carp;
 use base qw(Exporter Chemistry::Obj);
 
-$VERSION = '0.10';
 
+our @EXPORT = qw();
+our @EXPORT_OK = qw( read_mol );
 
-@EXPORT = qw();
-@EXPORT_OK = qw( read_mol );
-
-%EXPORT_TAGS = (
+our %EXPORT_TAGS = (
    all  => [@EXPORT, @EXPORT_OK]
 );
 
+use overload '""' => "stringify";
 
-use overload '""' => \&stringify;
-
-%FILE_FORMATS = ();
+our %FILE_FORMATS = ();
 my $N = 0;
 
 =head1 METHODS
+
+See also Chemistry::Obj for generic attributes.
 
 =over 4
 
 =item Chemistry::Mol->new(name => value, ...)
 
-Create a new Mol object with the specified attributes. Sensible defaults
-are used when possible.
+Create a new Mol object with the specified attributes. 
+
+    $mol = Chemistry::Mol->new(id => 'm123', name => 'my mol')
+
+is the same as
+
+    Chemistry::Mol->new()
+    $mol->id('m123')
+    $mol->name('my mol')
 
 =cut
 
 sub new {
     my $class = shift;
-    my $newmol = bless {
+    my %args = @_;
+    my $self = bless {
 	id => $class->nextID,
 	byId => {}, 
 	atoms => [], 
 	bonds => [], 
 	name => "",
     }, $class;
-    %$newmol = (%$newmol, @_);
-    return $newmol;
+    $self->$_($args{$_}) for (keys %args);
+    return $self;
 }
 
 sub nextID {
@@ -127,25 +89,37 @@ sub nextID {
 
 =item $mol->add_atom($atom, ...)
 
-Add one or more Atom objects to the molecule.
+Add one or more Atom objects to the molecule. Returns the last atom added.
 
 =cut
 
 sub add_atom {
     my $self = shift;
-    my $a;
 
-    for $a (@_){
+    for my $a (@_){
         push @{$self->{atoms}}, $a;
         $self->{byId}{$a->{id}} = $a;
     }
+    $_[-1];
+}
+
+=item $mol->new_atom(name => value, ...)
+
+Shorthand for $mol->add_atom(Chemistry::Atom->new(name => value, ...));
+It has the disadvantage that it doesn't let you create a subclass of 
+Chemistry::Atom.
+
+=cut
+
+sub new_atom {
+    my $self = shift;
+    $self->add_atom(Chemistry::Atom->new(@_));
 }
 
 
 =item $mol->add_bond($bond, ...)
 
-Add one or more Bond objects to the molecule. Automatically calls the add_bond
-method for each of the atoms involved.
+Add one or more Bond objects to the molecule. Returns the last bond added.
 
 =cut
 
@@ -155,11 +129,21 @@ sub add_bond {
     for my $b (@_){
         push @{$self->{bonds}}, $b;
 	$self->{byId}{$b->{id}} = $b;
-
-        for my $a (@{$b->{atoms}}){
-            $a->add_bond($b);
-        }
     }
+    $_[-1];
+}
+
+=item $mol->new_bond(name => value, ...)
+
+Shorthand for $mol->add_bond(Chemistry::Bond->new(name => value, ...));
+It has the disadvantage that it doesn't let you create a subclass of 
+Chemistry::Atom.
+
+=cut
+
+sub new_bond {
+    my $self = shift;
+    $self->add_bond(Chemistry::Bond->new(@_));
 }
 
 =item $mol->print
@@ -178,31 +162,20 @@ sub print {
 $self->{id}:
     name: $self->{name}
 END
-    $ret .= <<E;
-    atoms:
-E
-    for $a (@{$self->{atoms}}) { $ret .= $a->print }
-    $ret .= <<E;
-    bonds:
-E
-    for $b (@{$self->{bonds}}) { $ret .= $b->print }
+    $ret .= "    attr:\n";
+    $ret .= $self->print_attr(2);
+    $ret .= "    atoms:\n";
+    for $a (@{$self->{atoms}}) { $ret .= $a->print(2) }
+    $ret .= "    bonds:\n";
+    for $b (@{$self->{bonds}}) { $ret .= $b->print(2) }
     $ret;
 }
 
-=item $mol->stringify
-
-Used to overload "", returns the ID of the molecule.
-
-=cut
-
-sub stringify {
-    my $self = shift;
-    $self->{id};
-}
+=begin comment
 
 =item read_mol($fname, [$type])
 
-Read a file returning a list of Mol objects, or 0 if there
+Read a file returning a list of Mol objects, or undef if there
 was a problem. The type of file will be guessed if not
 specified.
 
@@ -214,7 +187,7 @@ This function may be exported.
 
 =cut
 
-sub read_mol($;$) {
+sub read_mol {
     my $fname = shift;
     my $type = shift;
 
@@ -230,7 +203,7 @@ sub read_mol($;$) {
 	    }
 	}
     }
-    return 0;
+    undef;
 }
 
 =item register_type($name, sub_id => \&sub,... )
@@ -269,11 +242,14 @@ molecules and returns a string.
 
 =back
 
+=end comment 
+
+=back
+
 =cut
 
 sub register_type {
     my $type = shift;
-
     $FILE_FORMATS{$type} = {@_};
 }
 
@@ -285,11 +261,13 @@ Chemistry::Atom, Chemistry::Bond, Chemistry::File
 
 =head1 AUTHOR
 
-Ivan Tubert-Brohman <ivan@tubert.org>
+Ivan Tubert E<lt>itub@cpan.orgE<gt>
 
-=head1 VERSION
+=head1 COPYRIGHT
 
-$Id$
+Copyright (c) 2003 Ivan Tubert. All rights reserved. This program is free
+software; you can redistribute it and/or modify it under the same terms as
+Perl itself.
 
 =cut
 

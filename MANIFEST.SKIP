@@ -19,3 +19,5 @@
 ^mtest.pl$
 ^t.pl$
 ^[xyz]$
+^pm_to_blib$
+^testmol.pl$

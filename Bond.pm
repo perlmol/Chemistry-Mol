@@ -14,17 +14,15 @@ Chemistry::Bond
 	atoms => [$a1, $a2]
     );
 
-    print $bond;
-
 =cut
 
 
 use strict;
 use base qw(Chemistry::Obj);
-use overload '""' => \&stringify;
 
-use vars qw($N);
 my $N = 0;
+
+Chemistry::Obj::accessor('order');
 
 =head1 METHODS
 
@@ -39,10 +37,16 @@ are used when possible.
 
 sub new {
     my $class = shift;
-    my $newbond = bless {id => "b".++$N, type => '', atoms => []} , $class;
+    my %args = @_;
+    my $self = bless {
+        id => $class->nextID(),
+        type => '', 
+        atoms => [],
+        order => 1,
+    } , $class;
 
-    %$newbond = (%$newbond, @_);
-    return $newbond;
+    $self->$_($args{$_}) for (keys %args);
+    $self;
 }
 
 sub nextID {
@@ -69,21 +73,33 @@ sub length {
 
 sub print {
     my $self = shift;
+    my ($indent) = @_;
     my $l = sprintf "%.4g", $self->length;
-    return <<EOF;
-        $self->{id}:
-            type: $self->{type}
-            atom1: $self->{atoms}[0]{id}
-            atom2: $self->{atoms}[1]{id}
-            length: $l
+    my $atoms = join " ", map {$_->id} $self->atoms;
+    my $ret =  <<EOF;
+$self->{id}:
+    type: $self->{type}
+    order: $self->{order}
+    atoms: "$atoms"
+    length: $l
 EOF
+    $ret .= "    attr:\n";
+    $ret .= $self->print_attr($indent);
+    $ret =~ s/^/"    "x$indent/gem;
+    $ret;
 }
 
-sub stringify {
+sub atoms {
     my $self = shift;
-    $self->{id};
+    if (@_) {
+        $self->{atoms} = ref $_[0] ? $_[0] : [@_];
+        for my $a (@{$self->{atoms}}) {
+            $a->add_bond($self);
+        }
+    } else {
+        return (@{$self->{atoms}});
+    }
 }
-
 
 1;
 
@@ -95,11 +111,13 @@ Chemistry::Mol, Chemistry::Atom
 
 =head1 AUTHOR
 
-Ivan Tubert-Brohman <ivan@tubert.org>
+Ivan Tubert E<lt>itub@cpan.orgE<gt>
 
-=head1 VERSION
+=head1 COPYRIGHT
 
-$Id$
+Copyright (c) 2003 Ivan Tubert. All rights reserved. This program is free
+software; you can redistribute it and/or modify it under the same terms as
+Perl itself.
 
 =cut
 

@@ -1,4 +1,4 @@
-Chemistry/Mol version 0.10
+Chemistry/Mol version 0.05
 ==========================
 
 This toolkit includes basic objects and methods to describe molecules. It
@@ -9,7 +9,6 @@ The core methods try not to commit to a particular convention, therefore fields
 such as the bond type have no intrinsic meaning. Bonds are defined as a list of
 atoms (typically two) with an arbitrary type. Atoms are defined by a symbol and
 a Z, and may have 3D coordinates (2D and internal coming soon).
-
 
 INSTALLATION
 

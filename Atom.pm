@@ -13,7 +13,7 @@ Chemistry::Atom
 	coords => [$x, $y, $z],
 	symbol => 'Br'
     );
-    
+
     $atom->add_bond($b);
 
     print $atom;
@@ -39,7 +39,7 @@ any parameters. To set the value, use $mol->method($new_value).
 
 use strict;
 use Math::VectorReal;
-use overload '""' => \&stringify,
+use overload 
              '<=>'  => \&spaceship,
 #	     '-' => \&minus,
 ;
@@ -77,21 +77,18 @@ are used when possible.
 
 sub new {
     my $class = shift;
+    my %args = @_;
 
-    my $newatom = bless {
-        id => "a".++$N,
+    my $self = bless {
+        id => $class->nextID(),
         coords => vector(0, 0, 0),
         Z => 0,
         symbol => '',
         bonds => [],
     }, $class;
 
-    my %arg = @_;
-
-    foreach (keys %arg){
-        $newatom->$_($arg{$_});
-    }
-    return $newatom;
+    $self->$_($args{$_}) for (keys %args);
+    $self;
 }
 
 sub nextID {
@@ -180,56 +177,58 @@ sub neighbors {
     my @ret = ();
 
     for my $b (@{$self->{bonds}}) {
-	push @ret, $b->{to} unless $b->{to} == $from;
+	push @ret, $b->{to} unless $from && $b->{to} == $from;
     }
     @ret;
 }
 
+=item $atom->bonds([$from])
 
-=back
+Return a list of bonds. If an atom object $from is specified, it will be
+excluded from the list.
 
-=head1 OPERATOR OVERLOADING
+=cut
 
-Chemistry::Atom overloads a few operators for convenience.
+sub bonds {
+    my $self = shift;
+    my $from = shift;
+    my @ret = ();
 
-=over 4
+    for my $b (@{$self->{bonds}}) {
+	push @ret, $b->{bond} unless $from && $b->{to} == $from;
+    }
+    @ret;
+}
 
 =item $mol->print
 
-Convert the atom to a string representation. Mainly used for debugging.
+Convert the atom to a string representation.
 
 =cut
 
 sub print {
     my $self = shift;
-    my $bonds = "";
-    my $neighbors = "";
+    my ($indent) = @_;
 
-    for (@{$self->{bonds}}){
-        $bonds .= $_->{bond}{id}." ";
-        $neighbors .= $_->{to}{id}." ";
-    }
-    chop $bonds;
-    chop $neighbors;
-
+    my $bonds = join " ", map {$_->id} $self->bonds;
+    my $neighbors = join " ", map {$_->id} $self->neighbors;
     my $coords = $self->{coords}->stringify(
-	'x3: %g
-            y3: %g
-            z3: %g'
+    'x3: %g
+    y3: %g
+    z3: %g'
     );
 
-    return <<EOF;
-        $self->{id}:
-            symbol: $self->{symbol}
-            $coords
-            bonds: "$bonds"
-            neighbors: "$neighbors"
+    my $ret = <<EOF;
+$self->{id}:
+    symbol: $self->{symbol}
+    $coords
+    bonds: "$bonds"
+    neighbors: "$neighbors"
 EOF
-}
-
-sub stringify {
-    my $self = shift;
-    $self->{id};
+    $ret .= "    attr:\n";
+    $ret .= $self->print_attr($indent);
+    $ret =~ s/^/"    "x$indent/gem;
+    $ret;
 }
 
 sub spaceship {
@@ -253,11 +252,13 @@ Chemistry::Mol, Chemistry::Bond, Math::VectorReal
 
 =head1 AUTHOR
 
-Ivan Tubert-Brohman <ivan@tubert.org>
+Ivan Tubert E<lt>itub@cpan.orgE<gt>
 
-=head1 VERSION
+=head1 COPYRIGHT
 
-$Id$
+Copyright (c) 2003 Ivan Tubert. All rights reserved. This program is free
+software; you can redistribute it and/or modify it under the same terms as
+Perl itself.
 
 =cut
 
