@@ -95,7 +95,6 @@ Add one or more Atom objects to the molecule. Returns the last atom added.
 
 sub add_atom {
     my $self = shift;
-
     for my $a (@_){
         push @{$self->{atoms}}, $a;
         $self->{byId}{$a->{id}} = $a;
@@ -125,7 +124,6 @@ Add one or more Bond objects to the molecule. Returns the last bond added.
 
 sub add_bond {
     my $self = shift;
-
     for my $b (@_){
         push @{$self->{bonds}}, $b;
 	$self->{byId}{$b->{id}} = $b;
@@ -144,6 +142,48 @@ Chemistry::Atom.
 sub new_bond {
     my $self = shift;
     $self->add_bond(Chemistry::Bond->new(@_));
+}
+
+=item $mol->by_id($id)
+
+Return the atom or bond object with the corresponding id.
+
+=cut
+
+sub by_id {
+    my $self = shift;
+    my ($id) = @_;
+    $self->{byId}{$id};
+}
+
+=item $mol->atoms($n1, ...)
+
+Returns the atoms with the given indices, or all by default.
+
+=cut
+
+sub atoms {
+    my $self = shift;
+    if (@_) {
+        @{$self->{atoms}}[@_];
+    } else {
+        @{$self->{atoms}};
+    }
+}
+
+=item $mol->bonds($n1, ...)
+
+Returns the bonds with the given indices, or all by default.
+
+=cut
+
+sub bonds {
+    my $self = shift;
+    if (@_) {
+        @{$self->{bonds}}[@_];
+    } else {
+        @{$self->{bonds}};
+    }
 }
 
 =item $mol->print
