@@ -1,5 +1,5 @@
 package Chemistry::Mol;
-$VERSION = '0.05';
+$VERSION = '0.06';
 
 =head1 NAME
 
@@ -169,6 +169,20 @@ sub atoms {
     } else {
         @{$self->{atoms}};
     }
+}
+
+=item $mol->atoms_by_name($name)
+
+Returns the atoms with the given name (treated as an anchored regular
+expression).
+
+=cut
+
+sub atoms_by_name {
+    my $self = shift;
+    my $re = qr/^$_[0]$/;
+    my @ret = grep {$_->name =~ $re} $self->atoms;
+    wantarray ? @ret : @ret[0];
 }
 
 =item $mol->bonds($n1, ...)
