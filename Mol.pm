@@ -44,8 +44,6 @@ our %EXPORT_TAGS = (
    all  => [@EXPORT, @EXPORT_OK]
 );
 
-use overload '""' => "stringify";
-
 our %FILE_FORMATS = ();
 my $N = 0;
 
@@ -167,7 +165,7 @@ sub atoms {
     my $self = shift;
     my @ats = map {$_ - 1} @_;
     if (@ats) {
-        @{$self->{atoms}}[@_];
+        @{$self->{atoms}}[@ats];
     } else {
         @{$self->{atoms}};
     }
@@ -212,7 +210,7 @@ sub bonds {
     my $self = shift;
     my @bonds = map {$_ - 1} @_;
     if (@bonds) {
-        @{$self->{bonds}}[@_];
+        @{$self->{bonds}}[@bonds];
     } else {
         @{$self->{bonds}};
     }

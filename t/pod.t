@@ -1,14 +1,15 @@
 use Test::More;
 my @files = (glob("*.pm"), glob("*.pod"));
 my $n = @files;
-plan tests => $n;
 
 eval 'use Test::Pod';
-my $no_test_pod = $@;
+if ($@) {
+    plan skip_all => "You don't have Test::Pod installed";
+} else {
+    plan tests => $n;
 
-SKIP: {
-    skip("you don't have Test::Pod installed", $n) if $no_test_pod;
-    for my $file (@files) {
-        pod_file_ok($file, "POD for '$file'");
-    }
+}
+
+for my $file (@files) {
+    pod_file_ok($file, "POD for '$file'");
 }

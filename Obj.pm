@@ -58,7 +58,9 @@ sub attr {
 
 =cut
 
-use overload '""' => "stringify";
+use overload 
+    '""' => "stringify",
+    '<=>' => "spaceship";
 
 # A generic class attribute set/get method generator
 sub accessor {
@@ -92,6 +94,12 @@ sub stringify {
     my $self = shift;
     $self->id;
 }
+
+sub spaceship {
+    my ($a, $b) = @_;
+    return $a->{id} cmp $b->{id};
+}
+
 accessor(qw(id name type));
 
 1;

@@ -40,10 +40,6 @@ any parameters. To set the value, use $mol->method($new_value).
 
 use strict;
 use Math::VectorReal;
-use overload 
-             '<=>'  => \&spaceship,
-#	     '-' => \&minus,
-;
 use Carp;
 use base qw(Chemistry::Obj);
 
@@ -265,17 +261,6 @@ EOF
     $ret =~ s/^/"    "x$indent/gem;
     $ret;
 }
-
-sub spaceship {
-#    my $self = shift;
-    my ($a, $b) = @_;
-
-#    print "ref a (id = $a->{id}) = ", ref($a), "\n";
-#    print "ref b (id = $b->{id}) = ", ref($b), "\n";
-
-    return $a->{id} cmp $b->{id};
-}
-
 
 1;
 
