@@ -8,6 +8,7 @@ WriteMakefile(
     'PREREQ_PM'		=> {
         'Math::VectorReal' => 1.0,
         'Test::Simple' => 0,
+        'Scalar::Util' => 1.01,
     },
     'PMLIBDIRS'         => ['File'],
 );

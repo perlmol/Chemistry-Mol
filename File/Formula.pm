@@ -1,5 +1,6 @@
 package Chemistry::File::Formula;
 $VERSION = '0.11';
+# $Id$
 
 use strict;
 use base "Chemistry::File";

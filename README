@@ -10,10 +10,10 @@ such as the bond type have no intrinsic meaning. Bonds are defined as a list of
 atoms (typically two) with an arbitrary type. Atoms are defined by a symbol and
 a Z, and may have 3D coordinates (2D and internal coming soon).
 
-CHANGES SINCE VERSION 0.10
-- New methods for Chemistry::Mol: mass, formula, formula_hash
-- New methods for Chemistry::Atom: mass
-- New module: Chemistry::File::Formula
+CHANGES SINCE VERSION 0.11
+    - Use Scalar::Util::weaken to avoid strong cyclic references
+      and ensure garbage collection.
+    - New methods for Chemistry::Mol: delete_atom, delete_bond
 
 INSTALLATION
 
@@ -28,6 +28,7 @@ DEPENDENCIES
 
 This module requires these other modules and libraries:
     - Math::VectorReal
+    - Scalar::Util (already included with perl 5.8)
 
 COPYRIGHT AND LICENCE
 

@@ -1,5 +1,6 @@
 package Chemistry::Atom;
 $VERSION = '0.11';
+# $Id$
 
 =head1 NAME
 
@@ -40,6 +41,7 @@ any parameters. To set the value, use $mol->method($new_value).
 
 use 5.006001;
 use strict;
+use Scalar::Util 'weaken';
 use Math::VectorReal;
 use Carp;
 use base qw(Chemistry::Obj);
@@ -226,11 +228,24 @@ Adds a new bond to the atom, as defined by the Bond object $bond.
 
 sub add_bond {
     my $self = shift;
-    my $b = shift;
+    my $bond = shift;
 
-    for my $a (@{$b->{atoms}}){ #for each atom...
-        push @{$self->{bonds}}, {to=>$a, bond=>$b} if $a ne $self;
+    for my $atom (@{$bond->{atoms}}){ #for each atom...
+        if ($atom ne $self) {
+            my $b = {to=>$atom, bond=>$bond};
+            weaken($b->{to});
+            weaken($b->{bond});
+            push @{$self->{bonds}}, $b;
+        }
     }
+}
+
+# This method is private. Bonds should be deleted from the 
+# mol object. These methods should only be called by 
+# $bond->delete_atoms, which is called by $mol->delete_bond
+sub delete_bond {
+    my ($self, $bond) = @_;
+    $self->{bonds} = [ grep { $_->{bond} ne $bond } @{$self->{bonds}} ];
 }
 
 =item $atom->neighbors([$from])

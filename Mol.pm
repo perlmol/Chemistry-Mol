@@ -1,5 +1,6 @@
 package Chemistry::Mol;
 $VERSION = '0.11';
+# $Id$
 
 =head1 NAME
 
@@ -112,6 +113,35 @@ sub new_atom {
     $self->add_atom(Chemistry::Atom->new(@_));
 }
 
+=item $mol->delete_atom($atom, ...)
+
+Deletes an atom from the molecule. It automatically deletes all the bonds
+in which the atom participates as well.
+
+=cut
+
+# mol deletes bonds that belonged to atom
+# mol deletes atom
+
+sub delete_atom {
+    my $self = shift;
+    for my $i (@_){
+        my ($atom, $index);
+        if (ref $i) {
+            $atom = $i;
+            $index = $self->get_atom_index($atom)    
+                or croak "$self->delete_atom: no such atom $atom\n";
+        } else {
+            $index = $i;
+            $atom = $self->atoms($index)
+                or croak "$self->delete_atom: no such atom $index\n";
+        }
+        my $id = $atom->id;
+        $self->delete_bond($atom->bonds);
+        delete $self->{byId}{$id};
+        splice @{$self->{atoms}}, $index - 1, 1;
+    }
+}
 
 =item $mol->add_bond($bond, ...)
 
@@ -139,6 +169,55 @@ Chemistry::Bond.
 sub new_bond {
     my $self = shift;
     $self->add_bond(Chemistry::Bond->new(@_));
+}
+
+sub get_bond_index {
+    my ($self, $bond) = @_;
+    my $i;
+    for ($self->bonds) {
+        ++$i;
+        return $i if ($_ eq $bond);
+    }
+    undef;
+}
+
+sub get_atom_index {
+    my ($self, $atom) = @_;
+    my $i;
+    for ($self->atoms) {
+        ++$i;
+        return $i if ($_ eq $atom);
+    }
+    undef;
+}
+
+=item $mol->delete_bond($bond, ...)
+
+Deletes a bond from the molecule.
+
+=cut
+
+# mol deletes bond
+# bond tells atoms involved to forget about it
+
+sub delete_bond {
+    my $self = shift;
+    for my $i (@_){
+        my ($bond, $index);
+        if (ref $i) {
+            $bond = $i;
+            $index = $self->get_bond_index($bond)
+                or croak "$self->delete_bond: no such bond $bond\n";
+        } else {
+            $index = $i;
+            $bond = $self->bonds($index)
+                or croak "$self->delete_bond: no such bond $index\n";
+        }
+        my $id = $bond->id;
+        delete $self->{byId}{$id};
+        splice @{$self->{bonds}}, $index - 1, 1;
+        $bond->delete_atoms;
+    }
 }
 
 =item $mol->by_id($id)

@@ -1,12 +1,16 @@
 Revision history for Perl extension Chemistry::Mol.
 
+0.20  ?
+        - Use Scalar::Util::weaken to avoid strong cyclic references
+          and ensure garbage collection.
+        - New methods for Chemistry::Mol: delete_atom, delete_bond
+
 0.11  Sun Feb 22 2004
         - New methods for Chemistry::Mol: mass, formula, formula_hash
         - New methods for Chemistry::Atom: mass
         - New module: Chemistry::File::Formula
 
 0.10  Mon Nov 03 2003
-        - New methods for Chemistry::Mol: atoms, bonds, by_id, atoms_by_name
         - New methods for Chemistry::Atom: distance
         - New methods for Chemistry::Obj: del_attr
         - New subroutines for Chemistry::Mol: read_mol, register_format

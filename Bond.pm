@@ -1,5 +1,6 @@
 package Chemistry::Bond;
 $VERSION = '0.11';
+# $Id$
 
 =head1 NAME
 
@@ -33,6 +34,7 @@ integer 1, 2, 3, or 4.
 
 use 5.006001;
 use strict;
+use Scalar::Util 'weaken';
 use base qw(Chemistry::Obj);
 
 my $N = 0;
@@ -135,10 +137,19 @@ sub atoms {
     if (@_) {
         $self->{atoms} = ref $_[0] ? $_[0] : [@_];
         for my $a (@{$self->{atoms}}) { # add bond to each atom
+            weaken($a);
             $a->add_bond($self);
         }
     } else {
         return (@{$self->{atoms}});
+    }
+}
+
+# This method is private and should only be called from $mol->delete_bond
+sub delete_atoms {
+    my $self = shift;
+    for my $a (@{$self->{atoms}}) { # delete bond from each atom
+        $a->delete_bond($self);
     }
 }
 
