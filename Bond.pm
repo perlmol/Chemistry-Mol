@@ -20,7 +20,7 @@ Chemistry::Bond
 
 
 use strict;
-use base Chemistry::Obj;
+use base qw(Chemistry::Obj);
 use overload '""' => \&stringify;
 
 use vars qw($N);
@@ -71,12 +71,11 @@ sub print {
     my $self = shift;
     my $l = sprintf "%.4g", $self->length;
     return <<EOF;
-    <bond id="$self->{id}">
-        type = $self->{type}
-        atom1 = $self->{atoms}[0]{id}
-        atom2 = $self->{atoms}[1]{id}
-	length = $l
-    </bond>
+        $self->{id}:
+            type: $self->{type}
+            atom1: $self->{atoms}[0]{id}
+            atom2: $self->{atoms}[1]{id}
+            length: $l
 EOF
 }
 

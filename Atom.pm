@@ -44,12 +44,11 @@ use overload '""' => \&stringify,
 #	     '-' => \&minus,
 ;
 use Carp;
-use base Chemistry::Obj;
+use base qw(Chemistry::Obj);
 
-use vars qw(%READ_ONLY @ELEMENTS %ELEMENTS);
+use vars qw(@ELEMENTS %ELEMENTS);
 
 my $N = 0; # Number of atoms created so far, used to generate default IDs.
-%READ_ONLY = (bonds => 1);
 
 @ELEMENTS = qw(
     n
@@ -210,20 +209,21 @@ sub print {
         $bonds .= $_->{bond}{id}." ";
         $neighbors .= $_->{to}{id}." ";
     }
+    chop $bonds;
+    chop $neighbors;
 
     my $coords = $self->{coords}->stringify(
-	'<float builtin="x3">%g</float>\n
-        <float builtin="y3">%g</float>\n
-        <float builtin="z3">%g</float>'
+	'x3: %g
+            y3: %g
+            z3: %g'
     );
 
     return <<EOF;
-    <atom id="$self->{id}">
-        <string builtin="elementType">$self->{symbol}</string>
-        $coords
-        <string name="bonds">$bonds</string>
-        <string name="neighbors">$neighbors</string>
-    </atom>
+        $self->{id}:
+            symbol: $self->{symbol}
+            $coords
+            bonds: "$bonds"
+            neighbors: "$neighbors"
 EOF
 }
 

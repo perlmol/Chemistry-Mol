@@ -1,5 +1,6 @@
 package Chemistry::Obj;
 
+use strict;
 =head1 NAME
 
 Chemistry::Obj - Abstract chemistry object

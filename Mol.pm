@@ -174,10 +174,18 @@ sub print {
     my ($a, $b);
     local $" = ""; #"
 
-    $ret = "<mol id=\"$self->{id}\" name=\"$self->{name}\">\n";
+    $ret = <<END;
+$self->{id}:
+    name: $self->{name}
+END
+    $ret .= <<E;
+    atoms:
+E
     for $a (@{$self->{atoms}}) { $ret .= $a->print }
+    $ret .= <<E;
+    bonds:
+E
     for $b (@{$self->{bonds}}) { $ret .= $b->print }
-    $ret .= "</mol>\n";
     $ret;
 }
 
