@@ -221,6 +221,7 @@ sub print {
     my $ret = <<EOF;
 $self->{id}:
     symbol: $self->{symbol}
+    name  : $self->{name}
     $coords
     bonds: "$bonds"
     neighbors: "$neighbors"
