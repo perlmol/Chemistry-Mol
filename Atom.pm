@@ -53,6 +53,7 @@ use Math::VectorReal qw(O vector);
 use Math::Trig;
 use Carp;
 use base qw(Chemistry::Obj Exporter);
+use List::Util qw(first);
 
 our @EXPORT_OK = qw(distance angle dihedral angle_deg dihedral_deg);
 our %EXPORT_TAGS = (
@@ -432,10 +433,12 @@ sub explicit_valence {
     $valence;
 }
 
-# this method is for internal use only; called by $bond->atoms
+# this method is for internal use only; called by $mol->add_bond
 sub add_bond {
     my $self = shift;
     my $bond = shift;
+    my %seen;
+    #return if first { $_ eq $bond } @{$self->{bonds}}; 
 
     for my $atom (@{$bond->{atoms}}){ #for each atom...
         if ($atom ne $self) {

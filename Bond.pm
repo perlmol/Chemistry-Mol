@@ -165,6 +165,7 @@ sub atoms {
         $self->{atoms} = ref $_[0] ? $_[0] : [@_];
         for my $a (@{$self->{atoms}}) { 
             weaken($a);
+            $a->add_bond($self);
         }
     } else {
         return (@{$self->{atoms}});
@@ -196,7 +197,8 @@ should belong to only one molecule or strange things may happen.
 
 sub delete {
     my ($self) = @_;
-    $self->{parent}->_delete_bond($self);
+    $self->parent->_delete_bond($self);
+    $self->{deleted} = 1;
 }
 
 sub parent {

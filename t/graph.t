@@ -6,8 +6,8 @@ use Test::More;
 use strict;
 use warnings;
 
-plan 'no_plan';
-#plan tests => 8;
+#plan 'no_plan';
+plan tests => 11;
 
 use Chemistry::File::Dumper;
 
@@ -24,6 +24,11 @@ is ( scalar @mols, 2, 'got 2 things' );
 is ( scalar (grep $_->isa('Chemistry::Mol'), @mols), 2, 'separate: two mols' );
 is ( $mols[0]->formula, 'CClH2',    'mol 1 is CClH2' );
 is ( $mols[1]->formula, 'CHO2',     'mol 2 is CHO2' );
+my $a1 = $mol->atoms(2);
+my $a2 = $mols[0]->atoms(2);
+my $nb_before = $a1->neighbors;
+my $nb_after  = $a2->neighbors;
+is ( $nb_after, $nb_before, "bond count for $a2 equal to $a1 ($nb_before)?" );
 
 # combine - new
 my $comb_new = Chemistry::Mol->combine(@mols);
