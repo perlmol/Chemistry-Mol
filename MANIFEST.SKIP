@@ -16,11 +16,17 @@
 ^\.#  
 ^\.
 
+# Stuff
 ^t.pl$
 ^[xyz]$
 ^pm_to_blib$
-^testmol.pl$
+^test
+^(?!t/).*pl
+^(?!t/).*gz
+^(?!t/).*mol
+^(?!t/).*pdb
 \.tar.gz$
 cover_db
+^blibdirs
 TODO
 

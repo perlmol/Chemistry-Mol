@@ -1,13 +1,16 @@
 Revision history for Perl extension Chemistry::Mol.
 
-0.30
+0.30  Nov 9 2004
         - New Chemistry::File interface
         - Added gzip support for reading and writing
-        - Improved the testing suite
         - New Atom methods: sprout_hydrogens, collapse_hydrogens, mass_number
         - New Mol methods: sprout_hydrogens, collapse_hydrogens
         - Added support for Chemistry::Isotope
         - Extended the Chemistry::Obj::attr method
+        - New Obj methods: new()
+        - Fixed backward compatibility bug in File/Dumper.pm
+        - Fixed inconsistency when an object id was changed
+        - Improved the testing suite
 
 0.26  Aug 6 2004
         - Added %S option to $mol->printf

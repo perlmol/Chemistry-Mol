@@ -7,6 +7,16 @@ and Chemistry::File. These are the core modules of the PerlMol toolkit;
 see http://www.perlmol.org/.
 
 CHANGES SINCE VERSION 0.26
+        - New Chemistry::File interface
+        - Added gzip support for reading and writing
+        - New Atom methods: sprout_hydrogens, collapse_hydrogens, mass_number
+        - New Mol methods: sprout_hydrogens, collapse_hydrogens
+        - Added support for Chemistry::Isotope
+        - Extended the Chemistry::Obj::attr method
+        - New Obj methods: new()
+        - Fixed backward compatibility bug in File/Dumper.pm
+        - Fixed inconsistency when an object id was changed
+        - Improved the testing suite
 
 INSTALLATION
 
@@ -20,9 +30,12 @@ To install this module type the following:
 DEPENDENCIES
 
 This module requires these other modules and libraries:
+    - perl-5.6.0 or more recent (5.8.0+ recommended)
     - Math::VectorReal
-    - Scalar::Util (already a core module since perl 5.7.3)
-    - Test::More   (already a core module since perl 5.7.3)
+    - Scalar::Util      (already a core module since perl 5.7.3)
+    - Test::More        (already a core module since perl 5.7.3)
+    - Text::Balanced    (already a core module since perl 5.7.3)
+    - IO::String        (required only for versions of perl prior to 5.8.0)
 
 The following modules are optional, but are required by certain functions:
     - Chemistry::InternalCoords
