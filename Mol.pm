@@ -1,5 +1,5 @@
 package Chemistry::Mol;
-$VERSION = '0.07';
+$VERSION = '0.10';
 
 =head1 NAME
 
@@ -259,11 +259,11 @@ sub read {
     my %opts = (mol_class => $class, @_);
 
     if ($opts{type}) {
-        return $class->formats($opts{type})->parsefile($fname, %opts);
+        return $class->formats($opts{type})->parse_file($fname, %opts);
     } else {
 	for my $type ($class->formats) {
-            if ($class->formats($type)->isfile($fname)) {
-                return $class->formats($type)->parsefile($fname, %opts);
+            if ($class->formats($type)->file_is($fname)) {
+                return $class->formats($type)->parse_file($fname, %opts);
 	    }
 	}
     }
@@ -304,16 +304,17 @@ sub formats {
         }
         return $file_class;
     } else {
-        return keys %FILE_FORMATS;
+        return sort keys %FILE_FORMATS;
     }
 }
 
-=item Chemistry::Mol->register_type($name, sub_id => \&sub,... )
+=item Chemistry::Mol->register_type($name, $ref)
 
 Register a file type. The identifier $name must be unique.
-To register a file type, you need to provide references to 
-at least some of the following functions, identified by their 
-respective sub_id's.
+$ref is either a class name (a package) or an object that complies
+with the Chemistry::File interface.
+
+=begin comment
 
 =over 4
 
@@ -343,6 +344,8 @@ A reference to a function that receives a list of
 molecules and returns a string.
 
 =back
+
+=end comment
 
 =cut
 

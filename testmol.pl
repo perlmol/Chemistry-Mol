@@ -1,8 +1,11 @@
 #!/home/ivan/bin/perl -w 
 
 use Data::Dumper;
-use blib;
+#use blib;
 use Chemistry::Mol;
+use Chemistry::File ":auto";
+
+print "Formats: ", join (",", Chemistry::Mol->formats), "\n";
 
 my $mol = Chemistry::Mol->new;
 my $a1 = Chemistry::Atom->new(symbol=>'C', name => 'carbon');
@@ -24,3 +27,4 @@ print "a mol:'$mol'\n";
 
 print $mol->atoms_by_name('c.*'), "\n";
 #print $mol->select_atoms(name => 'c.*'), "\n";
+

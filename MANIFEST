@@ -1,6 +1,7 @@
 Atom.pm
 Bond.pm
 Changes
+File.pm
 MANIFEST
 Makefile.PL
 Mol.pm
