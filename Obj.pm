@@ -12,8 +12,16 @@ Chemistry::Obj - Abstract chemistry object
 
 =head1 SYNOPSIS
 
+    package MyObj;
     use base "Chemistry::Obj";
-    Chemistry::Obj::accessor('myattr1', 'myattr2');
+    Chemistry::Obj::accessor('color', 'flavor');
+
+    package main;
+    my $obj = MyObj->new(name => 'bob', color => red);
+    $obj->attr(size => 42);
+    $obj->color('blue');
+    my $color = $obj->color;
+    my $size = $obj->attr('size');
 
 =head1 DESCRIPTION
 
@@ -208,8 +216,22 @@ sub obj_cmp {
 
 =cut
 
-accessor(qw(id name type));
+accessor(qw(name type));
 
+sub id {
+    my $self = shift;
+    return $self->{id} unless @_;
+    if ($self->{parent}) {
+        my $new_id = shift;
+        my $old_id = $self->{id};
+        $self->{id} = $new_id;
+        $self->{parent}->_change_id($old_id, $new_id);
+    } else {
+        $self->{id} = shift;
+    }
+}
+
+# this is an experimental method and shouldn't be used!
 sub use {
     my ($pack, $module, @args) = @_;
     $pack = ref $pack || $pack;
