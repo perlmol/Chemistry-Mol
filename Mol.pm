@@ -180,7 +180,10 @@ expression).
 sub atoms_by_name {
     my $self = shift;
     my $re = qr/^$_[0]$/;
-    my @ret = grep {defined $_->name and $_->name =~ $re} $self->atoms;
+    no warnings;
+    my @ret = grep {$_->name =~ $re} $self->atoms;
+    #my ($re) = @_; # 5.004 hack
+    #my @ret = grep {defined $_->name and $_->name =~ /$re/o} $self->atoms;
     wantarray ? @ret : $ret[0];
 }
 

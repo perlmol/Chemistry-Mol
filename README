@@ -14,6 +14,7 @@ CHANGES SINCE VERSION 0.05
 
 - New methods for Chemistry::Mol: atoms, bonds, by_id, atoms_by_name
 - New methods for Chemistry::Atom: distance
+- New methods for Chemistry::Obj: del_attr
 - New subroutines for Chemistry::Mol: read_mol, register_type
 - New class method for Mol, Atom, and Bond: reset_id
 
@@ -23,6 +24,8 @@ INCOMPATIBLE CHANGES SINCE VERSION 0.06
 frozen yet.
 - Chemistry::Mol->atoms() and bonds() now use 1-based indexing instead of
 zero-based.
+- Now Chemistry::Obj overloads cmp instead of ==. Note that this overloading
+behavior was undocumented, so it shouldn't cause a problem.
 
 
 INSTALLATION

@@ -1,5 +1,6 @@
 package Chemistry::Obj;
 $VERSION = "0.10";
+use 5.6.1;
 
 use strict;
 

@@ -1,5 +1,20 @@
 Revision history for Perl extension Chemistry::Mol.
 
+0.10  Oct 31?
+        - New methods for Chemistry::Mol: atoms, bonds, by_id, atoms_by_name
+        - New methods for Chemistry::Atom: distance
+        - New methods for Chemistry::Obj: del_attr
+        - New subroutines for Chemistry::Mol: read_mol, register_format
+        - New class method for Mol, Atom, and Bond: reset_id
+        - Incompatible changes:
+            - Changed File I/O API. It should be more stable now, but it's
+              certainly not frozen yet.
+            - Chemistry::Mol->atoms() and bonds() now use 1-based indexing
+              instead of zero-based.
+            - Now Chemistry::Obj overloads cmp instead of ==. Note that this
+              overloading behavior was undocumented, so it shouldn't cause a
+              problem.
+
 0.06  Fri Sep 26
         - New methods for Chemistry::Mol
             - atoms()
