@@ -70,7 +70,7 @@ sub new {
 	atoms => [], 
 	bonds => [], 
 	name => "",
-    }, $class;
+    }, ref $class || $class;
     $self->$_($args{$_}) for (keys %args);
     return $self;
 }
@@ -218,10 +218,14 @@ Convert the molecule to a string representation.
 
 sub print {
     my $self = shift;
+    my (%opts) = @_;
     my $ret;
-    my ($a, $b);
     local $" = ""; #"
 
+    if ($opts{format}) {
+        return $self->formats($opts{format})->write_string($self, %opts);
+    }
+    # else use default printout 
     $ret = <<END;
 $self->{id}:
     name: $self->{name}
@@ -229,10 +233,24 @@ END
     $ret .= "    attr:\n";
     $ret .= $self->print_attr(2);
     $ret .= "    atoms:\n";
-    for $a (@{$self->{atoms}}) { $ret .= $a->print(2) }
+    for my $a (@{$self->{atoms}}) { $ret .= $a->print(2) }
     $ret .= "    bonds:\n";
-    for $b (@{$self->{bonds}}) { $ret .= $b->print(2) }
+    for my $b (@{$self->{bonds}}) { $ret .= $b->print(2) }
     $ret;
+}
+
+sub parse {
+    my $self = shift;
+    my $s = shift;
+    my %opts = (mol_class => $self, @_);
+
+    if ($opts{format}) {
+        return $self->formats($opts{format})->parse_string($s, %opts);
+    } else {
+        croak "Parse does not support autodetection yet.",
+            "Please specify a format.";
+    }
+    undef;
 }
 
 =item Chemistry::Mol->read($fname, option => value ...)
@@ -249,17 +267,16 @@ be registered using register_type(); modules that include readers
 
 sub read_mol { # for backwards compatibility
     my ($fname, $type) = shift;
-    Chemistry::Mol->read($fname, type => $type);
+    Chemistry::Mol->read($fname, format => $type);
 }
 
 sub read {
     my $class = shift;
-    $class = ref $class || $class;
     my $fname = shift;
     my %opts = (mol_class => $class, @_);
 
-    if ($opts{type}) {
-        return $class->formats($opts{type})->parse_file($fname, %opts);
+    if ($opts{format}) {
+        return $class->formats($opts{format})->parse_file($fname, %opts);
     } else {
 	for my $type ($class->formats) {
             if ($class->formats($type)->file_is($fname)) {
@@ -319,7 +336,7 @@ register_type()
 =cut
 
 sub formats {
-    my $class = shift;
+    my $self = shift;
     if (@_) {
         my ($type) = @_;
         my $file_class = $FILE_FORMATS{$type};
