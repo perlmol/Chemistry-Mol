@@ -1,6 +1,6 @@
 package Chemistry::Atom;
 
-$VERSION = '0.22';
+$VERSION = '0.23';
 # $Id$
 
 =head1 NAME
@@ -245,6 +245,22 @@ sub formal_charge {
     }
 }
 
+=item $atom->aromatic($bool)
+
+Set or get whether the atom is considered to be aromatic.
+
+=cut
+
+sub aromatic {
+    my $self = shift;
+    if (@_) {
+        ($self->{aromatic}) = @_;
+        return $self;
+    } else {
+        return $self->{aromatic};
+    }
+}
+
 =item $atom->add_bond($bond)
 
 Adds a new bond to the atom, as defined by the Bond object $bond.
@@ -361,6 +377,7 @@ sub bonds_neighbors {
     }
     @ret;
 }
+
 =item ($distance, $closest_atom) = $atom->distance($obj)
 
 Returns the minimum distance to $obj, which can be an atom, a molecule, or a
@@ -502,7 +519,7 @@ EOF
 
 =head1 VERSION
 
-0.22
+0.23
 
 =head1 SEE ALSO
 

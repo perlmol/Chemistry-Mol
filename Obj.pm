@@ -1,5 +1,5 @@
 package Chemistry::Obj;
-$VERSION = "0.22";
+$VERSION = "0.23";
 # $Id$
 use 5.006;
 
@@ -173,7 +173,7 @@ sub use {
 
 =head1 VERSION
 
-0.22
+0.23
 
 =head1 SEE ALSO
 

@@ -1,5 +1,5 @@
 package Chemistry::Bond;
-$VERSION = '0.22';
+$VERSION = '0.23';
 # $Id$
 
 =head1 NAME
@@ -99,6 +99,22 @@ sub length {
     }
 }
 
+=item $bond->aromatic($bool)
+
+Set or get whether the bond is considered to be aromatic.
+
+=cut
+
+sub aromatic {
+    my $self = shift;
+    if (@_) {
+        ($self->{aromatic}) = @_;
+        return $self;
+    } else {
+        return $self->{aromatic};
+    }
+}
+
 =item $bond->print
 
 Convert the bond to a string representation. 
@@ -193,7 +209,7 @@ sub parent {
 
 =head1 VERSION
 
-0.22
+0.23
 
 =head1 SEE ALSO
 

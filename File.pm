@@ -1,9 +1,9 @@
 package Chemistry::File;
-$VERSION = '0.22';
+$VERSION = '0.23';
 
 =head1 NAME
 
-Chemistry::File
+Chemistry::File - Molecule file I/O base class
 
 =head1 SYNOPSIS
 
@@ -239,7 +239,7 @@ next to Chemistry::File itself.
 
 =head1 VERSION
 
-0.22
+0.23
 
 =head1 SEE ALSO
 

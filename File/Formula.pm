@@ -145,17 +145,17 @@ sub write_string {
     my @formula_parts;
     my $format = $opts{formula_format} || "%s%d";   # default format
     my $fh = $mol->formula_hash;
-    $format =~ s/%%/\\%/g;              # escape %% with a \
-    $format =~ s/(?<!\\)%j{(.*?)}//;    # joiner %j{}
-    my $joiner = $1 || '';
+    $format =~ s/%%/\\%/g;                          # escape %% with a \
+    my $joiner = "";
+    $joiner = $1 if $format =~ s/(?<!\\)%j{(.*?)}//;        # joiner %j{}
     for my $sym (sort keys %$fh) {
         my $s = $format;
         my $n = $fh->{$sym};
-        $s =~ s/(?<!\\)%s/$sym/g;                       # %s
-        $s =~ s/(?<!\\)%D/$n/g;                         # %D
-        $s =~ s/(?<!\\)%d\{(.*)\}/$n > 1 ? $1 : ''/eg;  # %d{}
-        $s =~ s/(?<!\\)%d/$n > 1 ? $n : ''/eg;          # %d
-        $s =~ s/\\(.)/$1/g;                             # other \ escapes
+        $s =~ s/(?<!\\)%s/$sym/g;                           # %s
+        $s =~ s/(?<!\\)%D/$n/g;                             # %D
+        $s =~ s/(?<!\\)%d\{(.*?)\}/$n > 1 ? $1 : ''/eg;     # %d{}
+        $s =~ s/(?<!\\)%d/$n > 1 ? $n : ''/eg;              # %d
+        $s =~ s/\\(.)/$1/g;                                 # other \ escapes
         push @formula_parts, $s;
     }
     return join($joiner, @formula_parts);

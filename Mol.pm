@@ -1,5 +1,5 @@
 package Chemistry::Mol;
-$VERSION = '0.22';
+$VERSION = '0.23';
 # $Id$
 
 =head1 NAME
@@ -34,6 +34,7 @@ internal coming soon).
 
 use 5.006;
 use strict;
+use warnings;
 use Chemistry::Atom;
 use Chemistry::Bond;
 use Carp;
@@ -347,6 +348,64 @@ END
     $ret;
 }
 
+=item my $info =  $mol->sprintf($format)
+
+Format interesting molecular information in a concise way, as specified by
+a printf-like format.
+
+    %n - name
+    %f - formula 
+    %f{formula with format} - (note: right braces within
+        the format should be escaped with a backslash)
+    %s - SMILES representation
+    %m - mass
+    %8.3m - mass, formatted as %8.3f with core sprintf
+    %q - formal charge
+    %a - atom count
+    %b - bond count
+    %t - type
+    %i - id
+    %% - %
+
+For example, if you want just about everything:
+
+    $mol->sprintf("%s - %n (%f). %a atoms, %b bonds; "
+        . "mass=%m; charge =%q; type=%t; id=%i");
+
+=cut
+
+sub sprintf {
+    my ($mol, $format) = @_;
+    no warnings 'uninitialized'; # don't care if some properties are undefined
+    $format ||= "%f";
+    $format =~ s/%%/\\%/g;              # escape %% with a \
+    $format =~ s/(?<!\\)%f\{(.*?)(?<!\\)\}/$mol->formula($1)/eg; # %f{}
+    $format =~ s/(?<!\\)%f/$mol->formula/eg;                    # %f
+    $format =~ s/(?<!\\)%s/$mol->print(format=>'smiles')/eg;    # %s
+    $format =~ s/(?<!\\)%n/$mol->name/eg;                       # %n
+    $format =~ s/(?<!\\)%(\d*\.?\d*)m/
+        $1 ? sprintf "%$1f", $mol->mass : $mol->mass/eg;        # %m
+    $format =~ s/(?<!\\)%q/$mol->charge/eg;                     # %q
+    $format =~ s/(?<!\\)%a/$mol->atoms/eg;                      # %a
+    $format =~ s/(?<!\\)%b/$mol->bonds/eg;                      # %b
+    $format =~ s/(?<!\\)%t/$mol->type/eg;                       # %t
+    $format =~ s/(?<!\\)%i/$mol->id/eg;                         # %i
+    $format =~ s/\\(.)/$1/g;                             # other \ escapes
+    $format;
+}
+
+=item $mol->printf($format)
+
+Same as $mol->sprintf, but prints to standard output automatically. Used
+for quick and dirty molecular information dumping.
+
+=cut
+
+sub printf {
+    my ($mol, $format) = @_;
+    print $mol->sprintf($format);
+}
+
 =item $mol->parse($string, option => value...)
 
 Parse the molecule encoded in $string. The format should be specified
@@ -486,6 +545,26 @@ sub mass {
         $mass += $atom->mass;
     }
     $mass;
+}
+
+=item $mol->charge
+
+Return the charge of the molecule. By default it returns the sum of the formal
+charges of the atoms.
+
+=cut
+
+sub charge {
+    my ($self) = shift;
+    if (@_) {
+        $self->{charge} = shift;
+        $self;
+    } else {
+        return $self->{charge} if defined $self->{charge};
+        my $charge = 0;
+        $charge += $_->formal_charge || 0 for $self->atoms;
+        $charge;
+    }
 }
 
 =item $mol->formula_hash
@@ -647,7 +726,7 @@ sub _paint {
 
 =head1 VERSION
 
-0.22
+0.23
 
 =head1 SEE ALSO
 
