@@ -249,7 +249,7 @@ sub spaceship {
 
 =head1 SEE ALSO
 
-Chemistry::Mol, Chemistry::Bond, Math::VectorReal
+L<Chemistry::Mol>, L<Chemistry::Bond>, L<Math::VectorReal>
 
 =head1 AUTHOR
 

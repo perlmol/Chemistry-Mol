@@ -311,7 +311,7 @@ sub register_type {
 
 =head1 SEE ALSO
 
-Chemistry::Atom, Chemistry::Bond, Chemistry::File
+L<Chemistry::Atom>, L<Chemistry::Bond>, L<Chemistry::File>
 
 =head1 AUTHOR
 

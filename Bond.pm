@@ -107,7 +107,7 @@ sub atoms {
 
 =head1 SEE ALSO
 
-Chemistry::Mol, Chemistry::Atom
+L<Chemistry::Mol>, L<Chemistry::Atom>
 
 =head1 AUTHOR
 
