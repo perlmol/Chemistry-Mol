@@ -1,6 +1,7 @@
 Revision history for Perl extension Chemistry::Mol.
 
-0.27
+0.30
+        - New Chemistry::File interface
         - Added gzip support for reading and writing
 
 0.26  Aug 6 2004

@@ -544,6 +544,55 @@ sub write {
     croak "Couldn't guess format for writing file '$fname'";
 }
 
+=item Chemistry::Mol->file($file, option => value ...)
+
+Create a L<Chemistry::File>-derived object for reading or writing
+to a file. The object can then be used to read the molecules or other
+information in the file.
+
+This has more flexibility than calling Chemistry::Mol->read when dealing with
+multi-molecule files or files that have higher structure or that have
+information that does not belong to the molecules themselves. For example, 
+a reaction file may have a list of molecules, but also general information
+like the reaction name, yield, etc. as well as the classification of the
+molecules as reactants or products. The exact information that is available
+will depend on the file reader class that is being used. The following is 
+a hypothetical example for reading MDL rxnfiles.
+
+    # assuming this module existed...
+    use Chemistry::File::Rxn;
+
+    my $rxn = Chemistry::Mol->file('test.rxn');
+    $rxn->read;
+    $name      = $rxn->name;
+    @reactants = $rxn->reactants; # mol objects
+    @products  = $rxn->products;
+    $yield     = $rxn->yield;     # a number
+
+Note that only registered file readers will be used. Readers may
+be registered using register_type(); modules that include readers
+(such as Chemistry::File::PDB) usually register them automatically.
+
+=cut
+
+sub file {
+    my ($self,  $file, %opts) = @_;
+    %opts = (mol_class => $self, %opts);
+
+    if ($opts{format}) {
+        return $self->formats($opts{format})->new(file => $file, 
+            opts => \%opts);
+    } else { # guess format
+        for my $type ($self->formats) {
+            if ($self->formats($type)->file_is($file)) {
+                return $self->formats($type)->new(file => $file, 
+                    opts => \%opts);
+            }
+        }
+    }
+    croak "Couldn't guess format of file '$file'";
+}
+
 =item Chemistry::Mol->register_format($name, $ref)
 
 Register a file type. The identifier $name must be unique.

@@ -53,6 +53,44 @@ all the Chemistry::File::* modules installed in your system.
 
     use Chemistry::File ':auto';
 
+=head1 FILE I/O MODEL
+
+Before version 0.30, file I/O modules typically used only parse_string,
+write_string, parse_file, and write_file as class methods. A file could contain
+one or more molecules and only be read or written whole; reading it would
+return every molecule on the file. This was problematic when dealing with large
+SDF files, because all the molecules would have to be loaded into memory at the
+same time.
+
+While version 0.30 retains backward compatibility with that simple model, it
+also allows a more flexible interface that allows reading one molecule at a
+time, skipping molecules, and having file-level information that is not
+associated with specific molecules. The following diagram shows the global
+structure of a file:
+
+    +-----------+
+    | header    |
+    +-----------+
+    | molecule  |
+    +-----------+
+    | molecule  |
+    +-----------+
+    | ...       |
+    +-----------+
+    | footer    |
+    +-----------+
+
+In cases where the header and the footer are empty, the model reduces to the
+pre-0.30 version. The steps to read a file are the following:
+
+    $file = Chemistry::File::MyFormat->new(file => 'xyz.mol');
+    $file->open('<');
+    $file->read_header;
+    while (my $mol = $self->next_mol) {
+        # do something with $mol...
+    }
+    $self->read_footer;
+
 =head1 STANDARD OPTIONS
 
 All the methods below include a list of options %options at the end of the
@@ -75,10 +113,11 @@ The file format being used, as registered by Chemistry::Mol->register_format.
 
 =back
 
-=head1 METHODS
+=head1 CLASS METHODS
 
-The methods in this class (or rather, its derived classes) are usually not
-called directly. Instead, use Chemistry::Mol->read, write, print, and parse.
+The class methods in this class (or rather, its derived classes) are usually
+not called directly. Instead, use Chemistry::Mol->read, write, print, parse,
+and file.
 
 =over 4
 
@@ -139,7 +178,8 @@ sub write_string {
 
 Reads the file $file and returns one or more molecules. The default method
 slurps the whole file and then calls parse_string, but derived classes may
-choose to override it. $file can be either a filehandle or a filename.
+choose to override it. $file can be a filehandle, a filename, or a scalar
+reference. See l<new>() for details.
 
 =cut
 
@@ -201,8 +241,12 @@ classes may choose to override it.
 sub file_is {
     my ($self, $file, %opts) = @_;
     
-    my $s = $self->slurp($file, %opts);
-    $self->string_is($s, %opts);
+    my $s = eval {$self->slurp($file, %opts)};
+    if ($s) {
+        $self->string_is($s, %opts);
+    } elsif (! ref $file) {
+        $self->name_is($file, %opts);
+    }
 }
 
 =item $class->slurp($file %opts)
@@ -265,9 +309,46 @@ sub snort {
     $fh->close or croak "Error closing $file: $!";
 }
 
+=item $class->new(file => $file, opts => \%opts)
+
+Create a new file object. This method is usually called indirectly through
+the Chemistry::Mol->file method. $file may be a scalar with a filename, an
+open filehandle, or a reference to a scalar. If a reference to a scalar is 
+used, the string contained in the scalar is used as an in-memory file.
+
+=cut
+
 Chemistry::Obj::accessor(qw(file fh opts));
+
+=back
+
+=head1 INSTANCE METHODS
+
+The 
+
+=over
+
+=item $file->read_header
+
+Read whatever information is available in the file before the first molecule.
+
+=cut
+
 sub read_header { }
+
+=item $file->read_footer
+
+Read whatever information is available in the file after the last molecule.
+
+=cut
+
 sub read_footer { }
+
+=item $self->open($mode) 
+
+Opens the file for reading by default, or for writing if $mode eq '>'.
+
+=cut
 
 sub open {
     my ($self, $mode) = @_;
@@ -297,6 +378,14 @@ sub open {
     $self;
 }
 
+=item $self->slurp_mol
+
+Reads from the input string until the end of the current molecule and returns
+the "slurped" string. It does not parse the string. It returns false if there
+are no more molecules in the file.
+
+=cut
+
 sub slurp_mol {
     my ($self) = @_;
     my $fh = $self->fh;
@@ -307,6 +396,13 @@ sub slurp_mol {
     }
 }
 
+=item $file->next_mol
+
+Read the next molecule in the input stream. It returns false if there
+are no more molecules in the file.
+
+
+=cut
 
 sub next_mol {
     my ($self) = @_;
@@ -314,6 +410,13 @@ sub next_mol {
     return unless defined $s and length $s;
     $self->parse_string($s);
 }
+
+=item $file->read
+
+Read the file. This calls read_header, next_mol until there are no more
+molecules left, and finally read_footer.
+
+=cut
 
 sub read {
     my ($self) = @_;
@@ -326,7 +429,6 @@ sub read {
     $self->read_footer;
     wantarray ? @mols : @mols ? $mols[0] : undef;
 }
-
 
 1;
 
