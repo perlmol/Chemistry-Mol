@@ -1,16 +1,15 @@
-Chemistry/Mol version 0.01
+Chemistry/Mol version 0.10
 ==========================
 
-The README is used to introduce the module and provide instructions on
-how to install the module, any machine dependencies it may have (for
-example C compilers and installed libraries) and any other information
-that should be provided before the module is installed.
+This toolkit includes basic objects and methods to describe molecules. It
+consists of several modules, including Chemistry::Mol, Chemistry::Atom, 
+and Chemistry::Bond.
 
-A README file is required for CPAN modules since CPAN extracts the
-README file from a module distribution so that people browsing the
-archive can use it get an idea of the modules uses. It is usually a
-good idea to provide version information here so that people can
-decide whether fixes for the module are worth downloading.
+The core methods try not to commit to a particular convention, therefore fields
+such as the bond type have no intrinsic meaning. Bonds are defined as a list of
+atoms (typically two) with an arbitrary type. Atoms are defined by a symbol and
+a Z, and may have 3D coordinates (2D and internal coming soon).
+
 
 INSTALLATION
 
@@ -24,12 +23,9 @@ To install this module type the following:
 DEPENDENCIES
 
 This module requires these other modules and libraries:
-
-  blah blah blah
+    - Math::VectorReal
 
 COPYRIGHT AND LICENCE
-
-Put the correct copyright and licence information here.
 
 Copyright (C) 2003 Ivan Tubert
 

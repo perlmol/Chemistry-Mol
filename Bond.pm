@@ -20,10 +20,11 @@ Chemistry::Bond
 
 
 use strict;
+use base Chemistry::Obj;
 use overload '""' => \&stringify;
 
 use vars qw($N);
-$N = 0;
+my $N = 0;
 
 =head1 METHODS
 
@@ -42,6 +43,10 @@ sub new {
 
     %$newbond = (%$newbond, @_);
     return $newbond;
+}
+
+sub nextID {
+    "b".++$N; 
 }
 
 =item $bond->length()

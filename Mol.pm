@@ -10,7 +10,7 @@ Chemistry::Mol - Molecule object core library
 
     $mol = new Chemistry::Mol(id => "mol_id");
     $mol->add_atom($atom1, $atom2);
-    $mol->add_bond($atom1, $atom2);
+    $mol->add_bond($bond);
 
     print $mol->print;
 
@@ -79,12 +79,11 @@ A hash of the atoms and bonds in the molecule, using their id as the key.
 use Chemistry::Atom;
 use Chemistry::Bond;
 use Carp;
+use base qw(Exporter Chemistry::Obj);
 
 $VERSION = '0.10';
 
-use Exporter;
 
-@ISA = qw(Exporter);
 @EXPORT = qw();
 @EXPORT_OK = qw( read_mol );
 
@@ -96,7 +95,7 @@ use Exporter;
 use overload '""' => \&stringify;
 
 %FILE_FORMATS = ();
-$N = 0;
+my $N = 0;
 
 =head1 METHODS
 
@@ -112,7 +111,7 @@ are used when possible.
 sub new {
     my $class = shift;
     my $newmol = bless {
-	id => "mol".++$N, 
+	id => $class->nextID,
 	byId => {}, 
 	atoms => [], 
 	bonds => [], 
@@ -120,6 +119,10 @@ sub new {
     }, $class;
     %$newmol = (%$newmol, @_);
     return $newmol;
+}
+
+sub nextID {
+    "mol".++$N; 
 }
 
 =item $mol->add_atom($atom, ...)

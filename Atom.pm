@@ -34,9 +34,6 @@ modified through methods defined below: bonds, coords, Z, symbol.
 In general, to get the value of a property use $mol->method without
 any parameters. To set the value, use $mol->method($new_value).
 
-You can even use this accessor methods for user-defined methods! They
-are created on-the-fly via AUTOLOAD.
-
 =cut
 
 
@@ -47,10 +44,11 @@ use overload '""' => \&stringify,
 #	     '-' => \&minus,
 ;
 use Carp;
+use base Chemistry::Obj;
 
-use vars qw($N %READ_ONLY @ELEMENTS %ELEMENTS $AUTOLOAD);
+use vars qw(%READ_ONLY @ELEMENTS %ELEMENTS);
 
-$N = 0; # Number of atoms created so far, used to generate default IDs.
+my $N = 0; # Number of atoms created so far, used to generate default IDs.
 %READ_ONLY = (bonds => 1);
 
 @ELEMENTS = qw(
@@ -95,6 +93,10 @@ sub new {
         $newatom->$_($arg{$_});
     }
     return $newatom;
+}
+
+sub nextID {
+    "a".++$N; 
 }
 
 
@@ -168,8 +170,8 @@ sub add_bond {
 
 =item $atom->neighbors([$from])
 
-Return a list of neighbors. If an atom object $from is specified, it will be excluded
-from the list.
+Return a list of neighbors. If an atom object $from is specified, it will be
+excluded from the list.
 
 =cut
 
@@ -184,25 +186,6 @@ sub neighbors {
     @ret;
 }
 
-sub AUTOLOAD {
-    my $self = shift;
-
-    # only handle instance methods, not class methods
-    croak "$self not an object" unless ref($self);
-    my ($name) = $AUTOLOAD =~ /^.*::(.*)/;
-
-    return if $name =~ /DESTROY$/;
-
-    if (@_) { 
-	croak "Atom Error: Tried to set read-only property $name" if $READ_ONLY{$name};
-	return $self->{$name} = shift;
-    } else {
-	unless (exists $self->{$name}) {
-	    croak "Undefined field `$name'";
-	}
-	return $self->{$name};
-    }
-}
 
 =back
 
