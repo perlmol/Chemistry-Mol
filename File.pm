@@ -190,7 +190,7 @@ For example, the Chemistry::File::PDB returns true if the file ends in .pdb.
 =cut
 
 sub name_is {
-    1;
+    0;
 }
 
 =item $class->string_is($s, %options)
