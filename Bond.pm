@@ -13,17 +13,28 @@ Chemistry::Bond
 	id => "b1", 
 	type => '=', 
 	atoms => [$a1, $a2]
+        order => '2',
     );
+
+=head1 DESCRIPTION
+
+This module includes objects to describe chemical bonds.
+A bond is defined as a list of atoms (typically two), with some
+associated properies.
+
+=head2 Bond Attributes
+
+In addition to common attributes such as id, name, and type, 
+bonds have the order attribute. The bond order is a number, typically the
+integer 1, 2, 3, or 4.
 
 =cut
 
-
+use 5.006001;
 use strict;
 use base qw(Chemistry::Obj);
 
 my $N = 0;
-
-Chemistry::Obj::accessor('order');
 
 =head1 METHODS
 
@@ -54,6 +65,14 @@ sub nextID {
     "b".++$N; 
 }
 
+=item $bond->order()
+
+Sets or gets the bond order.
+
+=cut
+
+Chemistry::Obj::accessor('order');
+
 =item $bond->length()
 
 Returns the length of the bond, i.e., the distance between the two atom
@@ -71,6 +90,12 @@ sub length {
 	return 0;
     }
 }
+
+=item $bond->print
+
+Convert the bond to a string representation. 
+
+=cut
 
 sub print {
     my $self = shift;
@@ -90,11 +115,20 @@ EOF
     $ret;
 }
 
+=item $bond->atoms()
+
+If called with no parameters, return a list of atoms in the bond.
+If called with a list (or a reference to an array) of atom objects,
+define the atoms in the bond and call $atom->add_bond for each atom
+in the list.
+
+=cut
+
 sub atoms {
     my $self = shift;
     if (@_) {
         $self->{atoms} = ref $_[0] ? $_[0] : [@_];
-        for my $a (@{$self->{atoms}}) {
+        for my $a (@{$self->{atoms}}) { # add bond to each atom
             $a->add_bond($self);
         }
     } else {
@@ -108,7 +142,7 @@ sub atoms {
 
 =head1 SEE ALSO
 
-L<Chemistry::Mol>, L<Chemistry::Atom>
+L<Chemistry::Mol>, L<Chemistry::Atom>, L<Chemistry::Tutorial>
 
 =head1 AUTHOR
 
