@@ -22,4 +22,5 @@ print "a mol:'$mol'\n";
 #print $mol->attr('mp');
 #print Dumper($mol);
 
-print $mol->atoms_by_name('c.*');
+print $mol->atoms_by_name('c.*'), "\n";
+#print $mol->select_atoms(name => 'c.*'), "\n";

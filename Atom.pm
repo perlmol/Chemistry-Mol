@@ -1,4 +1,5 @@
 package Chemistry::Atom;
+$VERSION = '0.07';
 
 =head1 NAME
 
@@ -200,7 +201,40 @@ sub bonds {
     @ret;
 }
 
-=item $mol->print
+=item $atom->distance($obj)
+
+Returns the minimum distance to $obj, which can be an atom, a molecule, or a
+vector.
+
+=cut
+
+# I'm considering making it return ($length, $closest_obj) if wantarray().
+sub distance {
+    my $self = shift;
+    my $obj = shift;
+    my $min_length;
+
+    if ($obj->isa('Chemistry::Atom')) {
+        my $v = $self->coords - $obj->coords;
+        $min_length = $v->length;
+    } elsif ($obj->isa('Math::VectorReal')) {
+        my $v = $self->coords - $obj;
+        $min_length = $v->length;
+    } elsif ($obj->isa('Chemistry::Mol')) {
+        my @atoms = $obj->atoms;
+        my $a = shift @atoms or return undef; # ensure there's at least 1 atom
+        $min_length = $self->distance($a);
+        for $a (@atoms) {
+            my $l = $self->distance($a);
+            $min_length = $l if $l < $min_length;
+        }
+    } else {
+        croak "atom->distance() undefined for objects of type '", ref $obj,"'";
+    }
+    $min_length;
+}
+
+=item $atom->print
 
 Convert the atom to a string representation.
 
@@ -227,7 +261,7 @@ $self->{id}:
     neighbors: "$neighbors"
 EOF
     $ret .= "    attr:\n";
-    $ret .= $self->print_attr($indent);
+    $ret .= $self->print_attr($indent+2);
     $ret =~ s/^/"    "x$indent/gem;
     $ret;
 }

@@ -1,5 +1,5 @@
 package Chemistry::Mol;
-$VERSION = '0.06';
+$VERSION = '0.07';
 
 =head1 NAME
 
@@ -158,13 +158,15 @@ sub by_id {
 
 =item $mol->atoms($n1, ...)
 
-Returns the atoms with the given indices, or all by default.
+Returns the atoms with the given indices, or all by default. 
+Indices start from one, not from zero.
 
 =cut
 
 sub atoms {
     my $self = shift;
-    if (@_) {
+    my @ats = map {$_ - 1} @_;
+    if (@ats) {
         @{$self->{atoms}}[@_];
     } else {
         @{$self->{atoms}};
@@ -182,18 +184,34 @@ sub atoms_by_name {
     my $self = shift;
     my $re = qr/^$_[0]$/;
     my @ret = grep {$_->name =~ $re} $self->atoms;
-    wantarray ? @ret : @ret[0];
+    wantarray ? @ret : $ret[0];
 }
+
+=for comment
+sub select_atoms {
+    my $self = shift;
+    my %opts = @_;
+    my @a = $self->atoms;
+    for my $opt (keys %opts) {
+        my $re = qr/^$opts{$opt}$/;
+        @a = grep {$_->$opt =~ $re} @a;
+    }
+    @a;
+}
+
+=cut
 
 =item $mol->bonds($n1, ...)
 
 Returns the bonds with the given indices, or all by default.
+Indices start from one, not from zero.
 
 =cut
 
 sub bonds {
     my $self = shift;
-    if (@_) {
+    my @bonds = map {$_ - 1} @_;
+    if (@bonds) {
         @{$self->{bonds}}[@_];
     } else {
         @{$self->{bonds}};
@@ -224,8 +242,6 @@ END
     for $b (@{$self->{bonds}}) { $ret .= $b->print(2) }
     $ret;
 }
-
-=begin comment
 
 =item read_mol($fname, [$type])
 
@@ -296,10 +312,6 @@ molecules and returns a string.
 
 =back
 
-=end comment 
-
-=back
-
 =cut
 
 sub register_type {
@@ -308,6 +320,8 @@ sub register_type {
 }
 
 1;
+
+=back
 
 =head1 SEE ALSO
 

@@ -1,4 +1,5 @@
 package Chemistry::Bond;
+$VERSION = '0.07';
 
 =head1 NAME
 
