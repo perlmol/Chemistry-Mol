@@ -15,6 +15,7 @@ Chemistry::Bond
 	atoms => [$a1, $a2]
         order => '2',
     );
+    print $bond->print;
 
 =head1 DESCRIPTION
 

@@ -20,12 +20,11 @@ The following code will read a PDB file:
     my $mol = Chemistry::Mol->read("test.pdb");
 
 The first two lines (which only need to be used once in a given program) tell
-Perl that you want to C<use> the specified modules, and that you want to import
-the C<read_mol> subroutine. The third line reads the file and returns a Mol
-object.
+Perl that you want to C<use> the specified modules The third line reads the
+file and returns a Mol object.
 
 To read other formats such as MDL molfiles,  you need to C<use> the
-corresponding module, such as Chemistry::File::MDLMol. Readers for other
+corresponding module, such as Chemistry::File::MDLMol. Readers for several
 formats are under development.
 
 =head2 The Mol object
@@ -41,6 +40,16 @@ syntax":
 A Mol object contains essentialy a list of atoms, a list of bonds, and a few
 generic properties such as name, type, and id. The atoms and bonds themselves
 are also objects.
+
+=head2 Writing a molecule file
+
+To write a molecule to a file, just use the C<write> method:
+
+    $mol->write("test.pdb"); # see note below
+
+Make sure you C<use>d the right module. Note: at the time of this writing,
+the Chemistry::File::PDB file does not yet implement the writing feature.
+Please stay tuned!
 
 =head2 Selecting atoms in a molecule
 

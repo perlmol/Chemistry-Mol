@@ -9,9 +9,10 @@ Chemistry::Mol - Molecule object toolkit
 
     use Chemistry::Mol;
 
-    $mol = new Chemistry::Mol(id => "mol_id");
-    $mol->add_atom($atom1, $atom2);
-    $mol->add_bond($bond);
+    $mol = Chemistry::Mol->new(id => "mol_id", name => "my molecule");
+    $c = $mol->new_atom(symbol => "C", coords => [0,0,0]); 
+    $o = $mol->new_atom(symbol => "O", coords => [0,0,1.23]); 
+    $mol->new_bond(atoms => [$c, $o], order => 3);
 
     print $mol->print;
 

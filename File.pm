@@ -22,12 +22,13 @@ Chemistry::File
     package Chemistry::File::Myfile;
     use base Chemistry::File;
     Chemistry::Mol->register_type("myfile", __PACKAGE__);
-    sub parse {
-        my $self = shift;
-        my $string = shift;
-        my $mol = Chemistry::Mol->new;
-        $mol->attr('string', $string);
-        $mol;
+    # override the parse_string method
+    sub parse_string {
+        my ($self, $string, %opts) = shift;
+        my $mol_class = $opts{mol_class} || "Chemistry::Mol";
+        my $mol = $mol_class->new;
+        # ... do some stuff with $string and $mol ...
+        return $mol;
     }
 
 =head1 DESCRIPTION
@@ -86,6 +87,9 @@ The file format being used, as registered by Chemistry::Mol->register_format.
 =back
 
 =head1 METHODS
+
+The methods in this class (or rather, its derived classes) are usually not
+called directly. Instead, use Chemistry::Mol->read , write, print, and parse.
 
 =over 4
 

@@ -15,9 +15,7 @@ Chemistry::Atom
 	symbol => 'Br'
     );
 
-    $atom->add_bond($b);
-
-    print $atom;
+    print $atom->print;
 
 =head1 DESCRIPTION
 

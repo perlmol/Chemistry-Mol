@@ -1,5 +1,5 @@
-use Test::More "no_plan";
-#use Test::More tests => 18;
+#use Test::More "no_plan";
+use Test::More tests => 22;
 BEGIN { 
     use_ok('Chemistry::Mol');
     use_ok('Math::VectorReal');    
