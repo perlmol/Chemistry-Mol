@@ -569,6 +569,7 @@ sub angle {
     @_ == 3 or croak "Chemistry::Atom::angle requires three atoms!\n";
     my @c;
     for my $a (@_) { # extract coordinates
+        ref $a or croak "Chemistry::Atom::angle: $a is not an object";
         push @c, $a->isa("Chemistry::Atom") ? $a->coords :
             $a->isa("Math::VectorReal") ? $a : 
                 croak "angle: $a is neither an atom nor a vector!\n";

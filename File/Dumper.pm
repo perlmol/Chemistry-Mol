@@ -11,7 +11,7 @@ use Carp;
 
 =head1 NAME
 
-Chemistry::File::Dumper - Read and write molecule via Data::Dumper
+Chemistry::File::Dumper - Read and write molecules via Data::Dumper
 
 =head1 SYNOPSIS
 

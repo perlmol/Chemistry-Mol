@@ -1,5 +1,8 @@
 Revision history for Perl extension Chemistry::Mol.
 
+0.27
+        - Added gzip support for reading and writing
+
 0.26  Aug 6 2004
         - Added %S option to $mol->printf
         - Atom.pm: added total_hydrogens, implicit_hydrogens, explicit_valence,

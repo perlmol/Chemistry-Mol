@@ -53,17 +53,14 @@ all the Chemistry::File::* modules installed in your system.
 
     use Chemistry::File ':auto';
 
-This basically looks for files of the name File/*.pm under the directory
-where Chemistry::File is installed.
-
 =head1 STANDARD OPTIONS
 
 All the methods below include a list of options %options at the end of the
 parameter list. Each class implementing this interface may have its own
-particular options. However, the following options should be implemented by
+particular options. However, the following options should be recognized by
 all classes:
 
-=over 4
+=over
 
 =item mol_class
 
@@ -71,14 +68,6 @@ A class or object with a C<new> method that constructs a molecule. This is
 needed when the user want to specify a molecule subclass different from the
 default. When this option is not defined, the module may use Chemistry::Mol 
 or whichever class is appropriate for that file format.
-
-=item atom_class
-
-Same as above, for atoms.
-
-=item bond_class
-
-Same as above, for bonds.
 
 =item format
 
@@ -97,6 +86,8 @@ called directly. Instead, use Chemistry::Mol->read, write, print, and parse.
 
 use strict;
 use Carp;
+use FileHandle;
+use warnings;
 
 # This subroutine implements the :auto functionality
 sub import {
@@ -143,44 +134,34 @@ sub write_string {
     croak "write_string() is not implemented for $class";
 }
 
-=item $class->parse_file($fname, %options)
+=item $class->parse_file($file, %options)
 
-Reads the file $fname and returns one or more molecules. The default method
+Reads the file $file and returns one or more molecules. The default method
 slurps the whole file and then calls parse_string, but derived classes may
-choose to override it.
+choose to override it. $file can be either a filehandle or a filename.
 
 =cut
 
 sub parse_file {
-    my $self = shift;
-    my $fname = shift;
-    my %opts = @_;
-    my $s;
-    
-    open F, $fname or croak "Could not open file $fname for reading";
-    {local $/; $s = <F>;}
-    close F;
+    my ($self, $file, %opts) = @_;
+
+    my $s = $self->slurp($file, %opts);
     $self->parse_string($s, %opts);
 }
 
-=item $class->write_file($mol, $fname, %options)
+=item $class->write_file($mol, $file, %options)
 
-Writes a file $fname containing the molecule $mol. The default method calls
+Writes a file $file containing the molecule $mol. The default method calls
 write_string first and then saves the string to a file, but derived classes
-may choose to override it.
+may choose to override it. $file can be either a filehandle or a filename.
 
 =cut
 
 sub write_file {
-    my $self = shift;
-    my $mol = shift;
-    my $fname = shift;
-    my %opts = @_;
+    my ($self, $mol, $file, %opts) = @_;
 
     my $s = $self->write_string($mol, %opts);
-    open F, ">$fname" or croak "Could not open file $fname for writing: $!\n";
-    print F $s;
-    close F;
+    $self->snort($file, $s);
 }
 
 =item $class->name_is($fname, %options)
@@ -206,25 +187,81 @@ sub string_is {
     0;
 }
 
-=item $class->file_is($fname, %options)
+=item $class->file_is($file, %options)
 
-Examines the file $fname and returns true if it has the format of the class.
+Examines the file $file and returns true if it has the format of the class.
 The default method slurps the whole file and then calls string_is, but derived
 classes may choose to override it.
 
 =cut
 
 sub file_is {
-    my $self = shift;
-    my $fname = shift;
-    my %opts = @_;
-    my $s;
+    my ($self, $file, %opts) = @_;
     
-    open F, $fname or croak "Could not open file $fname for reading";
-    {local $/; $s = <F>;}
-    close F;
+    my $s = $self->slurp($file, %opts);
     $self->string_is($s, %opts);
 }
+
+=item $class->slurp($file %opts)
+
+Reads a file into a scalar. Automatic decompression of gzipped files is
+supported if the IO::Zlib module is installed. Files ending in .gz are assumed
+to be compressed; otherwise it is possible to force decompression by passing
+the gzip => 1 option (or no decompression with gzip => 0).
+
+=cut
+
+# slurp a file into a scalar, with transparent decompression
+sub slurp {
+    my ($self, $file, %opts) = @_;
+
+    my $fh;
+    my $s;
+    if (ref $file) {
+        $fh = $file;
+    } elsif ($opts{gzip} or !defined $opts{gzip} and $file =~ /.gz$/) {
+        eval { require IO::Zlib } or croak "IO::Zlib support not installed";
+        $fh = IO::Zlib->new($file, 'rb') 
+            or croak "Could not open file $file for reading: $!";
+        $s = join '',  <$fh>;
+    } else {
+        $fh = FileHandle->new("<$file") 
+            or croak "Could not open file $file for reading: $!";
+        $s = do { local $/; <$fh> };
+    }
+    $fh->close;
+    $s;
+}
+
+=item $class->snort($file, $s, %opts)
+
+Write a scalar to a file in one step. Automatic gzip compression is supported
+if the IO::Zlib module is installed. Files ending in .gz are assumed to be
+compressed; otherwise it is possible to force compression by passing the gzip
+=> 1 option (or no compression with gzip => 0). Specific compression levels
+between 2 (fastest) and 9 (most compressed) may also be used (e.g., gzip => 9).
+
+=cut
+
+sub snort {
+    my ($self, $file, $s, %opts) = @_;
+    my $fh;
+    if (ref $file) {
+        $fh = $file;
+    } elsif ($opts{gzip} or !defined $opts{gzip} and $file =~ /.gz$/) {
+        eval { require IO::Zlib } or croak "IO::Zlib support not installed";
+        my $level = $opts{gzip} || 6;
+        $level = 6 if $level == 1;
+        $fh = IO::Zlib->new($file, "wb$level") 
+            or croak "Could not open file $file for compressed writing: $!";
+    } else {
+        $fh = FileHandle->new(">$file") 
+            or croak "Could not open file $file for writing: $!";
+    }
+    print $fh $s;
+    $fh->close or croak "Error closing $file: $!";
+}
+
 
 1;
 

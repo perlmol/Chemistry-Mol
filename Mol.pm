@@ -489,6 +489,11 @@ Note that only registered file readers will be used. Readers may
 be registered using register_type(); modules that include readers
 (such as Chemistry::File::PDB) usually register them automatically.
 
+Automatic decompression of gzipped files is supported if the IO::Zlib
+module is installed. Files ending in .gz are assumed to be compressed;
+otherwise it is possible to force decompression by passing the gzip => 1
+option (or no decompression with gzip => 0).
+
 =cut
 
 sub read_mol { # for backwards compatibility
@@ -520,6 +525,12 @@ was a problem. The type of file will be guessed if not
 specified via the C<format> option.
 
 Note that only registered file formats will be used. 
+
+Automatic gzip compression is supported if the IO::Zlib module is installed.
+Files ending in .gz are assumed to be compressed; otherwise it is possible to
+force compression by passing the gzip => 1 option (or no compression with gzip
+=> 0). Specific compression levels between 2 (fastest) and 9 (most compressed)
+may also be used (e.g., gzip => 9).
 
 =cut
 
