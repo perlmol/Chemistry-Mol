@@ -1,6 +1,9 @@
-#use Test::More "no_plan";
-use Test::More tests => 18;
-BEGIN { use_ok('Chemistry::Mol') };
+use Test::More "no_plan";
+#use Test::More tests => 18;
+BEGIN { 
+    use_ok('Chemistry::Mol');
+    use_ok('Math::VectorReal');    
+};
 
 # Constructors
 my $mol = Chemistry::Mol->new;
@@ -23,13 +26,24 @@ ok($mol->atoms_by_name('carbon') == $atom, '$mol->atoms_by_name');
 $mol->add_bond($bond);
 is(scalar $mol->bonds, 1, '$mol->bonds');
 ok($mol->bonds(1) == $bond, '$mol->bonds(1) == $bond');
-ok($mol->new_atom(symbol => "N"), '$mol->new_atom');
+my $atom3;
+ok($atom3 = $mol->new_atom(symbol => "N"), '$mol->new_atom');
 
 # Atom methods
 is($atom->distance($atom2), 5, '$atom->distance');
 is($atom->symbol, "C", '$atom->symbol');
 $atom->attr("color", "brown");
 is($atom->attr("color"), "brown", '$atom->attr');
+my $v = vector(3,0,4);
+$atom3->coords($v);
+my $v2 = $atom3->coords;
+is($v->length, 5, 'atom->coords(vector)');
+$atom3->coords([3,0,4]);
+$v2 = $atom3->coords;
+is($v->length, 5, 'atom->coords(array)');
+$atom3->coords(3,0,4);
+$v2 = $atom3->coords;
+is($v->length, 5, 'atom->coords(list)');
 
 # Bond methods
 is($bond->length, 5, '$bond->length');
