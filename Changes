@@ -1,6 +1,11 @@
 Revision history for Perl extension Chemistry::Mol.
 
-0.20  ?
+0.21  Thu May 13 2004
+        - Fixed bug where $/ was undef'ed in a nonlocal way in File.pm.
+        - Added formula parser contributed by Brent Gregersen.
+        - Added %j and %% formats to Formula.pm.
+
+0.20  Thu May 06 2004
         - Use Scalar::Util::weaken to avoid strong cyclic references
           and ensure garbage collection.
         - New methods for Chemistry::Mol: delete_atom, delete_bond,

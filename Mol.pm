@@ -1,5 +1,5 @@
 package Chemistry::Mol;
-$VERSION = '0.20';
+$VERSION = '0.21';
 # $Id$
 
 =head1 NAME
@@ -32,7 +32,7 @@ internal coming soon).
 
 =cut
 
-use 5.006001;
+use 5.006;
 use strict;
 use Chemistry::Atom;
 use Chemistry::Bond;
@@ -630,7 +630,7 @@ sub _paint {
 
 =head1 VERSION
 
-0.20
+0.21
 
 =head1 SEE ALSO
 

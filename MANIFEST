@@ -9,6 +9,7 @@ Mol.pm
 Obj.pm
 README
 Tutorial.pod
+formula_tests.txt
 t/Formula.t
 t/Mol.t
 t/pod.t

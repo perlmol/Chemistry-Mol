@@ -1,7 +1,7 @@
 package Chemistry::Obj;
-$VERSION = "0.20";
+$VERSION = "0.21";
 # $Id$
-use 5.006001;
+use 5.006;
 
 use strict;
 use Carp;
@@ -173,7 +173,7 @@ sub use {
 
 =head1 VERSION
 
-0.20
+0.21
 
 =head1 SEE ALSO
 

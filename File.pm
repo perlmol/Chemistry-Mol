@@ -1,5 +1,5 @@
 package Chemistry::File;
-$VERSION = '0.20';
+$VERSION = '0.21';
 
 =head1 NAME
 
@@ -159,7 +159,7 @@ sub parse_file {
     my $s;
     
     open F, $fname or croak "Could not open file $fname for reading";
-    {local undef $/; $s = <F>;}
+    {local $/; $s = <F>;}
     close F;
     $self->parse_string($s, %opts);
 }
@@ -222,7 +222,7 @@ sub file_is {
     my $s;
     
     open F, $fname or croak "Could not open file $fname for reading";
-    {local undef $/; $s = <F>;}
+    {local $/; $s = <F>;}
     close F;
     $self->string_is($s, %opts);
 }
@@ -239,7 +239,7 @@ next to Chemistry::File itself.
 
 =head1 VERSION
 
-0.20
+0.21
 
 =head1 SEE ALSO
 
