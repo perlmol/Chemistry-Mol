@@ -1,5 +1,5 @@
 package Chemistry::File;
-$VERSION = '0.11';
+$VERSION = '0.20';
 
 =head1 NAME
 
@@ -237,9 +237,15 @@ The :auto feature only looks in one directory. If you have modules in
 several different directories, it will only find those that are installed
 next to Chemistry::File itself.
 
+=head1 VERSION
+
+0.20
+
 =head1 SEE ALSO
 
-Chemistry::Mol
+L<Chemistry::Mol>
+
+The PerlMol website L<http://www.perlmol.org/>
 
 =head1 AUTHOR
 
@@ -247,7 +253,7 @@ Ivan Tubert-Brohman <itub@cpan.org>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2003 Ivan Tubert. All rights reserved. This program is free
+Copyright (c) 2004 Ivan Tubert. All rights reserved. This program is free
 software; you can redistribute it and/or modify it under the same terms as
 Perl itself.
 

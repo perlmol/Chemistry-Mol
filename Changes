@@ -3,8 +3,11 @@ Revision history for Perl extension Chemistry::Mol.
 0.20  ?
         - Use Scalar::Util::weaken to avoid strong cyclic references
           and ensure garbage collection.
-        - New methods for Chemistry::Mol: delete_atom, delete_bond
-        - New methods for Chemistry::Atom: angle, dihedral
+        - New methods for Chemistry::Mol: delete_atom, delete_bond,
+          clone, combine, separate, distance
+        - New methods for Chemistry::Atom: angle, dihedral, angle_deg, 
+          dihedral_deg, delete
+        - New methods for Chemistry::Bond: delete
         - Chemistry::Mol can export read_mol
         - Chemistry::Atom can export distance, angle, dihedral
 

@@ -1,5 +1,5 @@
 package Chemistry::File::Formula;
-$VERSION = '0.11';
+$VERSION = '0.20';
 # $Id$
 
 use strict;
@@ -107,9 +107,15 @@ sub file_is {
 
 1;
 
+=head1 VERSION
+
+0.20
+
 =head1 SEE ALSO
 
 L<Chemistry::Mol>, L<Chemistry::File>
+
+The PerlMol website L<http://www.perlmol.org/>
 
 =head1 AUTHOR
 

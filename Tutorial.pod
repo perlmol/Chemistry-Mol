@@ -247,11 +247,17 @@ temporary variable:
 The second example is a good way of selecting an atom from a PDB file when you
 know the residue number and atom name.
 
+=head1 VERSION
+
+0.20
+
 =head2 See Also
 
 The perldoc pages for L<Chemistry::Mol>, L<Chemistry::Atom>,
 L<Chemistry::Bond>, L<Chemistry::File>, L<Chemistry::MacroMol>,
 L<Chemistry::Domain>
+
+The PerlMol website L<http://www.perlmol.org/>
 
 =cut
 

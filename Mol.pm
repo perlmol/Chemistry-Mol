@@ -1,5 +1,5 @@
 package Chemistry::Mol;
-$VERSION = '0.11';
+$VERSION = '0.20';
 # $Id$
 
 =head1 NAME
@@ -101,9 +101,13 @@ Add one or more Atom objects to the molecule. Returns the last atom added.
 
 sub add_atom {
     my $self = shift;
-    for my $a (@_){
-        push @{$self->{atoms}}, $a;
-        $self->{byId}{$a->{id}} = $a;
+    for my $atom (@_){
+        #if ($self->by_id($atom->id)) {
+            #croak "Duplicate ID when adding atom '$atom' to mol '$self'";
+        #}
+        push @{$self->{atoms}}, $atom;
+        $self->{byId}{$atom->id} = $atom;
+        $atom->parent($self);
     }
     $_[-1];
 }
@@ -159,9 +163,13 @@ Add one or more Bond objects to the molecule. Returns the last bond added.
 
 sub add_bond {
     my $self = shift;
-    for my $b (@_){
-        push @{$self->{bonds}}, $b;
-	$self->{byId}{$b->{id}} = $b;
+    for my $bond (@_){
+        #if ($self->by_id($bond->id)) {
+            #croak "Duplicate ID when adding bond '$bond' to mol '$self'";
+        #}
+        push @{$self->{bonds}}, $bond;
+	$self->{byId}{$bond->id} = $bond;
+        $bond->parent($self);
     }
     $_[-1];
 }
@@ -399,7 +407,7 @@ sub write {
 	    }
 	}
     }
-    croak "Couldn't guess format of file '$fname'";
+    croak "Couldn't guess format for writing file '$fname'";
 }
 
 =item Chemistry::Mol->register_format($name, $ref)
@@ -493,26 +501,143 @@ sub formula {
     $self->print(format => "formula", formula_format => $format);
 }
 
-1;
+=item my $mol2 = $mol->clone;
+
+Makes a copy of a molecule.
+
+=cut
 
 sub clone {
     my ($self) = @_;
     my $clone = dclone $self;
-   
+    for ($clone->atoms, $clone->bonds) {
+        $_->_weaken;
+    }
+    $clone;
 }
+
+=item ($distance, $atom_here, $atom_there) = $mol->distance($obj)
+
+Returns the minimum distance to $obj, which can be an atom, a molecule, or a
+vector. In scalar context it returns only the distance; in list context it
+also returns the atoms involved. The current implementation for calculating
+the minimum distance between two molecules compares every possible pair of
+atoms, so it's not efficient for large molecules.
+
+=cut
+
+sub distance {
+    my ($self, $other) = @_;
+    if ($other->isa("Chemistry::Mol")) {
+        my @atoms = $self->atoms;
+        my $atom = shift @atoms or return undef; # need at least one atom
+        my $closest_here = $atom;
+        my ($min_length, $closest_there) = $atom->distance($other);
+        for $atom (@atoms) {
+            my ($d, $o) = $atom->distance($other);
+            if ($d < $min_length) {
+                ($min_length, $closest_there, $closest_here) = ($d, $o, $atom);
+            }
+        }
+        return wantarray ? 
+            ($min_length, $closest_here, $closest_there) : $min_length;
+    } elsif ($other->isa("Chemistry::Atom")) {
+        return $other->distance($self);
+    } elsif ($other->isa("Math::VectorReal")) {
+        return Chemistry::Atom->new(coords => $other)->distance($self);
+    }
+}
+
+=item my $bigmol = Chemistry::Mol->combine($mol1, $mol2, ...)
+
+=item $mol1->combine($mol2, $mol3, ...)
+
+Combines several molecules in one bigger molecule. If called as a class method,
+as in the first example, it returns a new combined molecule without altering
+any of the parameters. If called as an instance method, as in the second
+example, all molecules are combined into $mol1 (but $mol2, $mol3, ...) are not
+altered.
+
+=cut
+
+# joins several molecules into one
+# Does not touch the original copy.
+sub combine {
+    my ($self, @others) = @_;
+    my $mol;
+    if (ref $self) {
+        $mol = $self;
+    } else {
+        $mol = $self->new;
+    }
+    for my $other (@others) {
+        my $mol2 = $other->clone;
+        for my $atom ($mol2->atoms) {
+            $mol->add_atom($atom);
+        }
+        for my $bond ($mol2->bonds) {
+            $mol->add_bond($bond);
+        }
+    }
+    $mol;
+}
+
+=item my @mols = $mol->separate
+
+Separates a molecule into "connected fragments". The original object is not
+modified; the fragments are clones of the original ones. Example: if you have
+ethane (H3CCH3) and you delete the C-C bond, you have two CH3 radicals within
+one molecule object ($mol). When you call $mol->separate you get two molecules,
+each one with a CH3.
+
+=cut
+
+# splits a molecule into connected fragments
+# returns a list of molecules. Does not touch the original copy.
+sub separate {
+    my ($self) = @_;
+    $self = $self->clone;
+    $self->{_paint_tab} = {};
+    my $color = 0;
+    for my $atom ($self->atoms) {
+        next if defined $self->{_paint_tab}{$atom->id};
+        $self->_paint($atom, $color++);
+    }
+    my @mols;
+    push @mols, $self->new for (1 .. $color);
+    for my $atom ($self->atoms) {
+        $mols[$self->{_paint_tab}{$atom->id}]->add_atom($atom);
+    }
+    for my $bond ($self->bonds) {
+        $mols[$self->{_paint_tab}{$bond->id}]->add_bond($bond);
+    }
+    @mols;
+}
+
+sub _paint {
+    my ($self, $atom, $color) = @_;
+    return if $self->{_paint_tab}{$atom->id} eq $color;
+    $self->{_paint_tab}{$atom->id} = $color;
+    $self->{_paint_tab}{$_->id} = $color for ($atom->bonds);
+    for my $neighbor ($atom->neighbors) {
+        $self->_paint($neighbor, $color);
+    }
+}
+
+1;
 
 =back
 
-=head1 BUGS
+=head1 VERSION
 
-Blatant memory leaks. Due to the use of circular references, Perl's current
-garbage collector never cleans up molecule, atom, and bond objects. A future
-version should address this.
+0.20
 
 =head1 SEE ALSO
 
 L<Chemistry::Atom>, L<Chemistry::Bond>, L<Chemistry::File>,
 L<Chemistry::Tutorial>
+
+The PerlMol website L<http://www.perlmol.org/>
 
 =head1 AUTHOR
 
@@ -520,7 +645,7 @@ Ivan Tubert E<lt>itub@cpan.orgE<gt>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2003 Ivan Tubert. All rights reserved. This program is free
+Copyright (c) 2004 Ivan Tubert. All rights reserved. This program is free
 software; you can redistribute it and/or modify it under the same terms as
 Perl itself.
 
