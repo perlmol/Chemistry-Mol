@@ -2,6 +2,7 @@ Atom.pm
 Bond.pm
 Changes
 File.pm
+File/Dumper.pm
 File/Formula.pm
 MANIFEST
 Makefile.PL
@@ -10,6 +11,8 @@ Obj.pm
 README
 Tutorial.pod
 formula_tests.txt
+t/Dumper.t
 t/Formula.t
 t/Mol.t
+t/mol.pl
 t/pod.t

@@ -249,7 +249,7 @@ know the residue number and atom name.
 
 =head1 VERSION
 
-0.23
+0.24
 
 =head2 See Also
 

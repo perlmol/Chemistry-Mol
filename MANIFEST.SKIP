@@ -16,7 +16,7 @@
 ^\.#  
 ^\.
 
-^mtest.pl$
+.pl$
 ^t.pl$
 ^[xyz]$
 ^pm_to_blib$

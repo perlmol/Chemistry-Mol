@@ -1,6 +1,6 @@
 package Chemistry::Atom;
 
-$VERSION = '0.23';
+$VERSION = '0.24';
 # $Id$
 
 =head1 NAME
@@ -229,6 +229,18 @@ sub coords {
     }
 }
 
+=item $atom->x3, $atom->y3, $atom->z3
+
+Get the x, y or z 3D coordinate of the atom. This methods are just accessors
+that don't change the coordinats. $atom->x3 is short for 
+($atom->coords->array)[0], and so on.
+
+=cut
+
+sub x3 { ($_[0]->coords->array)[0] }
+sub y3 { ($_[0]->coords->array)[1] }
+sub z3 { ($_[0]->coords->array)[2] }
+
 =item $atom->formal_charge($charge)
 
 Set or get the formal charge of the atom.
@@ -245,9 +257,27 @@ sub formal_charge {
     }
 }
 
+=item $atom->hydrogens($h_count)
+
+Set or get the number of implicit hydrogen atoms bonded to the atom.
+
+=cut
+
+sub hydrogens {
+    my $self = shift;
+    if (@_) {
+        ($self->{hydrogens}) = @_;
+        return $self;
+    } else {
+        return $self->{hydrogens};
+    }
+}
+
 =item $atom->aromatic($bool)
 
-Set or get whether the atom is considered to be aromatic.
+Set or get whether the atom is considered to be aromatic. This property may be
+set arbitrarily, it doesn't imply any kind of "intelligent aromaticity
+detection"!
 
 =cut
 
@@ -259,6 +289,21 @@ sub aromatic {
     } else {
         return $self->{aromatic};
     }
+}
+
+=item $atom->valence
+
+Returns the sum of the bond orders of the bonds in which the atom participates,
+including implicit hydrogens.
+
+=cut
+
+sub valence {
+    my ($self) = @_;
+    my $valence = 0;
+    $valence += $_->order for $self->bonds;
+    $valence += $self->hydrogens || 0;
+    $valence;
 }
 
 =item $atom->add_bond($bond)
@@ -513,13 +558,69 @@ EOF
     $ret;
 }
 
+=item my $info = $atom->sprintf($format)
+
+Format interesting atomic information in a concise way, as specified by
+a printf-like format.
+
+    %s - symbol
+    %Z - atomic number
+    %n - name
+    %q - formal charge
+    %h - implicit hydrogen count
+    %v - valence
+    %i - id
+    %8.3m - mass, formatted as %8.3f with core sprintf
+    %8.3x - x coordinate, formatted as %8.3f with core sprintf
+    %8.3y - y coordinate, formatted as %8.3f with core sprintf
+    %8.3z - z coordinate, formatted as %8.3f with core sprintf
+    %% - %
+
+=cut
+
+sub sprintf {
+    my ($atom, $format) = @_;
+    no warnings 'uninitialized'; # don't care if some properties are undefined
+    $format ||= "%f";
+    $format =~ s/%%/\\%/g;              # escape %% with a \
+    $format =~ s/(?<!\\)%q/$atom->formal_charge || 0/eg;        # %q
+    $format =~ s/(?<!\\)%s/$atom->symbol/eg;                    # %s
+    $format =~ s/(?<!\\)%Z/$atom->Z/eg;                         # %Z
+    $format =~ s/(?<!\\)%n/$atom->name/eg;                      # %n
+    $format =~ s/(?<!\\)%h/$atom->hydrogens/eg;                 # %h
+    $format =~ s/(?<!\\)%v/$atom->valence/eg;                   # %v
+    $format =~ s/(?<!\\)%(\d*\.?\d*)m/
+        $1 ? sprintf "%$1f", $atom->mass : $atom->mass/eg;      # %m
+    $format =~ s/(?<!\\)%(\d*\.?\d*)x/
+        $1 ? sprintf "%$1f", $atom->x3 : $atom->x3/eg;          # %x
+    $format =~ s/(?<!\\)%(\d*\.?\d*)y/
+        $1 ? sprintf "%$1f", $atom->y3 : $atom->y3/eg;          # %y
+    $format =~ s/(?<!\\)%(\d*\.?\d*)z/
+        $1 ? sprintf "%$1f", $atom->z3 : $atom->z3/eg;          # %z
+    $format =~ s/(?<!\\)%i/$atom->id/eg;                        # %i
+    $format =~ s/\\(.)/$1/g;                             # other \ escapes
+    $format;
+}
+
+=item $atom->printf($format)
+
+Same as $atom->sprintf, but prints to standard output automatically. Used
+for quick and dirty molecular information dumping.
+
+=cut
+
+sub printf {
+    my ($atom, $format) = @_;
+    print $atom->sprintf($format);
+}
+
 1;
 
 =back
 
 =head1 VERSION
 
-0.23
+0.24
 
 =head1 SEE ALSO
 

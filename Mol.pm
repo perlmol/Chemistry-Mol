@@ -1,5 +1,5 @@
 package Chemistry::Mol;
-$VERSION = '0.23';
+$VERSION = '0.24';
 # $Id$
 
 =head1 NAME
@@ -121,17 +121,28 @@ sub add_atom_np {
     }
     $_[-1];
 }
+
+=item $mol->atom_class
+
+Returns the atom class that a molecule or molecule class expects to use by
+default. Chemistry::Mol objects return "Chemistry::Atom", but subclasses will
+likely override this method.
+
+=cut
+
+sub atom_class {
+    "Chemistry::Atom";
+}
+
 =item $mol->new_atom(name => value, ...)
 
-Shorthand for $mol->add_atom(Chemistry::Atom->new(name => value, ...));
-It has the disadvantage that it doesn't let you create a subclass of 
-Chemistry::Atom.
+Shorthand for $mol->add_atom($mol->atom_class->new(name => value, ...));
 
 =cut
 
 sub new_atom {
     my $self = shift;
-    $self->add_atom(Chemistry::Atom->new(@_));
+    $self->add_atom($self->atom_class->new(@_));
 }
 
 =item $mol->delete_atom($atom, ...)
@@ -192,17 +203,27 @@ sub add_bond_np {
     $_[-1];
 }
 
+=item $mol->bond_class
+
+Returns the bond class that a molecule or molecule class expects to use by
+default.  Chemistry::Mol objects return "Chemistry::Bond", but subclasses will
+likely override this method.
+
+=cut
+
+sub bond_class {
+    "Chemistry::Bond";
+}
+
 =item $mol->new_bond(name => value, ...)
 
-Shorthand for $mol->add_bond(Chemistry::Bond->new(name => value, ...));
-It has the disadvantage that it doesn't let you create a subclass of 
-Chemistry::Bond.
+Shorthand for $mol->add_bond($mol->bond_class->new(name => value, ...));
 
 =cut
 
 sub new_bond {
     my $self = shift;
-    $self->add_bond(Chemistry::Bond->new(@_));
+    $self->add_bond($self->bond_class->new(@_));
 }
 
 sub get_bond_index {
@@ -298,6 +319,31 @@ sub atoms_by_name {
     #my ($re) = @_; # 5.004 hack
     #my @ret = grep {defined $_->name and $_->name =~ /$re/o} $self->atoms;
     wantarray ? @ret : $ret[0];
+}
+
+=item $mol->sort_atoms($sub_ref)
+
+Sort the atoms in the molecule by using the comparison function given in
+$sub_ref. This function should take two atoms as parameters and return -1, 0,
+or 1 depending on whether the first atom should go first, same, or after the
+second atom. For example, to sort by atomic number, you could use the
+following:
+
+    $mol->sort( sub { $_[0]->Z <=> $_[1]->Z } );
+
+Note that the atoms are passed as parameters and not as the package variables
+$a and $b like the core sort function does. This is because $mol->sort will
+likely be called from another package and we don't want to play with another
+package's symbol table.
+
+=cut
+
+sub sort_atoms {
+    my ($self, $sub) = @_;
+    my @a = $self->atoms;
+    @a = sort { $sub->($a,$b) } @a;
+    $self->{atoms} = \@a;
+    $self;
 }
 
 =item $mol->bonds($n1, ...)
@@ -579,6 +625,7 @@ sub formula_hash {
     my $formula = {};
     for my $atom ($self->atoms) {
         $formula->{$atom->symbol}++;
+        $formula->{H} += $atom->hydrogens if $atom->hydrogens;
     }
     $formula;
 }
@@ -606,12 +653,16 @@ Makes a copy of a molecule.
 sub clone {
     my ($self) = @_;
     my $clone = dclone $self;
-    for ($clone->atoms, $clone->bonds) {
-        $_->_weaken;
-    }
-    $clone;
+    $clone->_weaken;
 }
 
+sub _weaken {
+    my ($self) = @_;
+    for ($self->atoms, $self->bonds) {
+        $_->_weaken;
+    }
+    $self;
+}
 =item ($distance, $atom_here, $atom_there) = $mol->distance($obj)
 
 Returns the minimum distance to $obj, which can be an atom, a molecule, or a
@@ -726,7 +777,7 @@ sub _paint {
 
 =head1 VERSION
 
-0.23
+0.24
 
 =head1 SEE ALSO
 

@@ -1,5 +1,10 @@
 Revision history for Perl extension Chemistry::Mol.
 
+0.24  Wed Jun 16 2004
+        - Mol:: _weaken, sort_atoms, atom_class, bond_class
+        - Atom:: sprintf, printf, hydrogens, valence
+        - Added the Chemistry::File::Dumper module.
+
 0.23  Wed May 19 2004
         - New methods: Mol::printf, sprintf, charge; Atom::aromatic,
           formal_charge; Bond::aromatic
