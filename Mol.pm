@@ -35,18 +35,11 @@ use strict;
 use Chemistry::Atom;
 use Chemistry::Bond;
 use Carp;
-use base qw(Exporter Chemistry::Obj);
+use base qw(Chemistry::Obj);
 
 
-our @EXPORT = qw();
-our @EXPORT_OK = qw( read_mol );
-
-our %EXPORT_TAGS = (
-   all  => [@EXPORT, @EXPORT_OK]
-);
-
-our %FILE_FORMATS = ();
-my $N = 0;
+my %FILE_FORMATS = ();
+my $N = 0; # atom ID counter
 
 =head1 METHODS
 
@@ -242,9 +235,9 @@ END
     $ret;
 }
 
-=item read_mol($fname, [$type])
+=item Chemistry::Mol->read($fname, option => value ...)
 
-Read a file returning a list of Mol objects, or undef if there
+Read a file and return a list of Mol objects, or undef if there
 was a problem. The type of file will be guessed if not
 specified.
 
@@ -252,30 +245,70 @@ Note that only registered file readers will be used. Readers may
 be registered using register_type(); modules that include readers
 (such as Chemistry::File::PDB) usually register them automatically.
 
-This function may be exported.
-
 =cut
 
-sub read_mol {
-    my $fname = shift;
-    my $type = shift;
+sub read_mol { # for backwards compatibility
+    my ($fname, $type) = shift;
+    Chemistry::Mol->read($fname, type => $type);
+}
 
-    if ($type) {
-	return $FILE_FORMATS{$type}->{read}($fname);
+sub read {
+    my $class = shift;
+    $class = ref $class || $class;
+    my $fname = shift;
+    my %opts = (mol_class => $class, @_);
+
+    if ($opts{type}) {
+        return $class->formats($opts{type})->parsefile($fname, %opts);
     } else {
-	#print "No type specified...\n";
-	for $type (keys %FILE_FORMATS) {
-	    #print "is file $type?\n";
-	    if ($FILE_FORMATS{$type}->{is}($fname)){
-		#print "file is $type!\n";
-		return $FILE_FORMATS{$type}->{read}($fname);
+	for my $type ($class->formats) {
+            if ($class->formats($type)->isfile($fname)) {
+                return $class->formats($type)->parsefile($fname, %opts);
 	    }
 	}
     }
     undef;
 }
 
-=item register_type($name, sub_id => \&sub,... )
+=begin comment
+
+sub write {
+    my $class = shift;
+    $class = ref $class || $class;
+    my $fname = shift;
+    my %opts = (@_);
+
+    if ($opts{type}) {
+        return $class->formats($opts{type},"write")->($fname, %opts);
+    } else {
+	for my $type ($class->formats) {
+            if ($class->formats($type, 'is')->($fname)) {
+                return $class->formats($type, 'write')->($fname, %opts);
+	    }
+	}
+    }
+    undef;
+}
+
+=end comment
+
+=cut
+
+sub formats {
+    my $class = shift;
+    if (@_) {
+        my ($type) = @_;
+        my $file_class = $FILE_FORMATS{$type};
+        unless ($file_class) {
+            croak "No class installed for type '$type'";
+        }
+        return $file_class;
+    } else {
+        return keys %FILE_FORMATS;
+    }
+}
+
+=item Chemistry::Mol->register_type($name, sub_id => \&sub,... )
 
 Register a file type. The identifier $name must be unique.
 To register a file type, you need to provide references to 
@@ -314,8 +347,9 @@ molecules and returns a string.
 =cut
 
 sub register_type {
-    my $type = shift;
-    $FILE_FORMATS{$type} = {@_};
+    my $class = shift;
+    my %opts = @_;
+    $FILE_FORMATS{$_} = $opts{$_} for keys %opts;
 }
 
 1;
