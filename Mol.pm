@@ -142,33 +142,38 @@ sub new_atom {
 
 =item $mol->delete_atom($atom, ...)
 
-Deletes an atom from the molecule. It automatically deletes all the bonds
-in which the atom participates as well. $atom can be either a Chemistry::Atom
-reference or an atom index.
+Deletes an atom from the molecule. It automatically deletes all the bonds in
+which the atom participates as well. $atom should be a Chemistry::Atom
+reference. This method also accepts the atom index, but this use is deprecated
+(and buggy if multiple indices are given, unless they are in descending order).
 
 =cut
 
-# mol deletes bonds that belonged to atom
-# mol deletes atom
-
 sub delete_atom {
     my $self = shift;
-    for my $i (@_){
-        my ($atom, $index);
+    for my $i (@_) {
+        my ($atom);
         if (ref $i) {
             $atom = $i;
-            $index = $self->get_atom_index($atom)    
-                or croak "$self->delete_atom: no such atom $atom\n";
         } else {
-            $index = $i;
-            $atom = $self->atoms($index)
-                or croak "$self->delete_atom: no such atom $index\n";
+            $atom = $self->atoms($i)
+                or croak "$self->delete_atom: no such atom $i\n";
         }
-        my $id = $atom->id;
-        $self->delete_bond($atom->bonds);
-        delete $self->{byId}{$id};
-        splice @{$self->{atoms}}, $index - 1, 1;
+        $atom->delete($i);
     }
+}
+
+# takes an atom ref to delete and optionally the atom index
+# 1) deletes bonds that belonged to atom
+# 2) deletes atom
+sub _delete_atom {
+    my ($self, $atom) = @_;
+    my $index = $self->get_atom_index($atom)    
+        or croak "$self->delete_atom: no such atom $atom\n";
+    my $id = $atom->id;
+    $self->delete_bond($atom->bonds);
+    delete $self->{byId}{$id};
+    splice @{$self->{atoms}}, $index - 1, 1;
 }
 
 =item $mol->add_bond($bond, ...)
@@ -244,7 +249,7 @@ sub get_atom_index {
 
 =item $mol->delete_bond($bond, ...)
 
-Deletes a bond from the molecule.
+Deletes a bond from the molecule. $bond should be a Chemistry::Bond object.
 
 =cut
 
@@ -254,21 +259,25 @@ Deletes a bond from the molecule.
 sub delete_bond {
     my $self = shift;
     for my $i (@_){
-        my ($bond, $index);
+        my ($bond);
         if (ref $i) {
             $bond = $i;
-            $index = $self->get_bond_index($bond)
-                or croak "$self->delete_bond: no such bond $bond\n";
         } else {
-            $index = $i;
-            $bond = $self->bonds($index)
-                or croak "$self->delete_bond: no such bond $index\n";
+            $bond = $self->bonds($i)
+                or croak "$self->delete_bond: no such bond $i\n";
         }
-        my $id = $bond->id;
-        delete $self->{byId}{$id};
-        splice @{$self->{bonds}}, $index - 1, 1;
-        $bond->delete_atoms;
+        $bond->delete;
     }
+}
+
+sub _delete_bond {
+    my ($self, $bond) = @_;
+    my $index = $self->get_bond_index($bond)    
+        or croak "$self->delete_bond: no such bond $bond\n";
+    my $id = $bond->id;
+    delete $self->{byId}{$id};
+    splice @{$self->{bonds}}, $index - 1, 1;
+    $bond->delete_atoms;
 }
 
 =item $mol->by_id($id)
@@ -281,6 +290,13 @@ sub by_id {
     my $self = shift;
     my ($id) = @_;
     $self->{byId}{$id};
+}
+
+sub _change_id {
+    my ($self, $old_id, $new_id) = @_;
+    my $ref = $self->{byId}{$old_id};
+    $self->{byId}{$new_id} = $ref;
+    delete $self->{byId}{$old_id};
 }
 
 =item $mol->atoms($n1, ...)
@@ -312,8 +328,6 @@ sub atoms_by_name {
     my $re = qr/^$_[0]$/;
     no warnings;
     my @ret = grep {$_->name =~ $re} $self->atoms;
-    #my ($re) = @_; # 5.004 hack
-    #my @ret = grep {defined $_->name and $_->name =~ /$re/o} $self->atoms;
     wantarray ? @ret : $ret[0];
 }
 
@@ -476,18 +490,17 @@ sub parse {
 
 =item Chemistry::Mol->read($fname, option => value ...)
 
-Read a file and return a list of Mol objects, or croaks if there
-was a problem. The type of file will be guessed if not
-specified via the C<format> option.
+Read a file and return a list of Mol objects, or croaks if there was a problem.
+The type of file will be guessed if not specified via the C<format> option.
 
-Note that only registered file readers will be used. Readers may
-be registered using register_type(); modules that include readers
-(such as Chemistry::File::PDB) usually register them automatically.
+Note that only registered file readers will be used. Readers may be registered
+using register_type(); modules that include readers (such as
+Chemistry::File::PDB) usually register them automatically.
 
-Automatic decompression of gzipped files is supported if the IO::Zlib
-module is installed. Files ending in .gz are assumed to be compressed;
-otherwise it is possible to force decompression by passing the gzip => 1
-option (or no decompression with gzip => 0).
+Automatic decompression of gzipped files is supported if the IO::Zlib module is
+installed. Files ending in .gz are assumed to be compressed; otherwise it is
+possible to force decompression by passing the gzip => 1 option (or no
+decompression with gzip => 0).
 
 =cut
 
@@ -515,9 +528,8 @@ sub read {
 
 =item $mol->write($fname, option => value ...)
 
-Write a molecule file, or croak if there
-was a problem. The type of file will be guessed if not
-specified via the C<format> option.
+Write a molecule file, or croak if there was a problem. The type of file will
+be guessed if not specified via the C<format> option.
 
 Note that only registered file formats will be used. 
 
@@ -546,18 +558,18 @@ sub write {
 
 =item Chemistry::Mol->file($file, option => value ...)
 
-Create a L<Chemistry::File>-derived object for reading or writing
-to a file. The object can then be used to read the molecules or other
-information in the file.
+Create a L<Chemistry::File>-derived object for reading or writing to a file.
+The object can then be used to read the molecules or other information in the
+file.
 
 This has more flexibility than calling Chemistry::Mol->read when dealing with
 multi-molecule files or files that have higher structure or that have
-information that does not belong to the molecules themselves. For example, 
-a reaction file may have a list of molecules, but also general information
-like the reaction name, yield, etc. as well as the classification of the
-molecules as reactants or products. The exact information that is available
-will depend on the file reader class that is being used. The following is 
-a hypothetical example for reading MDL rxnfiles.
+information that does not belong to the molecules themselves. For example, a
+reaction file may have a list of molecules, but also general information like
+the reaction name, yield, etc. as well as the classification of the molecules
+as reactants or products. The exact information that is available will depend
+on the file reader class that is being used. The following is a hypothetical
+example for reading MDL rxnfiles.
 
     # assuming this module existed...
     use Chemistry::File::Rxn;
@@ -569,9 +581,9 @@ a hypothetical example for reading MDL rxnfiles.
     @products  = $rxn->products;
     $yield     = $rxn->yield;     # a number
 
-Note that only registered file readers will be used. Readers may
-be registered using register_type(); modules that include readers
-(such as Chemistry::File::PDB) usually register them automatically.
+Note that only registered file readers will be used. Readers may be registered
+using register_type(); modules that include readers (such as
+Chemistry::File::PDB) usually register them automatically.
 
 =cut
 
@@ -595,13 +607,12 @@ sub file {
 
 =item Chemistry::Mol->register_format($name, $ref)
 
-Register a file type. The identifier $name must be unique.
-$ref is either a class name (a package) or an object that complies
-with the L<Chemistry::File> interface (e.g., a subclass of Chemistry::File).
-If $ref is omitted, the calling package is used automatically. More than one
-format can be registered at a time, but then $ref must be included for each
-format (e.g., Chemistry::Mol->register_format(format1 => "package1", format2 =>
-package2).
+Register a file type. The identifier $name must be unique.  $ref is either a
+class name (a package) or an object that complies with the L<Chemistry::File>
+interface (e.g., a subclass of Chemistry::File).  If $ref is omitted, the
+calling package is used automatically. More than one format can be registered
+at a time, but then $ref must be included for each format (e.g.,
+Chemistry::Mol->register_format(format1 => "package1", format2 => package2).
 
 The typical user doesn't have to care about this function. It is used
 automatically by molecule file I/O modules.
@@ -641,7 +652,8 @@ sub formats {
 
 =item $mol->mass
 
-Return the molar mass.
+Return the molar mass. This is just the sum of the masses of the atoms.  See
+L<Chemistry::Atom>::mass for details such as the handling of isotopes.
 
 =cut
 
@@ -657,7 +669,8 @@ sub mass {
 =item $mol->charge
 
 Return the charge of the molecule. By default it returns the sum of the formal
-charges of the atoms.
+charges of the atoms. However, it is possible to set an arbitrary charge by
+calling C<< $mol->charge($new_charge) >>
 
 =cut
 
@@ -707,7 +720,8 @@ sub formula {
 
 =item my $mol2 = $mol->clone;
 
-Makes a copy of a molecule.
+Makes a copy of a molecule. Note that this is a B<deep> copy; if your molecule
+has a pointer to the rest of the universe, the entire universe will be cloned!
 
 =cut
 
@@ -724,6 +738,7 @@ sub _weaken {
     }
     $self;
 }
+
 =item ($distance, $atom_here, $atom_there) = $mol->distance($obj)
 
 Returns the minimum distance to $obj, which can be an atom, a molecule, or a
@@ -764,7 +779,8 @@ Combines several molecules in one bigger molecule. If called as a class method,
 as in the first example, it returns a new combined molecule without altering
 any of the parameters. If called as an instance method, as in the second
 example, all molecules are combined into $mol1 (but $mol2, $mol3, ...) are not
-altered.
+altered. B<Note>: Make sure you don't combine molecules which contain atoms
+with duplicate IDs (for example, if they were cloned).
 
 =cut
 

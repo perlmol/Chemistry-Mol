@@ -466,17 +466,22 @@ sub delete_bond {
 
 =item $atom->delete
 
-Calls $mol->delete_atom($atom) on the atom's parent molecule. Note that an atom
-should belong to only one molecule or strange things will happen.
+Calls $mol->delete_atom($atom) on the atom's parent molecule.
 
 =cut
 
 sub delete {
     my ($self) = @_;
-    $self->{parent}->delete_atom($self);
+    $self->{parent}->_delete_atom($self);
 }
 
-# This method is undocumented, but will probably be public
+=item $atom->parent
+
+Returns the atom's containing object (the molecule to which the atom belongs).
+An atom can only have one parent.
+
+=cut
+
 sub parent {
     my $self = shift;
     if (@_) {

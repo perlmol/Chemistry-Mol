@@ -197,7 +197,7 @@ should belong to only one molecule or strange things may happen.
 
 sub delete {
     my ($self) = @_;
-    $self->{parent}->delete_bond($self);
+    $self->{parent}->_delete_bond($self);
 }
 
 sub parent {
