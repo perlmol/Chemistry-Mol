@@ -302,15 +302,7 @@ Set or get the formal charge of the atom.
 
 =cut
 
-sub formal_charge {
-    my $self = shift;
-    if (@_) {
-        ($self->{formal_charge}) = @_;
-        return $self;
-    } else {
-        return $self->{formal_charge};
-    }
-}
+Chemistry::Obj::accessor('formal_charge');
 
 =item $atom->implicit_hydrogens($h_count)
 
@@ -318,10 +310,7 @@ Set or get the number of implicit hydrogen atoms bonded to the atom.
 
 =cut
 
-sub implicit_hydrogens {
-    my ($self) = shift;
-    $self->hydrogens(@_);
-}
+sub implicit_hydrogens { shift->hydrogens(@_) }
 
 =item $atom->hydrogens($h_count)
 
@@ -330,19 +319,12 @@ Set or get the number of implicit hydrogen atoms bonded to the atom
 
 =cut
 
-sub hydrogens {
-    my $self = shift;
-    if (@_) {
-        ($self->{hydrogens}) = @_;
-        return $self;
-    } else {
-        return $self->{hydrogens};
-    }
-}
+Chemistry::Obj::accessor('hydrogens');
 
 =item $atom->total_hydrogens($h_count)
 
-Set or get the total number of hydrogen atoms bonded to the atom.
+Get the total number of hydrogen atoms bonded to the atom (implicit +
+explicit).
 
 =cut
 
@@ -350,6 +332,24 @@ sub total_hydrogens {
     my ($self) = @_;
     no warnings 'uninitialized';
     $self->hydrogens + grep { $_->symbol eq 'H' } $self->neighbors;
+}
+
+sub sprout_hydrogens {
+    my ($self) = @_;
+    for (1 .. $self->implicit_hydrogens) {
+        $self->parent->new_bond(
+            atoms => [$self, $self->parent->new_atom(symbol => 'H')]);
+    }
+    $self->implicit_hydrogens(0);
+}
+
+sub collapse_hydrogens {
+    my ($self) = @_;
+    my $implicit = $self->implicit_hydrogens;
+    for my $nei ($self->neighbors) {
+        $nei->delete, $implicit++ if $nei->symbol eq 'H';
+    }
+    $self->implicit_hydrogens($implicit);
 }
 
 =item $atom->aromatic($bool)
@@ -360,15 +360,7 @@ detection"! (For that, look at the L<Chemistry::Ring> module).
 
 =cut
 
-sub aromatic {
-    my $self = shift;
-    if (@_) {
-        ($self->{aromatic}) = @_;
-        return $self;
-    } else {
-        return $self->{aromatic};
-    }
-}
+Chemistry::Obj::accessor('aromatic');
 
 =item $atom->valence
 
@@ -385,7 +377,7 @@ sub valence {
     $valence;
 }
 
-=item $atom->valence
+=item $atom->explicit_valence
 
 Like c<valence>, but excluding implicit hydrogen atoms.
 
@@ -398,12 +390,7 @@ sub explicit_valence {
     $valence;
 }
 
-=item $atom->add_bond($bond)
-
-Adds a new bond to the atom, as defined by the Chemistry::Bond object $bond.
-
-=cut
-
+# this method is for internal use only; called by $bond->atoms
 sub add_bond {
     my $self = shift;
     my $bond = shift;
@@ -586,7 +573,7 @@ Same as angle(), but returns the value in degrees. May be exported.
 =cut
 
 sub angle_deg {
-    rad2deg(angle(@_));
+    rad2deg(shift->angle(@_));
 }
 
 =item $atom->dihedral($atom2, $atom3, $atom4)
@@ -621,7 +608,7 @@ Same as dihedral(), but returns the value in degrees. May be exported.
 =cut
 
 sub dihedral_deg {
-    rad2deg(dihedral(@_));
+    rad2deg(shift->dihedral(@_));
 }
 
 =item $atom->print

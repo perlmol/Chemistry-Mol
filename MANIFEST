@@ -10,6 +10,7 @@ MANIFEST
 Mol.pm
 Obj.pm
 README
+t/Atom.t
 t/Dumper.t
 t/empty.mol
 t/exception.t
@@ -19,6 +20,8 @@ t/list.txt
 t/mol.pl
 t/mol.pl.gz
 t/Mol.t
+t/Obj.t
 t/pod.t
 t/zlib.t
 Tutorial.pod
+META.yml                                 Module meta-data (added by MakeMaker)

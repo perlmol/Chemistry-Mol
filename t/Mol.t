@@ -2,7 +2,6 @@ use Test::More "no_plan";
 #use Test::More tests => 22;
 BEGIN { 
     use_ok('Chemistry::Mol');
-    use_ok('Math::VectorReal');
 };
 
 # Constructors
@@ -29,29 +28,6 @@ ok($mol->bonds(1) eq $bond, '$mol->bonds(1) eq $bond');
 my $atom3;
 ok($atom3 = $mol->new_atom(symbol => "N"), '$mol->new_atom');
 
-# Atom methods
-is($atom->distance($atom2), 5, '$atom->distance');
-is($atom->symbol, "C", '$atom->symbol');
-$atom->attr("color", "brown");
-is($atom->attr("color"), "brown", '$atom->attr');
-my $v = vector(3,0,4);
-$atom3->coords($v);
-my $v2 = $atom3->coords;
-is($v->length, 5, 'atom->coords(vector)');
-$atom3->coords([3,0,4]);
-$v2 = $atom3->coords;
-is($v->length, 5, 'atom->coords(array)');
-$atom3->coords(3,0,4);
-$v2 = $atom3->coords;
-is($v->length, 5, 'atom->coords(list)');
-
-# x3, y3, z3 accessors
-my $x = $atom3->x3;
-is($x, 3, 'x3');
-my $y = $atom3->y3;
-is($y, 0, 'y3');
-my $z = $atom3->z3;
-is($z, 4, 'z3');
 
 $mol = Chemistry::Mol->new;
 $mol->new_atom(symbol => 'O');

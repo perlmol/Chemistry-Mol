@@ -196,11 +196,7 @@ reference. See l<new>() for details.
 
 sub parse_file {
     my ($self, $file, %opts) = @_;
-
     $self->new(file => $file, opts => \%opts)->read;
-
-    #my $s = $self->slurp($file, %opts);
-    #$self->parse_string($s, %opts);
 }
 
 =item $class->write_file($mol, $file, %options)
@@ -215,8 +211,6 @@ sub write_file {
     my ($self, $mol, $file, %opts) = @_;
 
     $self->new(file => $file, mols => [$mol], opts => \%opts)->write;
-    #my $s = $self->write_string($mol, %opts);
-    #$self->snort($file, $s);
 }
 
 =item $class->name_is($fname, %options)
@@ -253,7 +247,10 @@ classes may choose to override it.
 sub file_is {
     my ($self, $file, %opts) = @_;
     
-    my $s = eval {$self->slurp($file, %opts)};
+    my $s = eval {
+        $self->open('<');
+        $self->slurp;
+    };
     if ($s) {
         $self->string_is($s, %opts);
     } elsif (! ref $file) {
@@ -272,53 +269,11 @@ passing the gzip => 1 option (or no decompression with gzip => 0).
 
 # slurp a file into a scalar, with transparent decompression
 sub slurp {
-    my ($self, $file, %opts) = @_;
+    my ($self) = @_;
 
-    my $fh;
-    my $s;
-    if (ref $file) {
-        $fh = $file;
-    } elsif ($opts{gzip} or !defined $opts{gzip} and $file =~ /.gz$/) {
-        eval { require Compress::Zlib } or croak "Compress::Zlib support not installed";
-        $fh = Compress::Zlib->new($file, 'rb') 
-            or croak "Could not open file $file for reading: $!";
-        $s = join '',  <$fh>;
-    } else {
-        $fh = FileHandle->new("<$file") 
-            or croak "Could not open file $file for reading: $!";
-        $s = do { local $/; <$fh> };
-    }
-    $fh->close;
-    $s;
-}
-
-=item $class->snort($file, $s, %opts)
-
-Write a scalar to a file in one step. Automatic gzip compression is supported
-if the Compress::Zlib module is installed. Files ending in .gz are assumed to be
-compressed; otherwise it is possible to force compression by passing the gzip
-=> 1 option (or no compression with gzip => 0). Specific compression levels
-between 2 (fastest) and 9 (most compressed) may also be used (e.g., gzip => 9).
-
-=cut
-
-sub snort {
-    my ($self, $file, $s, %opts) = @_;
-    my $fh;
-    if (ref $file) {
-        $fh = $file;
-    } elsif ($opts{gzip} or !defined $opts{gzip} and $file =~ /.gz$/) {
-        eval { require Compress::Zlib } or croak "Compress::Zlib support not installed";
-        my $level = $opts{gzip} || 6;
-        $level = 6 if $level == 1;
-        $fh = Compress::Zlib->new($file, "wb$level") 
-            or croak "Could not open file $file for compressed writing: $!";
-    } else {
-        $fh = FileHandle->new(">$file") 
-            or croak "Could not open file $file for writing: $!";
-    }
-    print $fh $s;
-    $fh->close or croak "Error closing $file: $!";
+    my $fh = $self->fh;
+    local $/; 
+    <$fh>;
 }
 
 =item $class->new(file => $file, opts => \%opts)
