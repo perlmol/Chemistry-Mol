@@ -79,6 +79,7 @@ is( $atom->valence,                 2,  'valence' );
 $atom2 = Chemistry::Atom->new(coords => [3,0,4]);
 is( $atom->distance($atom2),    5,  'distance(coords(arrayref))' );
 my $v1 = $atom2->coords;
+isa_ok( $v1, 'Math::VectorReal');
 my $v = vector(0,10,0);
 $atom2->coords($v);
 is( $atom->distance($atom2),   10,  'distance(coords(vector))' );

@@ -4,6 +4,8 @@ Revision history for Perl extension Chemistry::Mol.
         - New Chemistry::File interface
         - Added gzip support for reading and writing
         - Improved the testing suite
+        - New Atom methods: sprout_hydrogens, collapse_hydrogens
+        - New Mol methods: sprout_hydrogens, collapse_hydrogens
 
 0.26  Aug 6 2004
         - Added %S option to $mol->printf

@@ -64,20 +64,26 @@ There are no special options for reading.
 
 =cut
 
-sub write_string {
-    my ($self, $mol, %opts) = @_;
+sub write_mol {
+    my ($self, $fh, $mol, %opts) = @_;
     my $d = Data::Dumper->new([$mol],['$mol']);
-    $d  ->Sortkeys(1)
+    print $fh $d
+        ->Sortkeys(1)
         ->Indent(exists $opts{dumper_indent} ? $opts{dumper_indent} : 1)
         ->Purity(exists $opts{dumper_purity} ? $opts{dumper_purity} : 1)
         ->Dump;
 }
 
-sub parse_string {
-    my ($self, $s, %opts) = @_;
+sub read_mol {
+    my ($self, $fh, %opts) = @_;
     my $mol;
+    my $s = do { local $/; <$fh> };
+    return unless $s;
     eval $s;
-    confess "$@" if $@;
+    if ($@) {
+        croak "Dumper eval error: $@" if $opts{fatal};
+        return;
+    } 
     $mol->_weaken;
     $mol;
 }

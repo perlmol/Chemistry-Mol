@@ -118,15 +118,25 @@ my $N = 0; # atom ID counter
 sub nextID { "obj".++$N; }
 sub reset_id { $N = 0; }
 
+=item $class->new(name => value, name => value...) 
+
+Generic object constructor. It will automatically call each "name" method with
+the parameter "value".
+
+=cut
+
 sub new {
     my $class = shift;
     my %args = @_;
     my $self = bless {
-	id => $class->nextID,
+        id => $class->nextID,
+        #$class->default_args, 
     }, ref $class || $class;
     $self->$_($args{$_}) for (keys %args);
     return $self;
 }
+
+#sub default_args { (id => shift->nextID) }
 
 =back
 

@@ -8,7 +8,6 @@ Chemistry::File - Molecule file I/O base class
 =head1 SYNOPSIS
 
     # As a convenient interface for several mol readers:
-    use Chemistry::Mol;
     use Chemistry::File qw(PDB MDLMol); # load PDB and MDL modules
     
     # or try to use every file I/O module installed in the system:
@@ -17,26 +16,37 @@ Chemistry::File - Molecule file I/O base class
     my $mol1 = Chemistry::Mol->read("file.pdb");
     my $mol2 = Chemistry::Mol->read("file.mol");
 
+
     # as a base for a mol reader:
 
     package Chemistry::File::Myfile;
-    use base Chemistry::File;
+    use base qw(Chemistry::File);
     Chemistry::Mol->register_type("myfile", __PACKAGE__);
-    # override the parse_string method
-    sub parse_string {
-        my ($self, $string, %opts) = shift;
+
+    # override the read_mol method
+    sub read_mol {
+        my ($self, $fh, %opts) = shift;
         my $mol_class = $opts{mol_class} || "Chemistry::Mol";
         my $mol = $mol_class->new;
-        # ... do some stuff with $string and $mol ...
+        # ... do some stuff with $fh and $mol ...
         return $mol;
+    }
+
+    # override the write_mol method
+    sub write_mol {
+        my ($self, $fh, $mol, %opts) = shift;
+        print $fh $mol->name, "\n"; 
+        # ... do some stuff with $fh and $mol ...
     }
 
 =head1 DESCRIPTION
 
 The main use of this module is as a base class for other molecule file I/O
-modules (for example, Chemistry::File::PDB). Such modules should extend
-the Chemistry::File methods as needed. You only need to care about them
-if you are writing a file I/O module.
+modules (for example, Chemistry::File::PDB). Such modules should override and
+extend the Chemistry::File methods as needed. You only need to care about the
+methods here if if you are writing a file I/O module or if you want a finer
+degree of control than what is offered by the simple read and write methods
+in the Chemistry::Mol class.
 
 From the user's point of view, this module can also be used as shorthand
 for using several Chemistry::File modules at the same time.
@@ -48,7 +58,7 @@ is exactly equivalent to
     use Chemistry::File::PDB;
     use Chemistry::File::MDLMol;
 
-If you use the :auto keyword, Chemistry::File can try to autodetect and load
+If you use the :auto keyword, Chemistry::File will autodetect and load
 all the Chemistry::File::* modules installed in your system.
 
     use Chemistry::File ':auto';
@@ -56,17 +66,17 @@ all the Chemistry::File::* modules installed in your system.
 =head1 FILE I/O MODEL
 
 Before version 0.30, file I/O modules typically used only parse_string,
-write_string, parse_file, and write_file as class methods. A file could contain
-one or more molecules and only be read or written whole; reading it would
-return every molecule on the file. This was problematic when dealing with large
-SDF files, because all the molecules would have to be loaded into memory at the
-same time.
+write_string, parse_file, and write_file, and they were generally used as class
+methods. A file could contain one or more molecules and only be read or written
+whole; reading it would return every molecule on the file. This was problematic
+when dealing with large multi-molecule files (such as SDF files), because all
+the molecules would have to be loaded into memory at the same time.
 
 While version 0.30 retains backward compatibility with that simple model, it
 also allows a more flexible interface that allows reading one molecule at a
-time, skipping molecules, and having file-level information that is not
-associated with specific molecules. The following diagram shows the global
-structure of a file:
+time, skipping molecules, and reading and writing file-level information that
+is not associated with specific molecules. The following diagram shows the
+global structure of a file according to the new model:
 
     +-----------+
     | header    |
@@ -81,22 +91,25 @@ structure of a file:
     +-----------+
 
 In cases where the header and the footer are empty, the model reduces to the
-pre-0.30 version. The steps to read a file are the following:
+pre-0.30 version. The low-level steps to read a file are the following:
 
     $file = Chemistry::File::MyFormat->new(file => 'xyz.mol');
     $file->open('<');
     $file->read_header;
-    while (my $mol = $self->read_mol) {
+    while (my $mol = $self->read_mol($file->fh, %opts)) {
         # do something with $mol...
     }
     $self->read_footer;
 
+The C<read> method does all the above automatically, and it stores all the
+molecules read in the mols property.
+
 =head1 STANDARD OPTIONS
 
-All the methods below include a list of options %options at the end of the
+All the methods below include a list of options %opts at the end of the
 parameter list. Each class implementing this interface may have its own
-particular options. However, the following options should be recognized by
-all classes:
+particular options. However, the following options should be recognized by all
+classes:
 
 =over
 
@@ -109,7 +122,13 @@ or whichever class is appropriate for that file format.
 
 =item format
 
-The file format being used, as registered by Chemistry::Mol->register_format.
+The name of the file format being used, as registered by
+Chemistry::Mol->register_format.
+
+=item fatal
+
+If true, parsing errors should throw an exception; if false, they should just
+try to recover if possible. True by default.
 
 =back
 
@@ -117,9 +136,10 @@ The file format being used, as registered by Chemistry::Mol->register_format.
 
 The class methods in this class (or rather, its derived classes) are usually
 not called directly. Instead, use Chemistry::Mol->read, write, print, parse,
-and file.
+and file. These methods also work if called as instance methods.
 
-=over 4
+=over
+
 
 =cut
 
@@ -158,7 +178,7 @@ method, so it should be provided by all derived classes.
 =cut
 
 sub parse_string {
-    my ($self, $s, %opts);
+    my ($self, $s, %opts) = @_;
     if ($opts{_must_override}) {
         my $class = ref $self || $self;
         croak "parse_string() is not implemented for $class";
@@ -175,13 +195,13 @@ provided by all derived classes.
 =cut
 
 sub write_string {
-    my ($self, $mol, %opts);
+    my ($self, $mol, %opts) = @_;
     if ($opts{_must_override}) {
         my $class = ref $self || $self;
         croak "write_string() is not implemented for $class";
     }
     my $s;
-    $self->new(file => \$s, opts => \%opts)->write;
+    $self->new(file => \$s, mols => [$mol], opts => \%opts)->write;
     $s;
 }
 
@@ -190,7 +210,7 @@ sub write_string {
 Reads the file $file and returns one or more molecules. The default method
 slurps the whole file and then calls parse_string, but derived classes may
 choose to override it. $file can be a filehandle, a filename, or a scalar
-reference. See l<new>() for details.
+reference. See C<new> for details.
 
 =cut
 
@@ -278,12 +298,18 @@ sub slurp {
 
 =item $class->new(file => $file, opts => \%opts)
 
-Create a new file object. This method is usually called indirectly through
+Create a new file object. This method is usually called indirectly via
 the Chemistry::Mol->file method. $file may be a scalar with a filename, an
 open filehandle, or a reference to a scalar. If a reference to a scalar is 
 used, the string contained in the scalar is used as an in-memory file.
 
 =cut
+
+sub new {
+    my $self = shift->SUPER::new(@_);
+    $self->{opts}{fatal} = 1 unless exists $self->{opts}{fatal};
+    $self;
+}
 
 Chemistry::Obj::accessor(qw(file fh opts mols mode));
 
@@ -291,13 +317,49 @@ Chemistry::Obj::accessor(qw(file fh opts mols mode));
 
 =head1 INSTANCE METHODS
 
-The 
+=head2 Accessors
+
+Chemistry::File objects are derived from Chemistry::Obj and have the same
+properties (name, id, and type), as well as the following ones:
+
+=over
+
+=item file
+
+The "file" as described above under C<new>.
+
+=item fh
+
+The filehandle used for reading and writing molecules. It is opened by C<open>.
+
+=item opts
+
+A hashref containing the options that are passed through to the old-style class
+methods. They are also passed to the instance method to keep a similar
+interface, but they could access them via $self->opts anyway.
+
+=item mode
+
+'>' if the file is open for writing, '<' for reading, and false if not open.
+
+=item mols
+
+C<read> stores all the molecules that were read in this property as an array
+reference. C<write> gets the molecules to write from here.
+
+=back
+
+=head2 Abstract methods
+
+These methods should be overridden, because they don't really do much by
+default.
 
 =over
 
 =item $file->read_header
 
 Read whatever information is available in the file before the first molecule.
+Does nothing by default.
 
 =cut
 
@@ -306,20 +368,104 @@ sub read_header { }
 =item $file->read_footer
 
 Read whatever information is available in the file after the last molecule.
+Does nothing by default.
 
 =cut
 
 sub read_footer { }
 
-=item $self->open($mode) 
+=item $self->slurp_mol($fh)
 
-Opens the file for reading by default, or for writing if $mode eq '>'.
+Reads from the input string until the end of the current molecule and returns
+the "slurped" string. It does not parse the string. It returns undefined if
+there are no more molecules in the file. This method should be overridden if
+needed; by default, it slurps until the end of the file.
+
+=cut
+
+sub slurp_mol {
+    my ($self, $fh) = @_;
+    local $/; <$fh>;
+}
+
+=item $self->skip_mol($fh)
+
+Similar to slurp_mol, but it doesn't need to return anything except true or 
+false. It should also be overridden if needed; by default, it just calls 
+slurp_mol.
+
+=cut
+
+sub skip_mol { shift->slurp_mol(@_) }
+
+=item $file->read_mol($fh, %opts)
+
+Read the next molecule in the input stream. It returns false if there are no
+more molecules in the file. This method should be overridden by derived
+classes; otherwise it will call slurp_mol and parse_string (for backwards
+compatibility; it is recommended to override read_mol directly in new modules).
+
+Note: some old file I/O modules (written before the 0.30 interface) may return
+more than one molecule anyway, so it is recommended to call read_mol in list
+context to be safe:
+
+    ($mol) = $file->read_mol($fh, %opts);
+
+=cut
+
+sub read_mol {
+    my ($self, $fh, %opts) = @_;
+    my $s = $self->slurp_mol($fh);
+    return unless defined $s and length $s;
+    $self->parse_string($s, %opts, _must_override => 1);
+}
+=item $file->write_header
+
+Write whatever information is needed before the first molecule.
+Does nothing by default.
 
 =cut
 
 sub write_header { }
+
+=item $file->write_footer
+
+Write whatever information is needed after the last molecule.
+Does nothing by default.
+
+=cut
+
 sub write_footer { }
 
+=item $self->write_mol($fh, $mol, %opts)
+
+Write one molecule to $fh. By default and for backward compatibility, it just
+calls C<write_string> and prints its return value to $self->fh. New classes
+should override it.
+
+=cut
+
+sub write_mol {
+    my ($self, $fh, $mol, %opts) = @_;
+    print $fh $self->write_string($mol, %opts, _must_override => 1);
+}
+
+########################## OTHER ##################################
+
+=back
+
+=head2 Other methods
+
+=over 
+
+=item $self->open($mode) 
+
+Opens the file (held in $self->file) for reading by default, or for writing if
+$mode eq '>'. This method sets $self->fh transparently regardless of whether
+$self->file is a filename (compressed or not), a scalar reference, or a
+filehandle.
+
+=cut
 
 sub open {
     my ($self, $mode) = @_;
@@ -328,6 +474,7 @@ sub open {
     $mode ||= '<';
     $self->mode($mode);
     my $file = $self->file;
+    croak "Chemistry::File::open: no file supplied" unless defined $file;
     if (ref $file eq 'SCALAR') {
         croak "decompression only supported for files" if $self->{opts}{gzip};
         require IO::String;
@@ -346,14 +493,14 @@ sub open {
         $self->{opts}{gzip} ||= 1;
         unless ($mode eq '>') { 
             my $gz = Compress::Zlib::gzopen($file, "rb") 
-                 or die "Cannot open compressed $file: "
+                 or croak "Cannot open compressed $file: "
                      . "$Compress::Zlib::gzerrno\n";
 
             my $buffer;
             print $fh $buffer while $gz->gzread($buffer) > 0;
         
             if ($Compress::Zlib::gzerrno != Compress::Zlib::Z_STREAM_END()) {
-                die "Error reading from $file: $Compress::Zlib::gzerrno"
+                croak "Error reading from $file: $Compress::Zlib::gzerrno"
                     . ($Compress::Zlib::gzerrno+0) . "\n";
             }
             $gz->gzclose();
@@ -367,6 +514,15 @@ sub open {
     $self;
 }
 
+=item $self->close
+
+Close the file. For regular files this just closes the filehandle, but for
+gzipped files it does some additional postprocessing. This method is called
+automatically on object destruction, so it is not mandatory to call it
+explicitly.
+
+=cut
+
 sub close {
     my ($self) = @_;
     my $fh = $self->fh;
@@ -379,57 +535,28 @@ sub close {
         } else {
             seek $fh, 0, 0;
             my $gz = Compress::Zlib::gzopen($file, "wb$level")
-                or die "Cannot open stdout: $Compress::Zlib::gzerrno\n";
+                or croak "Cannot open $file $Compress::Zlib::gzerrno\n";
             local $_;
             while (<$fh>) {
                 $gz->gzwrite($_) 
-                    or die "error writing: $Compress::Zlib::gzerrno\n";
+                    or croak "error writing: $Compress::Zlib::gzerrno\n";
             }
             $gz->gzclose;
         }
     }
     if ($self->mode) {
-        if ($fh) { $fh->close or die "$!" };
+        if ($fh) { $fh->close or croak "$!" };
         $self->mode('');
     }
 }
 
 sub DESTROY { shift->close }
 
-=item $self->slurp_mol
-
-Reads from the input string until the end of the current molecule and returns
-the "slurped" string. It does not parse the string. It returns false if there
-are no more molecules in the file.
-
-=cut
-
-sub slurp_mol {
-    my ($self, $fh) = @_;
-    local $/; <$fh>;
-}
-
-sub skip_mol { shift->slurp_mol(@_) }
-
-=item $file->read_mol($fh, %opts)
-
-Read the next molecule in the input stream. It returns false if there
-are no more molecules in the file. These method should be overridden by
-derived classes; otherwise it will call slurp_mol and parse_string.
-
-=cut
-
-sub read_mol {
-    my ($self, $fh, %opts) = @_;
-    my $s = $self->slurp_mol($fh);
-    return unless defined $s and length $s;
-    $self->parse_string($s, %opts, _must_override => 1);
-}
-
 =item $file->read
 
-Read the file. This calls read_header, read_mol until there are no more
-molecules left, and finally read_footer.
+Read the whole file. This calls open, read_header, read_mol until there are no
+more molecules left, read_footer, and close. Returns a list of molecules if
+called in list context, or the first molecule in scalar context.
 
 =cut
 
@@ -437,20 +564,22 @@ sub read {
     my ($self) = @_;
     $self->open('<');
     $self->read_header;
-    my @mols;
-    while (my $mol = $self->read_mol($self->fh, %{$self->{opts}})) {
-        push @mols, $mol;
+    my @all_mols;
+    while (my @mols = $self->read_mol($self->fh, %{$self->{opts}})) {
+        push @all_mols, @mols;
     }
     $self->read_footer;
     $self->close;
-    $self->mols(\@mols);
-    wantarray ? @mols : $mols[0];
+    $self->mols(\@all_mols);
+    wantarray ? @all_mols : $all_mols[0];
 }
 
-sub write_mol {
-    my ($self, $fh, $mol, %opts) = @_;
-    print $fh $self->write_string($mol, %opts, _must_override => 1);
-}
+=item $self->write
+
+Write all the molecules in $self->mols. It just calls open, write_header, 
+write_mol (per each molecule), write_footer, and close.
+
+=cut
 
 sub write {
     my ($self) = @_;
@@ -488,8 +617,8 @@ Ivan Tubert-Brohman-Brohman <itub@cpan.org>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2004 Ivan Tubert-Brohman. All rights reserved. This program is free
-software; you can redistribute it and/or modify it under the same terms as
+Copyright (c) 2004 Ivan Tubert-Brohman. All rights reserved. This program is
+free software; you can redistribute it and/or modify it under the same terms as
 Perl itself.
 
 =cut

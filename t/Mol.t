@@ -29,6 +29,7 @@ my $atom3;
 ok($atom3 = $mol->new_atom(symbol => "N"), '$mol->new_atom');
 
 
+# mass
 $mol = Chemistry::Mol->new;
 $mol->new_atom(symbol => 'O');
 $mol->new_atom(symbol => 'H');
@@ -36,6 +37,16 @@ $mol->new_atom(symbol => 'H');
 ok(abs($mol->mass - 18.01528) < 0.0001, '$mol->mass');
 $mol->atoms(1)->mass(18); 
 ok(abs($mol->mass - 20.015) < 0.01, '$mol->mass');
+
+# sprout_hydrogens
+$mol = Chemistry::Mol->new;
+$mol->new_atom(symbol => 'O', implicit_hydrogens => 2);
+is( 0+$mol->atoms,      1,      'before sprout_hydrogens' );
+$mol->sprout_hydrogens;
+is( 0+$mol->atoms,      3,      'after sprout_hydrogens' );
+$mol->collapse_hydrogens;
+is( 0+$mol->atoms,      1,      'before sprout_hydrogens' );
+
 
 # Bond methods
 is($bond->length, 5, '$bond->length');

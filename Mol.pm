@@ -832,6 +832,19 @@ sub _paint {
     }
 }
 
+
+sub sprout_hydrogens {
+    my ($self) = @_;
+    $_->sprout_hydrogens for $self->atoms;
+}
+
+sub collapse_hydrogens {
+    my ($self) = @_;
+    for my $atom (grep { $_->symbol ne 'H' } $self->atoms) {
+        $atom->collapse_hydrogens;
+    }
+}
+
 1;
 
 =back
