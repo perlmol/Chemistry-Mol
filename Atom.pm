@@ -42,9 +42,17 @@ any parameters. To set the value, use $mol->method($new_value).
 use 5.006001;
 use strict;
 use Scalar::Util 'weaken';
-use Math::VectorReal;
+use Math::VectorReal qw(O vector);
+use Math::Trig;
 use Carp;
-use base qw(Chemistry::Obj);
+use base qw(Chemistry::Obj Exporter);
+
+our @EXPORT_OK = qw(distance angle dihedral);
+our @EXPORT = ();
+our %EXPORT_TAGS = (
+      all  => [@EXPORT, @EXPORT_OK],
+);
+
 
 use vars qw(@ELEMENTS %ELEMENTS);
 
@@ -284,18 +292,19 @@ sub bonds {
     @ret;
 }
 
-=item $atom->distance($obj)
+=item ($distance, $closest_atom) = $atom->distance($obj)
 
 Returns the minimum distance to $obj, which can be an atom, a molecule, or a
-vector.
+vector. In scalar context it returns only the distance; in list context it
+also returns the closest atom found.
 
 =cut
 
-# I'm considering making it return ($length, $closest_obj) if wantarray().
 sub distance {
     my $self = shift;
     my $obj = shift;
     my $min_length;
+    my $closest_atom = $obj;
 
     if ($obj->isa('Chemistry::Atom')) {
         my $v = $self->coords - $obj->coords;
@@ -307,14 +316,60 @@ sub distance {
         my @atoms = $obj->atoms;
         my $a = shift @atoms or return undef; # ensure there's at least 1 atom
         $min_length = $self->distance($a);
+        $closest_atom = $a;
         for $a (@atoms) {
             my $l = $self->distance($a);
-            $min_length = $l if $l < $min_length;
+            $min_length = $l, $closest_atom = $a if $l < $min_length;
         }
     } else {
         croak "atom->distance() undefined for objects of type '", ref $obj,"'";
     }
-    $min_length;
+    wantarray ? ($min_length, $closest_atom) : $min_length;
+}
+
+=item $atom->angle($atom2, $atom3)
+
+Returns the angle in radians between the atoms involved. $atom2 is the atom in
+the middle. Can also be called as Chemistry::Atom::angle($atom1, $atom2, $atom3);
+
+=cut
+
+# $a2 is the one in the center
+sub angle {
+    @_ == 3 or croak "Chemistry::Atom::angle requires three atoms!\n";
+    my @c;
+    for my $a (@_) { # extract coordinates
+        push @c, $a->isa("Chemistry::Atom") ? $a->coords :
+            $a->isa("Math::VectorReal") ? $a : 
+                croak "angle: $a is neither an atom nor a vector!\n";
+    }
+    my $v1 = $c[0] - $c[1];
+    my $v2 = $c[2] - $c[1];
+    acos(($v1 . $v2) / ($v1->length * $v2->length));
+}
+
+=item $atom->angle($atom2, $atom3)
+
+Returns the angle in radians between the atoms involved. $atom2 is the atom in
+the middle. Can also be called as Chemistry::Atom::angle($atom1, $atom2, $atom3);
+
+=cut
+
+sub dihedral {
+    @_ == 4 or croak "Chemistry::Atom::dihedral requires three atoms!\n";
+    my @c;
+    for my $a (@_) { # extract coordinates
+        push @c, $a->isa("Chemistry::Atom") ? $a->coords :
+            $a->isa("Math::VectorReal") ? $a : 
+                croak "angle: $a is neither an atom nor a vector!\n";
+    }
+    my $v1 = $c[0] - $c[1];
+    my $v2 = $c[2] - $c[1];
+    my $v3 = $c[3] - $c[2];
+    my $x1 = $v1 x $v2;
+    my $x2 = $v3 x $v2;
+    my $abs_dih = angle($x1, O(), $x2);
+    $v1 . $v3 > 0 ? $abs_dih : -$abs_dih;
 }
 
 =item $atom->print

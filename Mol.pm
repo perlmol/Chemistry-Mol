@@ -37,7 +37,14 @@ use strict;
 use Chemistry::Atom;
 use Chemistry::Bond;
 use Carp;
-use base qw(Chemistry::Obj);
+use base qw(Chemistry::Obj Exporter);
+
+our @EXPORT_OK = qw(read_mol);
+our @EXPORT = ();
+our %EXPORT_TAGS = (
+      all  => [@EXPORT, @EXPORT_OK],
+);
+
 
 
 my %FILE_FORMATS = ();
@@ -349,7 +356,7 @@ be registered using register_type(); modules that include readers
 
 sub read_mol { # for backwards compatibility
     my ($fname, $type) = shift;
-    Chemistry::Mol->read($fname, format => $type);
+    __PACKAGE__->read($fname, format => $type);
 }
 
 sub read {
