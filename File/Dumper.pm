@@ -67,8 +67,9 @@ There are no special options for reading.
 sub write_mol {
     my ($self, $fh, $mol, %opts) = @_;
     my $d = Data::Dumper->new([$mol],['$mol']);
+    # sort the keys if this version of Data::Dumper supports it
+    $d->Sortkeys(1) if $d->can('Sortkeys'); 
     print $fh $d
-        ->Sortkeys(1)
         ->Indent(exists $opts{dumper_indent} ? $opts{dumper_indent} : 1)
         ->Purity(exists $opts{dumper_purity} ? $opts{dumper_purity} : 1)
         ->Dump;
