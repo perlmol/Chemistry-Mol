@@ -20,7 +20,7 @@ isa_ok( $atom, 'Chemistry::Obj',  'blank atom' );
 # symbol
 $atom = Chemistry::Atom->new(symbol => 'C');
 is( $atom->symbol, 'C', 'symbol -> symbol' );
-is( $atom->Z,       6,  'symol -> Z' );
+is( $atom->Z,       6,  'symbol -> Z' );
 
 # Z
 $atom->Z(8);
@@ -102,5 +102,18 @@ is( $atom->distance($v1),       5,  'distance(vector)' );
 is( $atom->sprintf("%s"),       'O', 'sprintf - %s' );
 is( $atom->sprintf("%Z"),       8,   'sprintf - %Z' );
 is( $atom2->sprintf("%x,%y,%z"), '3,0,4',   'sprintf - %x,%y,%z' );
+
+# mass_number
+$atom = Chemistry::Atom->new(Z => 1);
+ok( abs($atom->mass-1.008)<0.001, '1H mass');
+$atom->mass_number(2);
+is( $atom->mass_number,     2,      '2H mass number' );
+
+my $got_m2H = $atom->mass;
+my $m_2H = $INC{'Chemistry/Isotope.pm'} ? 2.014 : 2;
+ok( abs($got_m2H - $m_2H)<0.001,   '2H mass' )
+    or diag(sprintf "expected %s, got %s", $m_2H, $atom->mass);
+$atom->mass_number(10);
+is( $atom->mass,     10,             '10H mass' );
 
 

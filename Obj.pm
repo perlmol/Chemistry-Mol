@@ -47,7 +47,13 @@ used for bond orders and atom types.
 
 A space where the user can store any kind of information about the object.  The
 accessor method for attr expects the attribute name as the first parameter, and
-(optionally) the new value as the second parameter.
+(optionally) the new value as the second parameter. It can also take a hash or
+hashref with several attributes. Examples:
+
+    $color = $obj->attr('color');
+    $obj->attr(color => 'red');
+    $obj->attr(color => 'red', flavor => 'cherry');
+    $obj->attr({color => 'red', flavor => 'cherry'});
 
 =cut
 
@@ -121,7 +127,15 @@ sub reset_id { $N = 0; }
 =item $class->new(name => value, name => value...) 
 
 Generic object constructor. It will automatically call each "name" method with
-the parameter "value".
+the parameter "value". For example,
+
+    $bob = Chemistry::Obj->new(name => 'bob', attr => {size => 42});
+
+is equivalent to
+
+    $bob = Chemistry::Obj->new;
+    $bob->name('bob');
+    $bob->attr({size => 42});
 
 =cut
 
@@ -157,10 +171,10 @@ use overload
 
 =item ""
 
-The stringification operator. Stringify an object as its id. For example,
-If an object $obj has the id 'a1', print "$obj" will print 'a1' instead of
-something like 'Chemistry::Obj=HASH(0x810bbdc)'. If you really want to get 
-the latter, you can call overload::StrVal($obj).
+The stringification operator. Stringify an object as its id. For example, If an
+object $obj has the id 'a1', print "$obj" will print 'a1' instead of something
+like 'Chemistry::Obj=HASH(0x810bbdc)'. If you really want to get the latter,
+you can call C<overload::StrVal($obj)>. See L<overload> for details.
 
 =cut
 
@@ -221,8 +235,8 @@ Ivan Tubert-Brohman E<lt>itub@cpan.orgE<gt>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2004 Ivan Tubert-Brohman. All rights reserved. This program is free
-software; you can redistribute it and/or modify it under the same terms as
+Copyright (c) 2004 Ivan Tubert-Brohman. All rights reserved. This program is
+free software; you can redistribute it and/or modify it under the same terms as
 Perl itself.
 
 =cut

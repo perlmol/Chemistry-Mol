@@ -292,8 +292,8 @@ Indices start from one, not from zero.
 
 sub atoms {
     my $self = shift;
-    my @ats = map {$_ - 1} @_;
-    if (@ats) {
+    if (@_) {
+        my @ats = map {$_ - 1} @_;
         @{$self->{atoms}}[@ats];
     } else {
         @{$self->{atoms}};
@@ -351,8 +351,8 @@ Indices start from one, not from zero.
 
 sub bonds {
     my $self = shift;
-    my @bonds = map {$_ - 1} @_;
-    if (@bonds) {
+    if (@_) {
+        my @bonds = map {$_ - 1} @_;
         @{$self->{bonds}}[@bonds];
     } else {
         @{$self->{bonds}};

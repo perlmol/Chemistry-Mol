@@ -10,13 +10,22 @@ Chemistry::Bond - Chemical bonds as objects in molecules
 
     use Chemistry::Bond;
 
-    my $bond = new Chemistry::Bond(
+    # assuming we have molecule $mol with atoms $a1 and $a2
+    $bond = Chemistry::Bond->new(
         id => "b1", 
         type => '=', 
         atoms => [$a1, $a2]
         order => '2',
     );
-    print $bond->print;
+    $mol->add_bond($bond);
+
+    # simpler way of doing the same:
+    $mol->new_bond(
+        id => "b1", 
+        type => '=', 
+        atoms => [$a1, $a2]
+        order => '2',
+    );
 
 =head1 DESCRIPTION
 
@@ -142,10 +151,11 @@ EOF
 
 =item $bond->atoms()
 
-If called with no parameters, return a list of atoms in the bond.
-If called with a list (or a reference to an array) of atom objects,
-define the atoms in the bond and call $atom->add_bond for each atom
-in the list.
+If called with no parameters, return a list of atoms in the bond.  If called
+with a list (or a reference to an array) of atom objects, define the atoms in
+the bond and call $atom->add_bond for each atom in the list. Note: changing the
+atoms in a bond may have strange side effects; it is safer to treat bonds as
+immutable except with respect to properties such as name and type.
 
 =cut
 

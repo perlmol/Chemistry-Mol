@@ -215,7 +215,8 @@ sub mass {
             return $self->{mass};
         } elsif (defined $self->{mass_number}) {
             if (eval { require Chemistry::Isotope } and 
-                my $m = Chemistry::Isotope::isotope_mass($self->{mass_number})
+                my $m = Chemistry::Isotope::isotope_mass(
+                    $self->{mass_number}, $self->{Z})
             ) {
                 return $m;
             } else {
@@ -235,9 +236,7 @@ on the natural occuring isotope distribution).
 
 =cut
 
-sub mass_number {
-
-}
+Chemistry::Obj::accessor('mass_number');
 
 =item $atom->coords
 
