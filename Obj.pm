@@ -68,7 +68,7 @@ sub del_attr {
 
 use overload 
     '""' => "stringify",
-    '<=>' => "spaceship";
+    'cmp' => "obj_cmp";
 
 # A generic class attribute set/get method generator
 sub accessor {
@@ -103,7 +103,7 @@ sub stringify {
     $self->id;
 }
 
-sub spaceship {
+sub obj_cmp {
     my ($a, $b) = @_;
     return $a->{id} cmp $b->{id};
 }

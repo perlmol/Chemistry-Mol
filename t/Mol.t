@@ -20,12 +20,12 @@ isa_ok($bond, 'Chemistry::Obj', '$bond');
 # Mol methods
 $mol->add_atom($atom, $atom2);
 is(scalar $mol->atoms, 2, '$mol->atoms');
-ok($mol->atoms(1) == $atom, '$mol->atoms(1) == $atom');
-ok($mol->by_id('xyz') == $atom2, '$mol->by_id');
-ok($mol->atoms_by_name('carbon') == $atom, '$mol->atoms_by_name');
+ok($mol->atoms(1) eq $atom, '$mol->atoms(1) eq $atom');
+ok($mol->by_id('xyz') eq $atom2, '$mol->by_id');
+ok($mol->atoms_by_name('carbon') eq $atom, '$mol->atoms_by_name');
 $mol->add_bond($bond);
 is(scalar $mol->bonds, 1, '$mol->bonds');
-ok($mol->bonds(1) == $bond, '$mol->bonds(1) == $bond');
+ok($mol->bonds(1) eq $bond, '$mol->bonds(1) eq $bond');
 my $atom3;
 ok($atom3 = $mol->new_atom(symbol => "N"), '$mol->new_atom');
 

@@ -176,7 +176,7 @@ sub add_bond {
     my $b = shift;
 
     for my $a (@{$b->{atoms}}){ #for each atom...
-        push @{$self->{bonds}}, {to=>$a, bond=>$b} if $a != $self;
+        push @{$self->{bonds}}, {to=>$a, bond=>$b} if $a ne $self;
     }
 }
 
@@ -193,7 +193,7 @@ sub neighbors {
     my @ret = ();
 
     for my $b (@{$self->{bonds}}) {
-	push @ret, $b->{to} unless $from && $b->{to} == $from;
+	push @ret, $b->{to} unless $from && $b->{to} eq $from;
     }
     @ret;
 }
@@ -211,7 +211,7 @@ sub bonds {
     my @ret = ();
 
     for my $b (@{$self->{bonds}}) {
-	push @ret, $b->{bond} unless $from && $b->{to} == $from;
+	push @ret, $b->{bond} unless $from && $b->{to} ne $from;
     }
     @ret;
 }
