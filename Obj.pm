@@ -56,6 +56,12 @@ sub attr {
     $self;
 }
 
+sub del_attr {
+    my $self = shift;
+    my $attr = shift;
+    delete $self->{attr}{$attr};
+}
+
 =back
 
 =cut

@@ -66,6 +66,11 @@ sub nextID {
     "b".++$N; 
 }
 
+sub reset_id {
+    $N = 0; 
+}
+
+
 =item $bond->order()
 
 Sets or gets the bond order.

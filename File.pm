@@ -105,9 +105,9 @@ sub import {
         for (@_){
             if ($_ eq ':auto') {
                 my ($dir) = $INC{"Chemistry/File.pm"} =~ m|^.*/|g;
-                for my $pm (glob "$dir/File/*.pm") {
-                    #my ($pm) = $pmfile =~ m|Chemistry/File/.*\.pm|g;
-                    require $pm;
+                for my $pmfile (glob "${dir}File/*.pm") {
+                    my ($pm) = $pmfile =~ m|Chemistry/File/(.*)\.pm|g;
+                    eval "use ${pack}::$pm"; die "$@" if $@;
                 }
             } else {
                 eval "use ${pack}::$_";

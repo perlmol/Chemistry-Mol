@@ -99,6 +99,10 @@ sub nextID {
     "a".++$N; 
 }
 
+sub reset_id {
+    $N = 0; 
+}
+
 
 =item $atom->Z($new_Z)
 

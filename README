@@ -15,11 +15,14 @@ CHANGES SINCE VERSION 0.05
 - New methods for Chemistry::Mol: atoms, bonds, by_id, atoms_by_name
 - New methods for Chemistry::Atom: distance
 - New subroutines for Chemistry::Mol: read_mol, register_type
+- New class method for Mol, Atom, and Bond: reset_id
 
 INCOMPATIBLE CHANGES SINCE VERSION 0.06
 
 - Changed File I/O API. It should be more stable now, but it's certainly not
 frozen yet.
+- Chemistry::Mol->atoms() and bonds() now use 1-based indexing instead of
+zero-based.
 
 
 INSTALLATION

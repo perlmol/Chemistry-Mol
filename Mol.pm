@@ -80,6 +80,10 @@ sub nextID {
     "mol".++$N; 
 }
 
+sub reset_id {
+    $N = 0; 
+}
+
 =item $mol->add_atom($atom, ...)
 
 Add one or more Atom objects to the molecule. Returns the last atom added.
@@ -288,11 +292,11 @@ sub read {
     if ($opts{format}) {
         return $self->formats($opts{format})->parse_file($fname, %opts);
     } else { # guess format
-	for my $type ($self->formats) {
+        for my $type ($self->formats) {
             if ($self->formats($type)->file_is($fname)) {
                 return $self->formats($type)->parse_file($fname, %opts);
-	    }
-	}
+            }
+        }
     }
     croak "Couldn't guess format of file '$fname'";
 }

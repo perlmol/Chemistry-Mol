@@ -8,6 +8,5 @@ Mol.pm
 Obj.pm
 README
 Tutorial.pod
-t/1.t
 t/Mol.t
 t/pod.t

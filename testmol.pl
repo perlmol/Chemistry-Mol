@@ -20,8 +20,15 @@ $mol->attr('mp',333);
 $mol->attr('mdl:dim',2);
 $a2->attr('am1:charge', -0.23);
 $b1->attr('am1:order', 0.987);
-#print $mol->print;
 print "a mol:'$mol'\n";
+
+print $a2->print;
+$a2->attr('am1:charge', -0.55);
+print $a2->print;
+$a2->del_attr('am1:charge');
+print $a2->print;
+
+#print $mol->print;
 #print $mol->attr('mp');
 #print Dumper($mol);
 
