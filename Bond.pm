@@ -81,7 +81,7 @@ Sets or gets the bond order.
 
 Chemistry::Obj::accessor('order');
 
-=item $bond->length()
+=item $bond->length
 
 Returns the length of the bond, i.e., the distance between the two atom
 objects in the bond. Returns zero if the bond does not have exactly two atoms.
@@ -223,8 +223,8 @@ Ivan Tubert-Brohman E<lt>itub@cpan.orgE<gt>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2004 Ivan Tubert-Brohman. All rights reserved. This program is free
-software; you can redistribute it and/or modify it under the same terms as
+Copyright (c) 2004 Ivan Tubert-Brohman. All rights reserved. This program is
+free software; you can redistribute it and/or modify it under the same terms as
 Perl itself.
 
 =cut

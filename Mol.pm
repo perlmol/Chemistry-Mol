@@ -822,6 +822,9 @@ sub separate {
     @mols;
 }
 
+# this method fills the _paint_tab attribute for every atom connected
+# to the given start atom $atom with $color. Used for separating
+# connected fragments. Uses a depth-first search
 sub _paint {
     my ($self, $atom, $color) = @_;
     return if $self->{_paint_tab}{$atom->id} eq $color;
@@ -832,11 +835,25 @@ sub _paint {
     }
 }
 
+=item $mol->sprout_hydrogens
+
+Convert all the implicit hydrogen atoms in the molecule to explicit atoms.
+It does B<not> generate coordinates for the atoms.
+
+=cut
 
 sub sprout_hydrogens {
     my ($self) = @_;
     $_->sprout_hydrogens for $self->atoms;
 }
+
+=item $mol->collapse_hydrogens
+
+Convert all the explicit hydrogen atoms in the molecule to implicit hydrogens.
+(Exception: hydrogen atoms that are adjacent to a hydrogen atom are not
+collapsed.)
+
+=cut
 
 sub collapse_hydrogens {
     my ($self) = @_;
@@ -866,8 +883,8 @@ Ivan Tubert-Brohman E<lt>itub@cpan.orgE<gt>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2004 Ivan Tubert-Brohman. All rights reserved. This program is free
-software; you can redistribute it and/or modify it under the same terms as
+Copyright (c) 2004 Ivan Tubert-Brohman. All rights reserved. This program is
+free software; you can redistribute it and/or modify it under the same terms as
 Perl itself.
 
 =cut

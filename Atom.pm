@@ -334,6 +334,13 @@ sub total_hydrogens {
     $self->hydrogens + grep { $_->symbol eq 'H' } $self->neighbors;
 }
 
+=item $atom->sprout_hydrogens
+
+Convert all the implicit hydrogens for this atom to explicit hydrogens. Note:
+it does B<not> generate coordinates for the new atoms.
+
+=cut
+
 sub sprout_hydrogens {
     my ($self) = @_;
     for (1 .. $self->implicit_hydrogens) {
@@ -342,6 +349,13 @@ sub sprout_hydrogens {
     }
     $self->implicit_hydrogens(0);
 }
+
+=item $atom->collapse_hydrogens
+
+Delete neighboring hydrogen atoms and add them as implicit hydrogens for this
+atom.
+
+=cut
 
 sub collapse_hydrogens {
     my ($self) = @_;
@@ -379,7 +393,8 @@ sub valence {
 
 =item $atom->explicit_valence
 
-Like c<valence>, but excluding implicit hydrogen atoms.
+Like C<valence>, but excluding implicit hydrogen atoms. To get the raw number
+of bonds, without counting bond orders, call $atom->bonds in scalar context.
 
 =cut
 
@@ -435,6 +450,7 @@ sub delete {
     $self->{parent}->delete_atom($self);
 }
 
+# This method is undocumented, but will probably be public
 sub parent {
     my $self = shift;
     if (@_) {
@@ -693,7 +709,7 @@ sub sprintf {
 =item $atom->printf($format)
 
 Same as $atom->sprintf, but prints to standard output automatically. Used
-for quick and dirty molecular information dumping.
+for quick and dirty atomic information dumping.
 
 =cut
 
@@ -713,7 +729,8 @@ sub printf {
 =head1 SEE ALSO
 
 L<Chemistry::Mol>, L<Chemistry::Bond>, 
-L<Math::VectorReal>, L<Chemistry::Tutorial>
+L<Math::VectorReal>, L<Chemistry::Tutorial>,
+L<Chemistry::InternalCoords>
 
 The PerlMol website L<http://www.perlmol.org/>
 
@@ -723,8 +740,8 @@ Ivan Tubert-Brohman E<lt>itub@cpan.orgE<gt>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2004 Ivan Tubert-Brohman. All rights reserved. This program is free
-software; you can redistribute it and/or modify it under the same terms as
+Copyright (c) 2004 Ivan Tubert-Brohman. All rights reserved. This program is
+free software; you can redistribute it and/or modify it under the same terms as
 Perl itself.
 
 =cut
