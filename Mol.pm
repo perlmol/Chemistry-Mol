@@ -187,20 +187,6 @@ sub atoms_by_name {
     wantarray ? @ret : $ret[0];
 }
 
-=for comment
-sub select_atoms {
-    my $self = shift;
-    my %opts = @_;
-    my @a = $self->atoms;
-    for my $opt (keys %opts) {
-        my $re = qr/^$opts{$opt}$/;
-        @a = grep {$_->$opt =~ $re} @a;
-    }
-    @a;
-}
-
-=cut
-
 =item $mol->bonds($n1, ...)
 
 Returns the bonds with the given indices, or all by default.
@@ -365,6 +351,54 @@ sub formats {
     } else {
         return sort keys %FILE_FORMATS;
     }
+}
+
+=item $mol->mass
+
+Return the molar mass.
+
+=cut
+
+sub mass {
+    my ($self) = @_;
+    my $mass = 0;
+    for my $atom ($self->atoms) {
+        $mass += $atom->mass;
+    }
+    $mass;
+}
+
+=item $mol->formula_hash
+
+Returns a hash reference describing the molecular formula. For methane it would
+return { C => 1, H => 4 }.
+
+=cut
+
+sub formula_hash {
+    my ($self) = @_;
+    my $formula = {};
+    for my $atom ($self->atoms) {
+        $formula->{$atom->symbol}++;
+    }
+    $formula;
+}
+
+=item $mol->formula
+
+Returns a string with the formula.
+
+=cut
+
+sub formula {
+    my ($self) = @_;
+    my $formula = "";
+    my $fh = $self->formula_hash;
+    for my $sym (sort keys %$fh) {
+        $formula .= $sym;
+        $formula .= $fh->{$sym} if $fh->{$sym} > 1;
+    }
+    $formula;
 }
 
 1;

@@ -1,6 +1,10 @@
 Revision history for Perl extension Chemistry::Mol.
 
-0.10  Oct 31?
+0.??  
+        - New methods for Chemistry::Mol: mass, formula, formula_hash
+        - New methods for Chemistry::Atom: mass
+
+0.10  Mon Nov 03 2003
         - New methods for Chemistry::Mol: atoms, bonds, by_id, atoms_by_name
         - New methods for Chemistry::Atom: distance
         - New methods for Chemistry::Obj: del_attr
@@ -15,7 +19,7 @@ Revision history for Perl extension Chemistry::Mol.
               overloading behavior was undocumented, so it shouldn't cause a
               problem.
 
-0.06  Fri Sep 26
+0.06  Fri Sep 26 2003
         - New methods for Chemistry::Mol
             - atoms()
             - bonds()
