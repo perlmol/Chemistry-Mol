@@ -38,6 +38,7 @@ use Chemistry::Atom;
 use Chemistry::Bond;
 use Carp;
 use base qw(Chemistry::Obj Exporter);
+use Storable 'dclone';
 
 our @EXPORT_OK = qw(read_mol);
 our @EXPORT = ();
@@ -493,6 +494,12 @@ sub formula {
 }
 
 1;
+
+sub clone {
+    my ($self) = @_;
+    my $clone = dclone $self;
+   
+}
 
 =back
 

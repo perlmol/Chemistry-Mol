@@ -162,6 +162,13 @@ sub obj_cmp {
 
 accessor(qw(id name type));
 
+sub use {
+    my ($pack, $module, @args) = @_;
+    $pack = ref $pack || $pack;
+    my $args = @args ? "(@args)" : '';
+    eval "package $pack; use $module $args";
+}
+
 1;
 
 =head1 SEE ALSO

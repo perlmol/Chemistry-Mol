@@ -248,6 +248,14 @@ sub add_bond {
     }
 }
 
+sub _weaken {
+    my $self = shift;
+    for my $b (@{$self->{bonds}}) {
+        weaken($b->{to});
+        weaken($b->{bond});
+    }
+}
+
 # This method is private. Bonds should be deleted from the 
 # mol object. These methods should only be called by 
 # $bond->delete_atoms, which is called by $mol->delete_bond
@@ -369,7 +377,7 @@ sub dihedral {
     my $x1 = $v1 x $v2;
     my $x2 = $v3 x $v2;
     my $abs_dih = angle($x1, O(), $x2);
-    $v1 . $v3 > 0 ? $abs_dih : -$abs_dih;
+    $v1 . $x2 > 0 ? $abs_dih : -$abs_dih;
 }
 
 =item $atom->print

@@ -146,6 +146,13 @@ sub atoms {
     }
 }
 
+sub _weaken {
+    my $self = shift;
+    for my $a (@{$self->{atoms}}) {
+        weaken($a);
+    }
+}
+
 # This method is private and should only be called from $mol->delete_bond
 sub delete_atoms {
     my $self = shift;
