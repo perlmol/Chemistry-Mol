@@ -21,6 +21,7 @@ t/exception.t
 t/File.t
 t/Formula.t
 t/geom.t
+t/graph.t
 t/list.txt
 t/mem.t
 t/mol.pl

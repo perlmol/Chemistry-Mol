@@ -1,5 +1,8 @@
 use Test::More;
 
+# These tests make sure that if the id of e.g. an atom changes, the containing
+# object is notified
+
 #plan 'no_plan';
 plan tests => 5;
 

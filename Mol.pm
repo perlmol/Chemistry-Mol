@@ -787,7 +787,6 @@ with duplicate IDs (for example, if they were cloned).
 =cut
 
 # joins several molecules into one
-# Does not touch the original copy.
 sub combine {
     my ($self, @others) = @_;
     my $mol;
@@ -845,9 +844,9 @@ sub separate {
 # connected fragments. Uses a depth-first search
 sub _paint {
     my ($self, $atom, $color) = @_;
-    return if $self->{_paint_tab}{$atom->id} eq $color;
+    return if defined $self->{_paint_tab}{$atom->id};
     $self->{_paint_tab}{$atom->id} = $color;
-    $self->{_paint_tab}{$_->id} = $color for ($atom->bonds);
+    $self->{_paint_tab}{$_->id}    = $color for ($atom->bonds);
     for my $neighbor ($atom->neighbors) {
         $self->_paint($neighbor, $color);
     }

@@ -1,5 +1,7 @@
 use Test::More;
 
+# Tests for geometry-related methods such as distance, angle, and dihedral
+
 #plan 'no_plan';
 plan tests => 4;
 
