@@ -104,6 +104,20 @@ sub print_attr {
     $ret;
 }
 
+my $N = 0; # atom ID counter
+sub nextID { "obj".++$N; }
+sub reset_id { $N = 0; }
+
+sub new {
+    my $class = shift;
+    my %args = @_;
+    my $self = bless {
+	id => $class->nextID,
+    }, ref $class || $class;
+    $self->$_($args{$_}) for (keys %args);
+    return $self;
+}
+
 =back
 
 =head1 OPERATOR OVERLOADING

@@ -87,6 +87,7 @@ called directly. Instead, use Chemistry::Mol->read, write, print, and parse.
 use strict;
 use Carp;
 use FileHandle;
+use base qw(Chemistry::Obj);
 use warnings;
 
 # This subroutine implements the :auto functionality
@@ -145,8 +146,10 @@ choose to override it. $file can be either a filehandle or a filename.
 sub parse_file {
     my ($self, $file, %opts) = @_;
 
-    my $s = $self->slurp($file, %opts);
-    $self->parse_string($s, %opts);
+    $self->new(file => $file, opts => \%opts)->read;
+
+    #my $s = $self->slurp($file, %opts);
+    #$self->parse_string($s, %opts);
 }
 
 =item $class->write_file($mol, $file, %options)
@@ -260,6 +263,68 @@ sub snort {
     }
     print $fh $s;
     $fh->close or croak "Error closing $file: $!";
+}
+
+Chemistry::Obj::accessor(qw(file fh opts));
+sub read_header { }
+sub read_footer { }
+
+sub open {
+    my ($self, $mode) = @_;
+    my $fh;
+    my $s;
+    $mode ||= '<';
+    my $file = $self->file;
+    if (ref $file eq 'SCALAR') {
+        require IO::String;
+        $fh = IO::String->new($$file);
+    } elsif (ref $file) {
+        $fh = $file;
+    } elsif ($self->{opts}{gzip} 
+        or !defined $self->{opts}{gzip} and $file =~ /.gz$/) 
+    {
+        eval { require IO::Zlib } or croak "IO::Zlib support not installed";
+        $self->{opts}{gzip} ||= 1;
+        $mode = $mode eq '>' ? 'w' : 'r';
+        $fh = IO::Zlib->new($file, $mode.'b') 
+            or croak "Could not open file $file: $!";
+        #print "open gzip($file)\n";
+    } else {
+        $fh = FileHandle->new("$mode$file") 
+            or croak "Could not open file $file: $!";
+    }
+    $self->fh($fh);
+    $self;
+}
+
+sub slurp_mol {
+    my ($self) = @_;
+    my $fh = $self->fh;
+    if ($self->{opts}{gzip}) {
+        join('', <$fh>);
+    } else {
+        local $/; <$fh>;
+    }
+}
+
+
+sub next_mol {
+    my ($self) = @_;
+    my $s = $self->slurp_mol;
+    return unless defined $s and length $s;
+    $self->parse_string($s);
+}
+
+sub read {
+    my ($self) = @_;
+    $self->open('<');
+    $self->read_header;
+    my @mols;
+    while (my $mol = $self->next_mol) {
+        push @mols, $mol;
+    }
+    $self->read_footer;
+    wantarray ? @mols : @mols ? $mols[0] : undef;
 }
 
 

@@ -77,7 +77,7 @@ sub parse_string {
     my ($self, $s, %opts) = @_;
     my $mol;
     eval $s;
-    croak "$@" if $@;
+    confess "$@" if $@;
     $mol->_weaken;
     $mol;
 }

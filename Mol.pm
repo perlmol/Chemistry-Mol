@@ -50,7 +50,6 @@ our %EXPORT_TAGS = (
 
 
 my %FILE_FORMATS = ();
-my $N = 0; # atom ID counter
 
 =head1 METHODS
 
@@ -86,13 +85,9 @@ sub new {
     return $self;
 }
 
-sub nextID {
-    "mol".++$N; 
-}
-
-sub reset_id {
-    $N = 0; 
-}
+my $N = 0; # atom ID counter
+sub nextID { "mol".++$N; }
+sub reset_id { $N = 0; }
 
 =item $mol->add_atom($atom, ...)
 
@@ -476,7 +471,7 @@ sub parse {
         croak "Parse does not support autodetection yet.",
             "Please specify a format.";
     }
-    undef;
+    return;
 }
 
 =item Chemistry::Mol->read($fname, option => value ...)
@@ -694,7 +689,7 @@ sub distance {
     my ($self, $other) = @_;
     if ($other->isa("Chemistry::Mol")) {
         my @atoms = $self->atoms;
-        my $atom = shift @atoms or return undef; # need at least one atom
+        my $atom = shift @atoms or return; # need at least one atom
         my $closest_here = $atom;
         my ($min_length, $closest_there) = $atom->distance($other);
         for $atom (@atoms) {

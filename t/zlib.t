@@ -14,9 +14,9 @@ if ($@) {
 }
 
 my $mol;
-my $na = 8; 
-my $in = 't/mol.pl.gz';
+my $in  = 't/mol.pl.gz';
 my $out = 't/tmp/mol.pl.gz';
+my $na  = 8; # expected number of atoms
 
 ####### read tests
 
