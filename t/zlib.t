@@ -30,6 +30,7 @@ ok($mol->atoms == $na, "has $na atoms");
 
 ####### write tests
 
+mkdir 't/tmp';
 
 $mol->write($out, format => 'dumper', gzip => 1);
 is_gzipped($out);
@@ -39,6 +40,7 @@ $mol->write($out, format => 'dumper');
 is_gzipped($out, "implicit compression on output");
 unlink $out;
 
+rmdir 't/tmp';
 
 sub is_gzipped {
     my ($fname, $comment) = @_;
