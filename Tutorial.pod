@@ -1,6 +1,6 @@
 =head1 NAME
 
-PerlMol Quick Tutorial
+Chemistry::Tutorial - PerlMol Quick Tutorial
 
 =head1 Introduction
 
@@ -289,7 +289,7 @@ know the residue number and atom name.
 
 =head1 VERSION
 
-0.25
+0.26
 
 =head1 SEE ALSO
 

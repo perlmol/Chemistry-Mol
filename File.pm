@@ -1,5 +1,5 @@
 package Chemistry::File;
-$VERSION = '0.25';
+$VERSION = '0.26';
 
 =head1 NAME
 
@@ -237,7 +237,7 @@ Unix and Windows (either Cygwin or Activestate).
 
 =head1 VERSION
 
-0.25
+0.26
 
 =head1 SEE ALSO
 
@@ -247,11 +247,11 @@ The PerlMol website L<http://www.perlmol.org/>
 
 =head1 AUTHOR
 
-Ivan Tubert-Brohman <itub@cpan.org>
+Ivan Tubert-Brohman-Brohman <itub@cpan.org>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2004 Ivan Tubert. All rights reserved. This program is free
+Copyright (c) 2004 Ivan Tubert-Brohman. All rights reserved. This program is free
 software; you can redistribute it and/or modify it under the same terms as
 Perl itself.
 

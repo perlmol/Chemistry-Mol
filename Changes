@@ -1,32 +1,37 @@
 Revision history for Perl extension Chemistry::Mol.
 
-0.25  Wed Jun 30 2004
+0.26  Aug 6 2004
+        - Added %S option to $mol->printf
+        - Atom.pm: added total_hydrogens, implicit_hydrogens, explicit_valence,
+          and deprecated hydrogens.
+
+0.25  Jun 30 2004
         - Fixed Chemistry::File :auto so that it looks in every @INC directory.
         - Added internal coordinates for atoms.
         - Updated the tutorial a little bit.
 
-0.24  Wed Jun 16 2004
+0.24  Jun 16 2004
         - Mol:: _weaken, sort_atoms, atom_class, bond_class
         - Atom:: sprintf, printf, hydrogens, valence
         - Added the Chemistry::File::Dumper module.
 
-0.23  Wed May 19 2004
+0.23  May 19 2004
         - New methods: Mol::printf, sprintf, charge; Atom::aromatic,
           formal_charge; Bond::aromatic
         - Fixed POD bug.
 
-0.22  Mon May 17 2004
+0.22  May 17 2004
         - Fixed bug in bonds($from)
         - Added add_atom_np, add_bond_np, bonds_neighbors
         - Fixed another memory leak
         - Added Atom::formal_charge
 
-0.21  Thu May 13 2004
+0.21  May 13 2004
         - Fixed bug where $/ was undef'ed in a nonlocal way in File.pm.
         - Added formula parser contributed by Brent Gregersen.
         - Added %j and %% formats to Formula.pm.
 
-0.20  Thu May 06 2004
+0.20  May 06 2004
         - Use Scalar::Util::weaken to avoid strong cyclic references
           and ensure garbage collection.
         - New methods for Chemistry::Mol: delete_atom, delete_bond,
@@ -37,12 +42,12 @@ Revision history for Perl extension Chemistry::Mol.
         - Chemistry::Mol can export read_mol
         - Chemistry::Atom can export distance, angle, dihedral
 
-0.11  Sun Feb 22 2004
+0.11  Feb 22 2004
         - New methods for Chemistry::Mol: mass, formula, formula_hash
         - New methods for Chemistry::Atom: mass
         - New module: Chemistry::File::Formula
 
-0.10  Mon Nov 03 2003
+0.10  Nov 03 2003
         - New methods for Chemistry::Atom: distance
         - New methods for Chemistry::Obj: del_attr
         - New subroutines for Chemistry::Mol: read_mol, register_format
@@ -56,13 +61,13 @@ Revision history for Perl extension Chemistry::Mol.
               overloading behavior was undocumented, so it shouldn't cause a
               problem.
 
-0.06  Fri Sep 26 2003
+0.06  Sep 26 2003
         - New methods for Chemistry::Mol
             - atoms()
             - bonds()
             - by_id()
             - atoms_by_name()
 
-0.05  Tue Sep 23 2003
+0.05  Sep 23 2003
 	- First release
 

@@ -1,5 +1,5 @@
 package Chemistry::File::Dumper;
-$VERSION = '0.25';
+$VERSION = '0.26';
 
 require 5.006;
 use strict;
@@ -11,7 +11,7 @@ use Carp;
 
 =head1 NAME
 
-Chemistry::File::Dumper
+Chemistry::File::Dumper - Read and write molecule via Data::Dumper
 
 =head1 SYNOPSIS
 
@@ -96,7 +96,7 @@ sub string_is {
 
 =head1 VERSION
 
-0.25
+0.26
 
 =head1 SEE ALSO
 

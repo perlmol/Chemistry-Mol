@@ -1,6 +1,6 @@
 package Chemistry::Atom;
 
-$VERSION = '0.25';
+$VERSION = '0.26';
 # $Id$
 
 =head1 NAME
@@ -312,9 +312,21 @@ sub formal_charge {
     }
 }
 
-=item $atom->hydrogens($h_count)
+=item $atom->implicit_hydrogens($h_count)
 
 Set or get the number of implicit hydrogen atoms bonded to the atom.
+
+=cut
+
+sub implicit_hydrogens {
+    my ($self) = shift;
+    $self->hydrogens(@_);
+}
+
+=item $atom->hydrogens($h_count)
+
+Set or get the number of implicit hydrogen atoms bonded to the atom
+(DEPRECATED: USE C<implicit_hydrogens> INSTEAD).
 
 =cut
 
@@ -326,6 +338,18 @@ sub hydrogens {
     } else {
         return $self->{hydrogens};
     }
+}
+
+=item $atom->total_hydrogens($h_count)
+
+Set or get the total number of hydrogen atoms bonded to the atom.
+
+=cut
+
+sub total_hydrogens {
+    my ($self) = @_;
+    no warnings 'uninitialized';
+    $self->hydrogens + grep { $_->symbol eq 'H' } $self->neighbors;
 }
 
 =item $atom->aromatic($bool)
@@ -358,6 +382,19 @@ sub valence {
     my $valence = 0;
     $valence += $_->order for $self->bonds;
     $valence += $self->hydrogens || 0;
+    $valence;
+}
+
+=item $atom->valence
+
+Like c<valence>, but excluding implicit hydrogen atoms.
+
+=cut
+
+sub explicit_valence {
+    my ($self) = @_;
+    my $valence = 0;
+    $valence += $_->order for $self->bonds;
     $valence;
 }
 
@@ -683,7 +720,7 @@ sub printf {
 
 =head1 VERSION
 
-0.25
+0.26
 
 =head1 SEE ALSO
 
@@ -694,11 +731,11 @@ The PerlMol website L<http://www.perlmol.org/>
 
 =head1 AUTHOR
 
-Ivan Tubert E<lt>itub@cpan.orgE<gt>
+Ivan Tubert-Brohman E<lt>itub@cpan.orgE<gt>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2004 Ivan Tubert. All rights reserved. This program is free
+Copyright (c) 2004 Ivan Tubert-Brohman. All rights reserved. This program is free
 software; you can redistribute it and/or modify it under the same terms as
 Perl itself.
 

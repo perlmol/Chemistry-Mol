@@ -1,5 +1,5 @@
 package Chemistry::Mol;
-$VERSION = '0.25';
+$VERSION = '0.26';
 # $Id$
 
 =head1 NAME
@@ -148,7 +148,8 @@ sub new_atom {
 =item $mol->delete_atom($atom, ...)
 
 Deletes an atom from the molecule. It automatically deletes all the bonds
-in which the atom participates as well.
+in which the atom participates as well. $atom can be either a Chemistry::Atom
+reference or an atom index.
 
 =cut
 
@@ -404,6 +405,7 @@ a printf-like format.
     %f{formula with format} - (note: right braces within
         the format should be escaped with a backslash)
     %s - SMILES representation
+    %S - canonical SMILES representation
     %m - mass
     %8.3m - mass, formatted as %8.3f with core sprintf
     %q - formal charge
@@ -418,6 +420,9 @@ For example, if you want just about everything:
     $mol->sprintf("%s - %n (%f). %a atoms, %b bonds; "
         . "mass=%m; charge =%q; type=%t; id=%i");
 
+Note that you have to C<use Chemistry::File::SMILES> before using C<%s> or
+C<%S> on C<$mol->sprintf>.
+
 =cut
 
 sub sprintf {
@@ -428,6 +433,7 @@ sub sprintf {
     $format =~ s/(?<!\\)%f\{(.*?)(?<!\\)\}/$mol->formula($1)/eg; # %f{}
     $format =~ s/(?<!\\)%f/$mol->formula/eg;                    # %f
     $format =~ s/(?<!\\)%s/$mol->print(format=>'smiles')/eg;    # %s
+    $format =~ s/(?<!\\)%S/$mol->print(format=>'smiles', unique => 1)/eg;    # %s
     $format =~ s/(?<!\\)%n/$mol->name/eg;                       # %n
     $format =~ s/(?<!\\)%(\d*\.?\d*)m/
         $1 ? sprintf "%$1f", $mol->mass : $mol->mass/eg;        # %m
@@ -777,7 +783,7 @@ sub _paint {
 
 =head1 VERSION
 
-0.25
+0.26
 
 =head1 SEE ALSO
 
@@ -788,11 +794,11 @@ The PerlMol website L<http://www.perlmol.org/>
 
 =head1 AUTHOR
 
-Ivan Tubert E<lt>itub@cpan.orgE<gt>
+Ivan Tubert-Brohman E<lt>itub@cpan.orgE<gt>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2004 Ivan Tubert. All rights reserved. This program is free
+Copyright (c) 2004 Ivan Tubert-Brohman. All rights reserved. This program is free
 software; you can redistribute it and/or modify it under the same terms as
 Perl itself.
 

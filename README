@@ -1,4 +1,4 @@
-Chemistry/Mol version 0.24
+Chemistry/Mol version 0.26
 ==========================
 
 This toolkit includes basic objects and methods to describe molecules. It
@@ -6,10 +6,10 @@ consists of several modules: Chemistry::Mol, Chemistry::Atom, Chemistry::Bond,
 and Chemistry::File. These are the core modules of the PerlMol toolkit;
 see http://www.perlmol.org/.
 
-CHANGES SINCE VERSION 0.23
-        - Mol:: _weaken, sort_atoms, atom_class, bond_class
-        - Atom:: sprintf, printf, hydrogens
-        - Added the Chemistry::File::Dumper module.
+CHANGES SINCE VERSION 0.25
+        - Added %S option to $mol->printf
+        - Atom.pm: added total_hydrogens, implicit_hydrogens, explicit_valence,
+          and deprecated hydrogens.
 
 INSTALLATION
 
@@ -29,7 +29,7 @@ This module requires these other modules and libraries:
 
 COPYRIGHT AND LICENSE
 
-Copyright (C) 2004 Ivan Tubert <itub@cpan.org>
+Copyright (C) 2004 Ivan Tubert-Brohman <itub@cpan.org>
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself. 
