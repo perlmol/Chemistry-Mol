@@ -36,6 +36,9 @@ In general, to get the value of a property use $mol->method without
 any parameters. To set the value, use $mol->method($new_value).
 
 =cut
+# Considering to add the following attributes:
+# mass_number (A)
+# formal_charge
 
 use 5.006001;
 use strict;
@@ -101,8 +104,8 @@ sub nextID {
 
 =item $atom->Z($new_Z)
 
-Sets and returns Z. If the symbol of the atom doesn't correspond to
-a known element, Z = undef.
+Sets and returns the atomic number (Z). If the symbol of the atom doesn't
+correspond to a known element, Z = undef.
 
 =cut
 

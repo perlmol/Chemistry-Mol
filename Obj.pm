@@ -1,6 +1,8 @@
 package Chemistry::Obj;
+$VERSION = "0.10";
 
 use strict;
+
 =head1 NAME
 
 Chemistry::Obj - Abstract chemistry object

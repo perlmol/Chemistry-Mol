@@ -294,6 +294,30 @@ sub write {
 
 =cut
 
+=item Chemistry::Mol->register_format($name, $ref)
+
+Register a file type. The identifier $name must be unique.
+$ref is either a class name (a package) or an object that complies
+with the L<Chemistry::File> interface (e.g., a subclass of Chemistry::File).
+
+The typical user doesn't have to care about this function. It is used
+automatically by molecule file I/O modules.
+
+=cut
+
+sub register_format {
+    my $class = shift;
+    my %opts = @_;
+    $FILE_FORMATS{$_} = $opts{$_} for keys %opts;
+}
+
+=item Chemistry::Mol->Formats
+
+Returns a list of the file formats that have been installed by
+register_type()
+
+=cut
+
 sub formats {
     my $class = shift;
     if (@_) {
@@ -308,56 +332,15 @@ sub formats {
     }
 }
 
-=item Chemistry::Mol->register_type($name, $ref)
-
-Register a file type. The identifier $name must be unique.
-$ref is either a class name (a package) or an object that complies
-with the Chemistry::File interface.
-
-=begin comment
-
-=over 4
-
-=item is
-
-A reference to a function that receives a filename and returns 1 if the
-file is of the specified type.
-
-=item read 
-
-A reference to a function that receives a filename and returns the list
-of Mols contained in the file.
-
-=item write 
-
-A reference to a function that receives a filename and a list of
-molecules and writes the molecules to the file.
-
-=item parse
-
-A reference to a function that receives a string and returns the list
-of Mols contained in the string.
-
-=item print
-
-A reference to a function that receives a list of
-molecules and returns a string.
-
-=back
-
-=end comment
-
-=cut
-
-sub register_type {
-    my $class = shift;
-    my %opts = @_;
-    $FILE_FORMATS{$_} = $opts{$_} for keys %opts;
-}
-
 1;
 
 =back
+
+=head1 BUGS
+
+Blatant memory leaks. Due to the use of circular references, Perl's current
+garbage collector never cleans up molecule, atom, and bond objects. A future
+version should address this.
 
 =head1 SEE ALSO
 

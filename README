@@ -2,8 +2,8 @@ Chemistry/Mol version 0.10
 ==========================
 
 This toolkit includes basic objects and methods to describe molecules. It
-consists of several modules, including Chemistry::Mol, Chemistry::Atom, 
-and Chemistry::Bond.
+consists of several modules: Chemistry::Mol, Chemistry::Atom, Chemistry::Bond,
+and Chemistry::File.
 
 The core methods try not to commit to a particular convention, therefore fields
 such as the bond type have no intrinsic meaning. Bonds are defined as a list of
@@ -17,6 +17,9 @@ CHANGES SINCE VERSION 0.05
 - New subroutines for Chemistry::Mol: read_mol, register_type
 
 INCOMPATIBLE CHANGES SINCE VERSION 0.06
+
+- Changed File I/O API. It should be more stable now, but it's certainly not
+frozen yet.
 
 
 INSTALLATION
@@ -35,7 +38,7 @@ This module requires these other modules and libraries:
 
 COPYRIGHT AND LICENCE
 
-Copyright (C) 2003 Ivan Tubert
+Copyright (C) 2003 Ivan Tubert <itub@cpan.org>
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself. 
