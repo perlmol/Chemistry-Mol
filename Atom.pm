@@ -191,25 +191,52 @@ sub symbol {
 
 =item $atom->mass($new_mass)
 
-Sets and returns the atomic mass in atomic mass units. By default, relative
-atomic masses from the 1995 IUPAC recommendation are used. (Table stolen from
-the Chemistry::MolecularMass module by Maksim A. Khrapov).
+Sets and returns the atomic mass in atomic mass units. Any arbitrary mass may
+be set explicitly by using this method. However, if no mass is set explicitly
+and this method is called as an accessor, the return value is the following:
+
+1) If the mass number is undefined (see the mass_number method below), the
+relative atomic mass from the 1995 IUPAC recommendation is used. (Table stolen
+from the Chemistry::MolecularMass module by Maksim A.  Khrapov).
+
+2) If the mass number is defined and the L<Chemistry::Isotope> module is 
+available and it knows the mass for the isotope, the exact mass of the isotope
+is used; otherwise, the mass number is returned.
 
 =cut
 
 sub mass {
-    my ($self, $mass) = @_;
-    if(defined $mass) {
-        $self->{mass} = $mass;
+    my $self = shift;
+    if (@_) {
+        $self->{mass} = shift;
         return $self;
     } else {
-        if (exists $self->{mass}) {
-            $mass = $self->{mass};
+        if (defined $self->{mass}) {
+            return $self->{mass};
+        } elsif (defined $self->{mass_number}) {
+            if (eval { require Chemistry::Isotope } and 
+                my $m = Chemistry::Isotope::isotope_mass($self->{mass_number})
+            ) {
+                return $m;
+            } else {
+                return $self->{mass_number};
+            }
         } else {
-            $mass = $Atomic_masses{$self->symbol};
+            return $Atomic_masses{$self->symbol};
         }
     }
-    $mass;
+}
+
+=item $atom->mass_number($new_mass_number)
+
+Sets or gets the mass number. The mass number is undefined unless is 
+set explicitly (this module does not try to guess a default mass number based
+on the natural occuring isotope distribution).
+
+=cut
+
+sub mass_number {
+
 }
 
 =item $atom->coords
