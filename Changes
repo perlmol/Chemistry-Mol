@@ -1,5 +1,9 @@
 Revision history for Perl extension Chemistry::Mol.
 
+0.31  Nov 10 2004
+        - Fixed an error in t/zlib.t (forgot to create t/tmp directory)
+        - Fixed some typos in the documentation
+
 0.30  Nov 9 2004
         - New Chemistry::File interface
         - Added gzip support for reading and writing

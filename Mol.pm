@@ -1,5 +1,5 @@
 package Chemistry::Mol;
-$VERSION = '0.30';
+$VERSION = '0.31';
 # $Id$
 
 =head1 NAME
@@ -27,8 +27,8 @@ only a minimal set of attributes is provided by default, and some attributes
 have very loosely defined meaning. This is because each program and file type
 has different idea of what each concept (such as bond and atom type) means.
 Bonds are defined as a list of atoms (typically two) with an arbitrary type.
-Atoms are defined by a symbol and a Z, and may have 3D coordinates (2D and
-internal coming soon).
+Atoms are defined by a symbol and a Z, and may have 3D and coordinates (2D
+coming soon).
 
 =cut
 
@@ -53,7 +53,7 @@ my %FILE_FORMATS = ();
 
 =head1 METHODS
 
-See also Chemistry::Obj for generic attributes.
+See also L<Chemistry::Obj> for generic attributes.
 
 =over 4
 
@@ -120,8 +120,8 @@ sub add_atom_np {
 =item $mol->atom_class
 
 Returns the atom class that a molecule or molecule class expects to use by
-default. Chemistry::Mol objects return "Chemistry::Atom", but subclasses will
-likely override this method.
+default. L<Chemistry::Mol> objects return "Chemistry::Atom", but subclasses
+will likely override this method.
 
 =cut
 
@@ -131,7 +131,7 @@ sub atom_class {
 
 =item $mol->new_atom(name => value, ...)
 
-Shorthand for $mol->add_atom($mol->atom_class->new(name => value, ...));
+Shorthand for C<< $mol->add_atom($mol->atom_class->new(name => value, ...)) >>.
 
 =cut
 
@@ -207,8 +207,8 @@ sub add_bond_np {
 =item $mol->bond_class
 
 Returns the bond class that a molecule or molecule class expects to use by
-default.  Chemistry::Mol objects return "Chemistry::Bond", but subclasses will
-likely override this method.
+default. L<Chemistry::Mol> objects return "Chemistry::Bond", but subclasses
+will likely override this method.
 
 =cut
 
@@ -218,7 +218,7 @@ sub bond_class {
 
 =item $mol->new_bond(name => value, ...)
 
-Shorthand for $mol->add_bond($mol->bond_class->new(name => value, ...));
+Shorthand for C<< $mol->add_bond($mol->bond_class->new(name => value, ...)) >>.
 
 =cut
 
@@ -249,7 +249,7 @@ sub get_atom_index {
 
 =item $mol->delete_bond($bond, ...)
 
-Deletes a bond from the molecule. $bond should be a Chemistry::Bond object.
+Deletes a bond from the molecule. $bond should be a L<Chemistry::Bond> object.
 
 =cut
 
@@ -335,11 +335,11 @@ sub atoms_by_name {
 
 Sort the atoms in the molecule by using the comparison function given in
 $sub_ref. This function should take two atoms as parameters and return -1, 0,
-or 1 depending on whether the first atom should go first, same, or after the
+or 1 depending on whether the first atom should go before, same, or after the
 second atom. For example, to sort by atomic number, you could use the
 following:
 
-    $mol->sort( sub { $_[0]->Z <=> $_[1]->Z } );
+    $mol->sort_atoms( sub { $_[0]->Z <=> $_[1]->Z } );
 
 Note that the atoms are passed as parameters and not as the package variables
 $a and $b like the core sort function does. This is because $mol->sort will
@@ -404,7 +404,7 @@ END
     $ret;
 }
 
-=item my $info =  $mol->sprintf($format)
+=item $s = $mol->sprintf($format)
 
 Format interesting molecular information in a concise way, as specified by
 a printf-like format.
@@ -430,7 +430,7 @@ For example, if you want just about everything:
         . "mass=%m; charge =%q; type=%t; id=%i");
 
 Note that you have to C<use Chemistry::File::SMILES> before using C<%s> or
-C<%S> on C<$mol->sprintf>.
+C<%S> on C<< $mol->sprintf >>.
 
 =cut
 
@@ -457,8 +457,8 @@ sub sprintf {
 
 =item $mol->printf($format)
 
-Same as $mol->sprintf, but prints to standard output automatically. Used
-for quick and dirty molecular information dumping.
+Same as C<< $mol->sprintf >>, but prints to standard output automatically.
+Used for quick and dirty molecular information dumping.
 
 =cut
 
@@ -469,7 +469,7 @@ sub printf {
 
 =item Chemistry::Mol->parse($string, option => value...)
 
-Parse the molecule encoded in $string. The format should be specified
+Parse the molecule encoded in C<$string>. The format should be specified
 with the the C<format> option; otherwise, it will be guessed.
 
 =cut
@@ -494,13 +494,14 @@ Read a file and return a list of Mol objects, or croaks if there was a problem.
 The type of file will be guessed if not specified via the C<format> option.
 
 Note that only registered file readers will be used. Readers may be registered
-using register_type(); modules that include readers (such as
-Chemistry::File::PDB) usually register them automatically.
+using C<register_type()>; modules that include readers (such as
+L<Chemistry::File::PDB>) usually register them automatically when they are
+loaded.
 
-Automatic decompression of gzipped files is supported if the IO::Zlib module is
-installed. Files ending in .gz are assumed to be compressed; otherwise it is
-possible to force decompression by passing the gzip => 1 option (or no
-decompression with gzip => 0).
+Automatic decompression of gzipped files is supported if the L<Compress::Zlib>
+module is installed. Files ending in .gz are assumed to be compressed;
+otherwise it is possible to force decompression by passing the gzip => 1
+option (or no decompression with gzip => 0).
 
 =cut
 
@@ -562,14 +563,14 @@ Create a L<Chemistry::File>-derived object for reading or writing to a file.
 The object can then be used to read the molecules or other information in the
 file.
 
-This has more flexibility than calling Chemistry::Mol->read when dealing with
-multi-molecule files or files that have higher structure or that have
-information that does not belong to the molecules themselves. For example, a
-reaction file may have a list of molecules, but also general information like
-the reaction name, yield, etc. as well as the classification of the molecules
-as reactants or products. The exact information that is available will depend
-on the file reader class that is being used. The following is a hypothetical
-example for reading MDL rxnfiles.
+This has more flexibility than calling C<< Chemistry::Mol->read >> when
+dealing with multi-molecule files or files that have higher structure or that
+have information that does not belong to the molecules themselves. For
+example, a reaction file may have a list of molecules, but also general
+information like the reaction name, yield, etc. as well as the classification
+of the molecules as reactants or products. The exact information that is
+available will depend on the file reader class that is being used. The
+following is a hypothetical example for reading MDL rxnfiles.
 
     # assuming this module existed...
     use Chemistry::File::Rxn;
@@ -884,7 +885,7 @@ sub collapse_hydrogens {
 
 =head1 VERSION
 
-0.30
+0.31
 
 =head1 SEE ALSO
 

@@ -1,5 +1,5 @@
 package Chemistry::File::Dumper;
-$VERSION = '0.30';
+$VERSION = '0.31';
 
 require 5.006;
 use strict;
@@ -103,7 +103,7 @@ sub string_is {
 
 =head1 VERSION
 
-0.30
+0.31
 
 =head1 SEE ALSO
 

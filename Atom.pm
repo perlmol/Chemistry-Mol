@@ -1,6 +1,6 @@
 package Chemistry::Atom;
 
-$VERSION = '0.30';
+$VERSION = '0.31';
 # $Id$
 
 =head1 NAME
@@ -755,7 +755,7 @@ sub printf {
 
 =head1 VERSION
 
-0.30
+0.31
 
 =head1 SEE ALSO
 

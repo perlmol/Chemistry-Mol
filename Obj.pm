@@ -1,5 +1,5 @@
 package Chemistry::Obj;
-$VERSION = "0.30";
+$VERSION = 0.31;
 # $Id$
 use 5.006;
 
@@ -17,7 +17,7 @@ Chemistry::Obj - Abstract chemistry object
     Chemistry::Obj::accessor('color', 'flavor');
 
     package main;
-    my $obj = MyObj->new(name => 'bob', color => red);
+    my $obj = MyObj->new(name => 'bob', color => 'red');
     $obj->attr(size => 42);
     $obj->color('blue');
     my $color = $obj->color;
@@ -25,15 +25,15 @@ Chemistry::Obj - Abstract chemistry object
 
 =head1 DESCRIPTION
 
-This module implements some generic methods that are used by Chemistry::Mol,
-Chemistry::Atom, Chemistry::Bond, etc.
+This module implements some generic methods that are used by L<Chemistry::Mol>,
+L<Chemistry::Atom>, L<Chemistry::Bond>, L<Chemistry::File>, etc.
 
 =head2 Common Attributes
 
-There are some common attributes that may be found in molecules, bonds, and 
-atoms, such as id, name, and type. They are all accessed through the methods
-of the same name. For example, to get the id, call $obj->id; to set the id,
-call $obj->id('new_id').
+There are some common attributes that may be found in molecules, bonds, and
+atoms, such as id, name, and type. They are all accessed through the methods of
+the same name. For example, to get the id, call C<< $obj->id >>; to set the id,
+call C<< $obj->id('new_id') >>.
 
 =over 4
 
@@ -197,11 +197,11 @@ sub as_number {
 
 =item cmp
 
-Compare objects by ID. This automatically overloads eq, ne, lt, le, gt, and ge
-as well. For example, $obj1 eq $obj2 returns true if both objects have the same
-id, even if they are different objects with different memory addresses. In
-contrast, $obj1 == $obj2 will return true only if $obj1 and $obj2 point to the
-same object, with the same memory address.
+Compare objects by ID. This automatically overloads C<eq>, C<ne>, C<lt>, C<le>,
+C<gt>, and C<ge> as well. For example, C<$obj1 eq $obj2> returns true if both
+objects have the same id, even if they are different objects with different
+memory addresses. In contrast, C<$obj1 == $obj2> will return true only if
+C<$obj1> and C<$obj2> point to the same object, with the same memory address.
 
 =cut
 
@@ -243,7 +243,7 @@ sub use {
 
 =head1 VERSION
 
-0.30
+0.31
 
 =head1 SEE ALSO
 

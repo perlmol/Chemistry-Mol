@@ -27,13 +27,13 @@ Perl that you want to C<use> the specified modules The third line reads the
 file and returns a molecule object.
 
 To read other formats such as MDL molfiles,  you need to C<use> the
-corresponding module, such as Chemistry::File::MDLMol. Readers for several
+corresponding module, such as L<Chemistry::File::MDLMol>. Readers for several
 formats are under development.
 
 =head1 The molecule object
 
-C<< Chemistry::Mol->read >> returns a Chemistry::Mol object. An I<object> is a
-data structure of a given I<class> that has I<methods> (i.e. subroutines)
+C<< Chemistry::Mol->read >> returns a L<Chemistry::Mol> object. An I<object> is
+a data structure of a given I<class> that has I<methods> (i.e. subroutines)
 associated with it. To access or modify an object's properties, you call the
 methods on the object through "arrow syntax":
 
@@ -46,9 +46,9 @@ several methods to set several options in one line:
 
     $mol->name("water")->type("wet");
 
-A Chemistry::Mol object contains essentialy a list of atoms, a list of bonds,
-and a few generic properties such as name, type, and id. The atoms and bonds
-themselves are also objects.
+A L<Chemistry::Mol> object contains essentialy a list of atoms, a list of
+bonds, and a few generic properties such as name, type, and id. The atoms and
+bonds themselves are also objects.
 
 =head1 Writing a molecule file
 
@@ -69,6 +69,10 @@ parameters, or a specific atom by giving its index:
     @all_atoms = $mol->atoms;
     $atom3 = $mol->atoms(3);
 
+B<Note>: Atom and bond indices are counted from 1, not from 0. This deviation
+from common Perl usage was made to be consistent with the way atoms are
+numbered in most common file formats.
+
 You can select atoms that match an arbitrary expression by using Perl's
 built-in C<grep> function:
 
@@ -78,15 +82,15 @@ built-in C<grep> function:
         and $_->distance($mol->atoms(37)) < 3.0 
     } $mol->atoms;
 
-The C<grep> function loops through all the atoms returned by $mol->atoms, 
+The C<grep> function loops through all the atoms returned by C<< $mol->atoms >>,
 aliasing each to $_ at each iteration, and returns only those for which
 the expression in braces is true. 
 
 Using C<grep> is a general way of finding atoms; however, since finding atoms
 by name is common, a convenience method is available for that purpose.
 
-    $HB1 = $mol->atoms_by_name('HB1');
-    @H_atoms = $mol->atoms_by_name('H.*'); # the name is treated as a regex
+    $HB1     = $mol->atoms_by_name('HB1');
+    @H_atoms = $mol->atoms_by_name('H.*'); # name treated as a regex
 
 Since the atom name is not generally unique, even the first example above 
 might match more than one atom. In that case, only the first one found is
@@ -104,17 +108,17 @@ main properties are Z, symbol, and coords.
 
 =head2 Atom coordinates
 
-The coordinates returned by $atom->coords are a Math::VectorReal object. You
-can print these objects and use them to do vector algebra:
+The coordinates returned by C<< $atom->coords >> are a L<Math::VectorReal>
+object. You can print these objects and use them to do vector algebra:
 
-    $c1 = $atom1->coords;
-    $c2 = $atom2->coords;
-    $dot_product = $c1 . $c2;       # returns a scalar
-    $cross_product = $c1 x $c2;     # returns a vector
-    $delta = $c2 - $c1;             # returns a vector
-    $distance = $delta->length;     # returns a scalar
+    $c1            = $atom1->coords;
+    $c2            = $atom2->coords;
+    $dot_product   = $c1 . $c2;       # returns a scalar
+    $cross_product = $c1 x $c2;       # returns a vector
+    $delta         = $c2 - $c1;       # returns a vector
+    $distance      = $delta->length;  # returns a scalar
+    ($x, $y, $z)   = $c1->array;      # get the components of $c1
     print $c1;     # prints something like "[ 1.0E0  2.0E0  3.0E0 ]"
-    ($x, $y, $z) = $c1->array;      # set $x, $y, $z to the components of $c1
 
 Since one is very often interested in calculating the distance between atoms,
 Atom objects provide a C<distance> method to save some typing:
@@ -133,12 +137,14 @@ $atom->internal_coords method, which uses L<Chemistry::InternalCoords> objects.
 
 =head1 The Bond object
 
-A bond object is a list of atoms with an associated bond order. In most cases,
-a bond has exactly two atoms, but we don't want to exclude possibilities such
-as three-center bonds. You can get the list of atoms in a bond by using the
-C<atoms> method.
+A L<Chemistry::Bond> object is a list of atoms with an associated bond order.
+In most cases, a bond has exactly two atoms, but we don't want to exclude
+possibilities such as three-center bonds. You can get the list of atoms in a
+bond by using the C<atoms> method; the bond order is accessed trouht the
+C<order> method;
 
     @atoms_in_bond = $bond->atoms;
+    $bond_order    = $bond->order;
 
 The other interesting method for Bond objects is C<length>, which returns
 the distance between the two atoms in a bond (this method requires that the 
@@ -160,7 +166,7 @@ There are three generic properties that all PerlMol objects have:
 
 Each object must have a unique ID. In most cases you don't have to worry about
 it, because it is assigned automatically unless you specify it. You can use
-the by_id method to select an object:
+the C<by_id> method to select an object contained in a molecule:
 
     $atom = $mol->by_id("a42");
 
@@ -205,9 +211,9 @@ attributes should prefix their name with a I<namespace>, followed by a slash.
 For example, atoms created by the PDB reader module (Chemistry::File::PDB)
 have the "pdb/residue" attribute.
 
-    my $mol = Chemistry::Mol->read("test.pdb");
-    my $atom = $mol->atoms(1234);
-    print $atom->attr("pdb/residue"); # prints "ALA123"
+    $mol  = Chemistry::Mol->read("test.pdb");
+    $atom = $mol->atoms(1234);
+    print $atom->attr("pdb/residue_name"); # prints "ALA123"
 
 =head1 Molecule subclasses
 
@@ -229,6 +235,10 @@ Used for substructure matching.
 
 Used for representing rings (cycles) in molecules.
 
+=item L<Chemistry::Reaction>
+
+Used for representing and applying chemical transformations.
+
 =back
 
 As an example we'll discuss macromolecules. Future versions of this tutorial
@@ -236,14 +246,15 @@ may also include a discussion about patterns and rings.
 
 =head1 Macromolecules
 
-So far we have assumed that we are dealing with molecules of the Chemistry::Mol
-class.  However, one of the interesting things about object-oriented
-programming is that classes can be extended. For dealing with macromolecules,
-we have the MacroMol class, which extends the Chemistry::Mol class. This means
-that in practice you can use a MacroMol object exactly as you would use a
-Chemistry::Mol object, but with some added functionality. In fact, the PDB
-reader can return MacroMol instead of Chemistry::Mol objects just by changing
-the first example like this:
+So far we have assumed that we are dealing with molecules of the
+L<Chemistry::Mol> class.  However, one of the interesting things about
+object-oriented programming is that classes can be extended. For dealing with
+macromolecules, we have the MacroMol class, which extends the L<Chemistry::Mol>
+class. This means that in practice you can use a L<Chemistry::MacroMol> object
+exactly as you would use a L<Chemistry::Mol> object, but with some added
+functionality. In fact, the PDB reader can return L<Chemistry::MacroMol>
+instead of L<Chemistry::Mol> objects just by changing the first example like
+this:
 
     use Chemistry::MacroMol;
     use Chemistry::File::PDB;
@@ -257,10 +268,6 @@ have on top of the original Chemistry::Mol object?
 For the purposes of this module, a macromolecule is considered to be a big
 molecule where atoms are divided in I<Domains>. A domain is just a subset of
 the atoms in the molecule; in a protein, a domain would be just a residue.
-Note that in principle it is not required that all atoms belong to one and 
-only one domain; you could have atoms that belong to several domains or atoms
-that don't belong to any domain. (But in the case of PDB files, it happens 
-that all atoms belong to one residue.)
 
 You can select domains in a molecule in a way similar to that used for atoms
 and bonds, in this case through the C<domains> method:
@@ -290,7 +297,7 @@ know the residue number and atom name.
 
 =head1 VERSION
 
-0.30
+0.31
 
 =head1 SEE ALSO
 
