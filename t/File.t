@@ -4,11 +4,11 @@ use warnings;
 use Test::More;
 
 BEGIN { 
-    plan 'no_plan';
+    #plan 'no_plan';
+    plan tests => 15;
     use_ok('Chemistry::File');
 }
 
-#plan tests => 6;
 
 # simple constructor test
 my $f = Chemistry::File->new;

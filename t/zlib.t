@@ -9,7 +9,7 @@ if (eval 'use Compress::Zlib; 1') {
     plan tests => 6;
     #plan 'no_plan';
 } else {
-    plan skip_all => "You don't have IO::Zlib installed";
+    plan skip_all => "You don't have Compress::Zlib installed";
 }
 
 my $mol;

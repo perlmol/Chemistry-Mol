@@ -1,8 +1,8 @@
 use strict;
 use warnings;
 
-use Test::More "no_plan";
-#use Test::More tests => 22;
+#use Test::More "no_plan";
+use Test::More tests => 49;
 
 BEGIN { 
     use_ok('Chemistry::Atom');
@@ -115,5 +115,4 @@ ok( abs($got_m2H - $m_2H)<0.001,   '2H mass' )
     or diag(sprintf "expected %s, got %s", $m_2H, $atom->mass);
 $atom->mass_number(10);
 is( $atom->mass,     10,             '10H mass' );
-
 

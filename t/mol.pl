@@ -2,235 +2,289 @@ $mol = bless( {
   'atoms' => [
     bless( {
       'Z' => 17,
-      'attr' => {
-        'int/ang_ref' => '0',
-        'int/ang_val' => '0.000000',
-        'int/dih_ref' => '0',
-        'int/dih_val' => '0.000000',
-        'int/len_ref' => '0',
-        'int/len_val' => '0.000000',
-        'mop/ang_opt' => '0',
-        'mop/dih_opt' => '0',
-        'mop/len_opt' => '0'
-      },
-      'bonds' => [],
+      'bonds' => [
+        {
+          'bond' => bless( {
+            'atoms' => [
+              {},
+              bless( {
+                'Z' => 6,
+                'bonds' => [
+                  {
+                    'bond' => bless( {
+                      'atoms' => [
+                        bless( {
+                          'Z' => 1,
+                          'bonds' => [
+                            {
+                              'bond' => {},
+                              'to' => {}
+                            }
+                          ],
+                          'coords' => bless( [
+                            [
+                              [
+                                '    2.0860',
+                                '   -0.5229',
+                                '   -0.9277'
+                              ]
+                            ],
+                            1,
+                            3
+                          ], 'Math::VectorReal' ),
+                          'id' => 'a6',
+                          'parent' => {},
+                          'symbol' => 'H'
+                        }, 'Chemistry::Atom' ),
+                        {}
+                      ],
+                      'id' => 'b3',
+                      'order' => '1',
+                      'parent' => {},
+                      'type' => '1'
+                    }, 'Chemistry::Bond' ),
+                    'to' => {}
+                  },
+                  {
+                    'bond' => bless( {
+                      'atoms' => [
+                        bless( {
+                          'Z' => 1,
+                          'bonds' => [
+                            {
+                              'bond' => {},
+                              'to' => {}
+                            }
+                          ],
+                          'coords' => bless( [
+                            [
+                              [
+                                '    2.0837',
+                                '   -0.5492',
+                                '    0.9128'
+                              ]
+                            ],
+                            1,
+                            3
+                          ], 'Math::VectorReal' ),
+                          'id' => 'a7',
+                          'parent' => {},
+                          'symbol' => 'H'
+                        }, 'Chemistry::Atom' ),
+                        {}
+                      ],
+                      'id' => 'b4',
+                      'order' => '1',
+                      'parent' => {},
+                      'type' => '1'
+                    }, 'Chemistry::Bond' ),
+                    'to' => {}
+                  },
+                  {
+                    'bond' => {},
+                    'to' => {}
+                  },
+                  {
+                    'bond' => bless( {
+                      'atoms' => [
+                        {},
+                        bless( {
+                          'Z' => 6,
+                          'bonds' => [
+                            {
+                              'bond' => bless( {
+                                'atoms' => [
+                                  {},
+                                  bless( {
+                                    'Z' => 8,
+                                    'bonds' => [
+                                      {
+                                        'bond' => {},
+                                        'to' => {}
+                                      },
+                                      {
+                                        'bond' => bless( {
+                                          'atoms' => [
+                                            {},
+                                            bless( {
+                                              'Z' => 1,
+                                              'bonds' => [
+                                                {
+                                                  'bond' => {},
+                                                  'to' => {}
+                                                }
+                                              ],
+                                              'coords' => bless( [
+                                                [
+                                                  [
+                                                    '    2.9125',
+                                                    '    2.7823',
+                                                    '    1.1712'
+                                                  ]
+                                                ],
+                                                1,
+                                                3
+                                              ], 'Math::VectorReal' ),
+                                              'id' => 'a8',
+                                              'parent' => {},
+                                              'symbol' => 'H'
+                                            }, 'Chemistry::Atom' )
+                                          ],
+                                          'id' => 'b2',
+                                          'order' => '1',
+                                          'parent' => {},
+                                          'type' => '1'
+                                        }, 'Chemistry::Bond' ),
+                                        'to' => {}
+                                      }
+                                    ],
+                                    'coords' => bless( [
+                                      [
+                                        [
+                                          '    2.5849',
+                                          '    1.8697',
+                                          '    1.2392'
+                                        ]
+                                      ],
+                                      1,
+                                      3
+                                    ], 'Math::VectorReal' ),
+                                    'id' => 'a5',
+                                    'parent' => {},
+                                    'symbol' => 'O'
+                                  }, 'Chemistry::Atom' )
+                                ],
+                                'id' => 'b1',
+                                'order' => '1',
+                                'parent' => {},
+                                'type' => '1'
+                              }, 'Chemistry::Bond' ),
+                              'to' => {}
+                            },
+                            {
+                              'bond' => bless( {
+                                'atoms' => [
+                                  bless( {
+                                    'Z' => 8,
+                                    'bonds' => [
+                                      {
+                                        'bond' => {},
+                                        'to' => {}
+                                      }
+                                    ],
+                                    'coords' => bless( [
+                                      [
+                                        [
+                                          '    2.4777',
+                                          '    2.1483',
+                                          '   -0.9572'
+                                        ]
+                                      ],
+                                      1,
+                                      3
+                                    ], 'Math::VectorReal' ),
+                                    'id' => 'a4',
+                                    'parent' => {},
+                                    'symbol' => 'O'
+                                  }, 'Chemistry::Atom' ),
+                                  {}
+                                ],
+                                'id' => 'b5',
+                                'order' => '2',
+                                'parent' => {},
+                                'type' => '2'
+                              }, 'Chemistry::Bond' ),
+                              'to' => {}
+                            },
+                            {
+                              'bond' => {},
+                              'to' => {}
+                            }
+                          ],
+                          'coords' => bless( [
+                            [
+                              [
+                                '    2.2735',
+                                '    1.4000',
+                                '    0.0000'
+                              ]
+                            ],
+                            1,
+                            3
+                          ], 'Math::VectorReal' ),
+                          'id' => 'a3',
+                          'parent' => {},
+                          'symbol' => 'C'
+                        }, 'Chemistry::Atom' )
+                      ],
+                      'id' => 'b7',
+                      'order' => '1',
+                      'parent' => {},
+                      'type' => '1'
+                    }, 'Chemistry::Bond' ),
+                    'to' => {}
+                  }
+                ],
+                'coords' => bless( [
+                  [
+                    [
+                      '    1.7451',
+                      '    0.0000',
+                      '    0.0000'
+                    ]
+                  ],
+                  1,
+                  3
+                ], 'Math::VectorReal' ),
+                'id' => 'a2',
+                'parent' => {},
+                'symbol' => 'C'
+              }, 'Chemistry::Atom' )
+            ],
+            'id' => 'b6',
+            'order' => '1',
+            'parent' => {},
+            'type' => '1'
+          }, 'Chemistry::Bond' ),
+          'to' => {}
+        }
+      ],
       'coords' => bless( [
         [
           [
-            0,
-            0,
-            0
+            '    0.0000',
+            '    0.0000',
+            '    0.0000'
           ]
         ],
         1,
         3
       ], 'Math::VectorReal' ),
       'id' => 'a1',
+      'parent' => {},
       'symbol' => 'Cl'
     }, 'Chemistry::Atom' ),
-    bless( {
-      'Z' => 6,
-      'attr' => {
-        'int/ang_ref' => '0',
-        'int/ang_val' => '0.000000',
-        'int/dih_ref' => '0',
-        'int/dih_val' => '0.000000',
-        'int/len_ref' => '1',
-        'int/len_val' => '1.745132',
-        'mop/ang_opt' => '0',
-        'mop/dih_opt' => '0',
-        'mop/len_opt' => '1'
-      },
-      'bonds' => [],
-      'coords' => bless( [
-        [
-          [
-            '1.745132',
-            '7.83504796828713e-11',
-            '7.83504796828713e-11'
-          ]
-        ],
-        1,
-        3
-      ], 'Math::VectorReal' ),
-      'id' => 'a2',
-      'symbol' => 'C'
-    }, 'Chemistry::Atom' ),
-    bless( {
-      'Z' => 6,
-      'attr' => {
-        'int/ang_ref' => '1',
-        'int/ang_val' => '110.676605',
-        'int/dih_ref' => '0',
-        'int/dih_val' => '0.000000',
-        'int/len_ref' => '2',
-        'int/len_val' => '1.496414',
-        'mop/ang_opt' => '1',
-        'mop/dih_opt' => '0',
-        'mop/len_opt' => '1'
-      },
-      'bonds' => [],
-      'coords' => bless( [
-        [
-          [
-            '2.27350508992109',
-            '1.40002740596841',
-            '1.64929090281127e-10'
-          ]
-        ],
-        1,
-        3
-      ], 'Math::VectorReal' ),
-      'id' => 'a3',
-      'symbol' => 'C'
-    }, 'Chemistry::Atom' ),
-    bless( {
-      'Z' => 8,
-      'attr' => {
-        'int/ang_ref' => '2',
-        'int/ang_val' => '128.812332',
-        'int/dih_ref' => '1',
-        'int/dih_val' => '274.372818',
-        'int/len_ref' => '3',
-        'int/len_val' => '1.232010',
-        'mop/ang_opt' => '1',
-        'mop/dih_opt' => '1',
-        'mop/len_opt' => '1'
-      },
-      'bonds' => [],
-      'coords' => bless( [
-        [
-          [
-            '2.47767896543912',
-            '2.14832286559991',
-            '-0.957191503010286'
-          ]
-        ],
-        1,
-        3
-      ], 'Math::VectorReal' ),
-      'id' => 'a4',
-      'symbol' => 'O'
-    }, 'Chemistry::Atom' ),
-    bless( {
-      'Z' => 8,
-      'attr' => {
-        'int/ang_ref' => '2',
-        'int/ang_val' => '113.799469',
-        'int/dih_ref' => '1',
-        'int/dih_val' => '95.780884',
-        'int/len_ref' => '3',
-        'int/len_val' => '1.361328',
-        'mop/ang_opt' => '1',
-        'mop/dih_opt' => '1',
-        'mop/len_opt' => '1'
-      },
-      'bonds' => [],
-      'coords' => bless( [
-        [
-          [
-            '2.58485298180787',
-            '1.86969046130798',
-            '1.23923082138056'
-          ]
-        ],
-        1,
-        3
-      ], 'Math::VectorReal' ),
-      'id' => 'a5',
-      'symbol' => 'O'
-    }, 'Chemistry::Atom' ),
-    bless( {
-      'Z' => 1,
-      'attr' => {
-        'int/ang_ref' => '1',
-        'int/ang_val' => '107.751312',
-        'int/dih_ref' => '3',
-        'int/dih_val' => '240.589508',
-        'int/len_ref' => '2',
-        'int/len_val' => '1.118149',
-        'mop/ang_opt' => '1',
-        'mop/dih_opt' => '1',
-        'mop/len_opt' => '1'
-      },
-      'bonds' => [],
-      'coords' => bless( [
-        [
-          [
-            '2.08604009632647',
-            '-0.522939478797596',
-            '-0.927670823809637'
-          ]
-        ],
-        1,
-        3
-      ], 'Math::VectorReal' ),
-      'id' => 'a6',
-      'symbol' => 'H'
-    }, 'Chemistry::Atom' ),
-    bless( {
-      'Z' => 1,
-      'attr' => {
-        'int/ang_ref' => '1',
-        'int/ang_val' => '107.630661',
-        'int/dih_ref' => '3',
-        'int/dih_val' => '121.033127',
-        'int/len_ref' => '2',
-        'int/len_val' => '1.117828',
-        'mop/ang_opt' => '1',
-        'mop/dih_opt' => '1',
-        'mop/len_opt' => '1'
-      },
-      'bonds' => [],
-      'coords' => bless( [
-        [
-          [
-            '2.08369967023363',
-            '-0.549209364578788',
-            '0.912841960129198'
-          ]
-        ],
-        1,
-        3
-      ], 'Math::VectorReal' ),
-      'id' => 'a7',
-      'symbol' => 'H'
-    }, 'Chemistry::Atom' ),
-    bless( {
-      'Z' => 1,
-      'attr' => {
-        'int/ang_ref' => '3',
-        'int/ang_val' => '109.714905',
-        'int/dih_ref' => '2',
-        'int/dih_val' => '180.548538',
-        'int/len_ref' => '5',
-        'int/len_val' => '0.972015',
-        'mop/ang_opt' => '1',
-        'mop/dih_opt' => '1',
-        'mop/len_opt' => '1'
-      },
-      'bonds' => [],
-      'coords' => bless( [
-        [
-          [
-            '2.9125020131235',
-            '2.78228973713215',
-            '1.17124674774476'
-          ]
-        ],
-        1,
-        3
-      ], 'Math::VectorReal' ),
-      'id' => 'a8',
-      'symbol' => 'H'
-    }, 'Chemistry::Atom' )
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {}
   ],
   'attr' => {
-    'keys_line' => 'MNDOD NOLOG PRECISE ',
-    'text_line' => 'line 2 
-CH2ClCOOH'
+    'mdlmol/comment' => '',
+    'mdlmol/line2' => '      perlmol   '
   },
-  'bonds' => [],
+  'bonds' => [
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {}
+  ],
   'byId' => {
     'a1' => {},
     'a2' => {},
@@ -239,16 +293,87 @@ CH2ClCOOH'
     'a5' => {},
     'a6' => {},
     'a7' => {},
-    'a8' => {}
+    'a8' => {},
+    'b1' => {},
+    'b2' => {},
+    'b3' => {},
+    'b4' => {},
+    'b5' => {},
+    'b6' => {},
+    'b7' => {}
   },
   'id' => 'mol1',
   'name' => ''
 }, 'Chemistry::Mol' );
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[0] = $mol->{'atoms'}[0];
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'}{'atoms'}[0]{'bonds'}[0]{'bond'} = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'};
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'}{'atoms'}[0]{'bonds'}[0]{'to'} = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1];
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'}{'atoms'}[0]{'parent'} = $mol;
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'}{'atoms'}[1] = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1];
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'}{'parent'} = $mol;
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[0]{'to'} = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'}{'atoms'}[0];
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[1]{'bond'}{'atoms'}[0]{'bonds'}[0]{'bond'} = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[1]{'bond'};
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[1]{'bond'}{'atoms'}[0]{'bonds'}[0]{'to'} = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1];
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[1]{'bond'}{'atoms'}[0]{'parent'} = $mol;
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[1]{'bond'}{'atoms'}[1] = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1];
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[1]{'bond'}{'parent'} = $mol;
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[1]{'to'} = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[1]{'bond'}{'atoms'}[0];
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[2]{'bond'} = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'};
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[2]{'to'} = $mol->{'atoms'}[0];
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[0] = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1];
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'}{'atoms'}[0] = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1];
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'} = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'};
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[0]{'to'} = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1];
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[1]{'bond'}{'atoms'}[0] = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'}{'atoms'}[1];
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[1]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'} = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[1]{'bond'};
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[1]{'bond'}{'atoms'}[1]{'bonds'}[0]{'to'} = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'}{'atoms'}[1];
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[1]{'bond'}{'atoms'}[1]{'parent'} = $mol;
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[1]{'bond'}{'parent'} = $mol;
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[1]{'to'} = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[1]{'bond'}{'atoms'}[1];
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'}{'atoms'}[1]{'parent'} = $mol;
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'}{'parent'} = $mol;
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[0]{'to'} = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'}{'atoms'}[1];
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[1]{'bond'}{'atoms'}[0]{'bonds'}[0]{'bond'} = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[1]{'bond'};
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[1]{'bond'}{'atoms'}[0]{'bonds'}[0]{'to'} = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1];
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[1]{'bond'}{'atoms'}[0]{'parent'} = $mol;
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[1]{'bond'}{'atoms'}[1] = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1];
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[1]{'bond'}{'parent'} = $mol;
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[1]{'to'} = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[1]{'bond'}{'atoms'}[0];
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[2]{'bond'} = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'};
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[2]{'to'} = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1];
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'parent'} = $mol;
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'parent'} = $mol;
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'to'} = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1];
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'parent'} = $mol;
+$mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'parent'} = $mol;
+$mol->{'atoms'}[0]{'bonds'}[0]{'to'} = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1];
+$mol->{'atoms'}[0]{'parent'} = $mol;
+$mol->{'atoms'}[1] = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1];
+$mol->{'atoms'}[2] = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1];
+$mol->{'atoms'}[3] = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[1]{'bond'}{'atoms'}[0];
+$mol->{'atoms'}[4] = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'}{'atoms'}[1];
+$mol->{'atoms'}[5] = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'}{'atoms'}[0];
+$mol->{'atoms'}[6] = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[1]{'bond'}{'atoms'}[0];
+$mol->{'atoms'}[7] = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[1]{'bond'}{'atoms'}[1];
+$mol->{'bonds'}[0] = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'};
+$mol->{'bonds'}[1] = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[1]{'bond'};
+$mol->{'bonds'}[2] = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'};
+$mol->{'bonds'}[3] = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[1]{'bond'};
+$mol->{'bonds'}[4] = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[1]{'bond'};
+$mol->{'bonds'}[5] = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'};
+$mol->{'bonds'}[6] = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'};
 $mol->{'byId'}{'a1'} = $mol->{'atoms'}[0];
-$mol->{'byId'}{'a2'} = $mol->{'atoms'}[1];
-$mol->{'byId'}{'a3'} = $mol->{'atoms'}[2];
-$mol->{'byId'}{'a4'} = $mol->{'atoms'}[3];
-$mol->{'byId'}{'a5'} = $mol->{'atoms'}[4];
-$mol->{'byId'}{'a6'} = $mol->{'atoms'}[5];
-$mol->{'byId'}{'a7'} = $mol->{'atoms'}[6];
-$mol->{'byId'}{'a8'} = $mol->{'atoms'}[7];
+$mol->{'byId'}{'a2'} = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1];
+$mol->{'byId'}{'a3'} = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1];
+$mol->{'byId'}{'a4'} = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[1]{'bond'}{'atoms'}[0];
+$mol->{'byId'}{'a5'} = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'}{'atoms'}[1];
+$mol->{'byId'}{'a6'} = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'}{'atoms'}[0];
+$mol->{'byId'}{'a7'} = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[1]{'bond'}{'atoms'}[0];
+$mol->{'byId'}{'a8'} = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[1]{'bond'}{'atoms'}[1];
+$mol->{'byId'}{'b1'} = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'};
+$mol->{'byId'}{'b2'} = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[1]{'bond'};
+$mol->{'byId'}{'b3'} = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[0]{'bond'};
+$mol->{'byId'}{'b4'} = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[1]{'bond'};
+$mol->{'byId'}{'b5'} = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'}{'atoms'}[1]{'bonds'}[1]{'bond'};
+$mol->{'byId'}{'b6'} = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'};
+$mol->{'byId'}{'b7'} = $mol->{'atoms'}[0]{'bonds'}[0]{'bond'}{'atoms'}[1]{'bonds'}[3]{'bond'};
