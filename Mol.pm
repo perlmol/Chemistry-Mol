@@ -189,6 +189,7 @@ sub add_bond {
             #croak "Duplicate ID when adding bond '$bond' to mol '$self'";
         #}
         push @{$self->{bonds}}, $bond;
+        $_->add_bond($bond) for $bond->atoms;
         $self->{byId}{$bond->id} = $bond;
         $bond->parent($self);
     }

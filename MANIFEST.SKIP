@@ -29,4 +29,6 @@
 cover_db
 ^blibdirs
 TODO
+.ppd$
+
 

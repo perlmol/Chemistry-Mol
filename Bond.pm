@@ -163,9 +163,8 @@ sub atoms {
     my $self = shift;
     if (@_) {
         $self->{atoms} = ref $_[0] ? $_[0] : [@_];
-        for my $a (@{$self->{atoms}}) { # add bond to each atom
+        for my $a (@{$self->{atoms}}) { 
             weaken($a);
-            $a->add_bond($self);
         }
     } else {
         return (@{$self->{atoms}});

@@ -12,6 +12,7 @@ Mol.pm
 Obj.pm
 README
 t/Atom.t
+t/Bond.t
 t/change_id.t
 t/delete.t
 t/Dumper.t
