@@ -108,6 +108,7 @@ Convert the bond to a string representation.
 sub print {
     my $self = shift;
     my ($indent) = @_;
+    $indent ||= 0;
     my $l = sprintf "%.4g", $self->length;
     my $atoms = join " ", map {$_->id} $self->atoms;
     my $ret =  <<EOF;
