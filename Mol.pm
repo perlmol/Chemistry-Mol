@@ -210,9 +210,11 @@ sub bonds {
     }
 }
 
-=item $mol->print
+=item $mol->print(option => value...)
 
-Convert the molecule to a string representation. 
+Convert the molecule to a string representation. If no options are given, 
+a default YAML-like format is used (this may change in the future). Otherwise,
+the format should be specified by using the C<format> option.
 
 =cut
 
@@ -239,6 +241,13 @@ END
     $ret;
 }
 
+=item $mol->parse($string, option => value...)
+
+Parse the molecule encoded in $string. The format should be specified
+with the the C<format> option; otherwise, it will be guessed.
+
+=cut
+
 sub parse {
     my $self = shift;
     my $s = shift;
@@ -255,9 +264,9 @@ sub parse {
 
 =item Chemistry::Mol->read($fname, option => value ...)
 
-Read a file and return a list of Mol objects, or undef if there
+Read a file and return a list of Mol objects, or croaks if there
 was a problem. The type of file will be guessed if not
-specified.
+specified via the C<format> option.
 
 Note that only registered file readers will be used. Readers may
 be registered using register_type(); modules that include readers
@@ -271,45 +280,46 @@ sub read_mol { # for backwards compatibility
 }
 
 sub read {
-    my $class = shift;
+    my $self = shift;
     my $fname = shift;
-    my %opts = (mol_class => $class, @_);
+    my %opts = (mol_class => $self, @_);
 
     if ($opts{format}) {
-        return $class->formats($opts{format})->parse_file($fname, %opts);
-    } else {
-	for my $type ($class->formats) {
-            if ($class->formats($type)->file_is($fname)) {
-                return $class->formats($type)->parse_file($fname, %opts);
+        return $self->formats($opts{format})->parse_file($fname, %opts);
+    } else { # guess format
+	for my $type ($self->formats) {
+            if ($self->formats($type)->file_is($fname)) {
+                return $self->formats($type)->parse_file($fname, %opts);
 	    }
 	}
     }
-    undef;
+    croak "Couldn't guess format of file '$fname'";
 }
 
-=begin comment
+=item $mol->write($fname, option => value ...)
 
-sub write {
-    my $class = shift;
-    $class = ref $class || $class;
-    my $fname = shift;
-    my %opts = (@_);
+Write a molecule file, or croak if there
+was a problem. The type of file will be guessed if not
+specified via the C<format> option.
 
-    if ($opts{type}) {
-        return $class->formats($opts{type},"write")->($fname, %opts);
-    } else {
-	for my $type ($class->formats) {
-            if ($class->formats($type, 'is')->($fname)) {
-                return $class->formats($type, 'write')->($fname, %opts);
-	    }
-	}
-    }
-    undef;
-}
-
-=end comment
+Note that only registered file formats will be used. 
 
 =cut
+
+sub write {
+    my ($self, $fname, %opts) = (@_);
+
+    if ($opts{format}) {
+        return $self->formats($opts{format})->write_file(@_);
+    } else { # guess format
+	for my $type ($self->formats) {
+            if ($self->formats($type)->name_is($fname)) {
+                return $self->formats($type)->write_file(@_);
+	    }
+	}
+    }
+    croak "Couldn't guess format of file '$fname'";
+}
 
 =item Chemistry::Mol->register_format($name, $ref)
 
@@ -328,7 +338,7 @@ sub register_format {
     $FILE_FORMATS{$_} = $opts{$_} for keys %opts;
 }
 
-=item Chemistry::Mol->Formats
+=item Chemistry::Mol->formats
 
 Returns a list of the file formats that have been installed by
 register_type()
