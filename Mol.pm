@@ -30,6 +30,7 @@ internal coming soon).
 
 =cut
 
+use 5.006001;
 use strict;
 use Chemistry::Atom;
 use Chemistry::Bond;
@@ -323,7 +324,8 @@ sub register_type {
 
 =head1 SEE ALSO
 
-L<Chemistry::Atom>, L<Chemistry::Bond>, L<Chemistry::File>
+L<Chemistry::Atom>, L<Chemistry::Bond>, L<Chemistry::File>,
+L<Chemistry::Tutorial>
 
 =head1 AUTHOR
 
