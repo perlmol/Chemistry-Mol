@@ -1,5 +1,5 @@
 package Chemistry::Mol;
-$VERSION = '0.10';
+$VERSION = '0.11';
 
 =head1 NAME
 
@@ -132,7 +132,7 @@ sub add_bond {
 
 Shorthand for $mol->add_bond(Chemistry::Bond->new(name => value, ...));
 It has the disadvantage that it doesn't let you create a subclass of 
-Chemistry::Atom.
+Chemistry::Bond.
 
 =cut
 
@@ -320,6 +320,10 @@ sub write {
 Register a file type. The identifier $name must be unique.
 $ref is either a class name (a package) or an object that complies
 with the L<Chemistry::File> interface (e.g., a subclass of Chemistry::File).
+If $ref is omitted, the calling package is used automatically. More than one
+format can be registered at a time, but then $ref must be included for each
+format (e.g., Chemistry::Mol->register_format(format1 => "package1", format2 =>
+package2).
 
 The typical user doesn't have to care about this function. It is used
 automatically by molecule file I/O modules.
@@ -328,6 +332,10 @@ automatically by molecule file I/O modules.
 
 sub register_format {
     my $class = shift;
+    if (@_ == 1) {
+        $FILE_FORMATS{$_[0]} = caller;
+        return;
+    }
     my %opts = @_;
     $FILE_FORMATS{$_} = $opts{$_} for keys %opts;
 }
@@ -384,21 +392,18 @@ sub formula_hash {
     $formula;
 }
 
-=item $mol->formula
+=item $mol->formula($format)
 
-Returns a string with the formula.
+Returns a string with the formula. The format can be specified as a printf-like
+string with the control sequences specified in the L<Chemistry::File::Formula>
+documentation.
 
 =cut
 
 sub formula {
-    my ($self) = @_;
-    my $formula = "";
-    my $fh = $self->formula_hash;
-    for my $sym (sort keys %$fh) {
-        $formula .= $sym;
-        $formula .= $fh->{$sym} if $fh->{$sym} > 1;
-    }
-    $formula;
+    my ($self, $format) = @_;
+    require Chemistry::File::Formula;
+    $self->print(format => "formula", formula_format => $format);
 }
 
 1;

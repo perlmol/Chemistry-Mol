@@ -1,5 +1,5 @@
 package Chemistry::Atom;
-$VERSION = '0.10';
+$VERSION = '0.11';
 
 =head1 NAME
 
@@ -312,6 +312,7 @@ sub print {
     my $self = shift;
     my ($indent) = @_;
 
+    $indent ||= 0;
     my $bonds = join " ", map {$_->id} $self->bonds;
     my $neighbors = join " ", map {$_->id} $self->neighbors;
     my $coords = $self->{coords}->stringify(

@@ -1,8 +1,9 @@
 package Chemistry::Obj;
-$VERSION = "0.10";
-use 5.6.1;
+$VERSION = "0.11";
+use 5.006001;
 
 use strict;
+use Carp;
 
 =head1 NAME
 
@@ -149,6 +150,8 @@ same object, with the same memory address.
 
 sub obj_cmp {
     my ($a, $b) = @_;
+    no warnings;
+
     return $a->{id} cmp $b->{id};
 }
 

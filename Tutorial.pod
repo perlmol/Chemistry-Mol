@@ -29,7 +29,7 @@ formats are under development.
 
 =head2 The Mol object
 
-C<read_mol> returns a Mol object. An I<object> is a data structure of a given
+C<< Chemistry::Mol->read >> returns a Mol object. An I<object> is a data structure of a given
 I<class> that has I<methods> (i.e. subroutines) associated with it. To access
 or modify an object's properties, you call the methods through the "arrow
 syntax":

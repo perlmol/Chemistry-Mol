@@ -1,5 +1,5 @@
 use Test::More;
-my @files = (glob("*.pm"), glob("*.pod"));
+my @files = (glob("*.pm"), glob("*.pod"), glob("*/*.pm"));
 my $n = @files;
 
 eval 'use Test::Pod';

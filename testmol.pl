@@ -1,7 +1,7 @@
 #!/home/ivan/bin/perl -w 
 
 use Data::Dumper;
-#use blib;
+use blib;
 use Chemistry::Mol;
 use Chemistry::File ":auto";
 
@@ -22,16 +22,12 @@ $a2->attr('am1:charge', -0.23);
 $b1->attr('am1:order', 0.987);
 print "a mol:'$mol'\n";
 
-print $a2->print;
-$a2->attr('am1:charge', -0.55);
-print $a2->print;
-$a2->del_attr('am1:charge');
-print $a2->print;
 
-#print $mol->print;
-#print $mol->attr('mp');
-#print Dumper($mol);
-
-print $mol->atoms_by_name('c.*'), "\n";
-#print $mol->select_atoms(name => 'c.*'), "\n";
+use Chemistry::File::MDLMol;
+$mol = Chemistry::Mol->read("test.mol");
+print "Mass: ", $mol->mass, "\n";
+print "Formula: ", $mol->formula, "\n";
+print "Formula: ", $mol->formula("%s %D "), "\n";
+print "Formula: ", $mol->formula("%s%d{<sub>%d</sub>}"), "\n";
+print "Formula: ", $mol->formula("%s%d{_%d}"), "\n";
 

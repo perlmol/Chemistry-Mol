@@ -9,4 +9,5 @@ WriteMakefile(
         'Math::VectorReal' => 1.0,
         'Test::Simple' => 0,
     },
+    'PMLIBDIRS'         => ['File'],
 );
