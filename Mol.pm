@@ -1,5 +1,5 @@
 package Chemistry::Mol;
-$VERSION = '0.26';
+$VERSION = '0.30';
 # $Id$
 
 =head1 NAME
@@ -838,7 +838,7 @@ sub _paint {
 
 =head1 VERSION
 
-0.26
+0.30
 
 =head1 SEE ALSO
 

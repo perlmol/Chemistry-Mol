@@ -1,5 +1,5 @@
 package Chemistry::Obj;
-$VERSION = "0.26";
+$VERSION = "0.30";
 # $Id$
 use 5.006;
 
@@ -53,9 +53,19 @@ accessor method for attr expects the attribute name as the first parameter, and
 
 sub attr {
     my $self = shift;
-    my $attr = shift;
-    return $self->{attr}{$attr} unless @_;
-    $self->{attr}{$attr} = shift;
+    my ($attr) = @_;
+    if (ref $attr eq 'HASH') {
+        $self->{attr} = { %$attr };
+    } elsif (@_ == 1) {
+        return $self->{attr}{$attr};
+    } elsif (@_ == 0) {
+        return {%{$self->{attr}}};
+    } else {
+        while (@_ > 1) {
+            $attr = shift;
+            $self->{attr}{$attr} = shift;
+        }
+    }
     $self;
 }
 
@@ -187,7 +197,7 @@ sub use {
 
 =head1 VERSION
 
-0.26
+0.30
 
 =head1 SEE ALSO
 

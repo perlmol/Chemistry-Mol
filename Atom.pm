@@ -1,6 +1,6 @@
 package Chemistry::Atom;
 
-$VERSION = '0.26';
+$VERSION = '0.30';
 # $Id$
 
 =head1 NAME
@@ -244,16 +244,16 @@ sub coords {
 =item $atom->internal_coords
 
     # get a Chemistry::InternalCoords object
-    my $ic = $atom->coords;      
+    my $ic = $atom->internal_coords;      
 
     # set a Chemistry::InternalCoords object 
-    $atom->coords($vic);         
+    $atom->internal_coords($vic);         
 
     # also accepts array refs 
-    $atom->coords([8, 1.54, 7, 109.47, 6, 120.0]);   
+    $atom->internal_coords([8, 1.54, 7, 109.47, 6, 120.0]);   
 
     # also accepts lists
-    $atom->coords(8, 1.54, 7, 109.47, 6, 120.0);    
+    $atom->internal_coords(8, 1.54, 7, 109.47, 6, 120.0);    
 
 Sets or gets the atom's internal coordinates. It can take as a parameter a
 Chemistry::InternalCoords object, a reference to an array, or the list of
@@ -287,7 +287,7 @@ sub internal_coords {
 =item $atom->x3, $atom->y3, $atom->z3
 
 Get the x, y or z 3D coordinate of the atom. This methods are just accessors
-that don't change the coordinats. $atom->x3 is short for 
+that don't change the coordinates. $atom->x3 is short for 
 ($atom->coords->array)[0], and so on.
 
 =cut
@@ -721,7 +721,7 @@ sub printf {
 
 =head1 VERSION
 
-0.26
+0.30
 
 =head1 SEE ALSO
 

@@ -1,5 +1,5 @@
 package Chemistry::File;
-$VERSION = '0.26';
+$VERSION = '0.30';
 
 =head1 NAME
 
@@ -86,7 +86,7 @@ pre-0.30 version. The steps to read a file are the following:
     $file = Chemistry::File::MyFormat->new(file => 'xyz.mol');
     $file->open('<');
     $file->read_header;
-    while (my $mol = $self->next_mol) {
+    while (my $mol = $self->read_mol) {
         # do something with $mol...
     }
     $self->read_footer;
@@ -124,10 +124,13 @@ and file.
 =cut
 
 use strict;
+use warnings;
+no warnings qw(uninitialized);
 use Carp;
 use FileHandle;
 use base qw(Chemistry::Obj);
-use warnings;
+# don't blame our problems in the Chemistry::Mol module ;-)
+our @CARP_NOT = qw(Chemistry::Mol);
 
 # This subroutine implements the :auto functionality
 sub import {
@@ -155,9 +158,12 @@ method, so it should be provided by all derived classes.
 =cut
 
 sub parse_string {
-    my $class = shift;
-    $class = ref $class || $class;
-    croak "parse_string() is not implemented for $class";
+    my ($self, $s, %opts);
+    if ($opts{_must_override}) {
+        my $class = ref $self || $self;
+        croak "parse_string() is not implemented for $class";
+    }
+    $self->new(file => \$s, opts => \%opts)->read;
 }
 
 
@@ -169,9 +175,14 @@ provided by all derived classes.
 =cut
 
 sub write_string {
-    my $class = shift;
-    $class = ref $class || $class;
-    croak "write_string() is not implemented for $class";
+    my ($self, $mol, %opts);
+    if ($opts{_must_override}) {
+        my $class = ref $self || $self;
+        croak "write_string() is not implemented for $class";
+    }
+    my $s;
+    $self->new(file => \$s, opts => \%opts)->write;
+    $s;
 }
 
 =item $class->parse_file($file, %options)
@@ -203,8 +214,9 @@ may choose to override it. $file can be either a filehandle or a filename.
 sub write_file {
     my ($self, $mol, $file, %opts) = @_;
 
-    my $s = $self->write_string($mol, %opts);
-    $self->snort($file, $s);
+    $self->new(file => $file, mols => [$mol], opts => \%opts)->write;
+    #my $s = $self->write_string($mol, %opts);
+    #$self->snort($file, $s);
 }
 
 =item $class->name_is($fname, %options)
@@ -252,9 +264,9 @@ sub file_is {
 =item $class->slurp($file %opts)
 
 Reads a file into a scalar. Automatic decompression of gzipped files is
-supported if the IO::Zlib module is installed. Files ending in .gz are assumed
-to be compressed; otherwise it is possible to force decompression by passing
-the gzip => 1 option (or no decompression with gzip => 0).
+supported if the Compress::Zlib module is installed. Files ending in .gz are
+assumed to be compressed; otherwise it is possible to force decompression by
+passing the gzip => 1 option (or no decompression with gzip => 0).
 
 =cut
 
@@ -267,8 +279,8 @@ sub slurp {
     if (ref $file) {
         $fh = $file;
     } elsif ($opts{gzip} or !defined $opts{gzip} and $file =~ /.gz$/) {
-        eval { require IO::Zlib } or croak "IO::Zlib support not installed";
-        $fh = IO::Zlib->new($file, 'rb') 
+        eval { require Compress::Zlib } or croak "Compress::Zlib support not installed";
+        $fh = Compress::Zlib->new($file, 'rb') 
             or croak "Could not open file $file for reading: $!";
         $s = join '',  <$fh>;
     } else {
@@ -283,7 +295,7 @@ sub slurp {
 =item $class->snort($file, $s, %opts)
 
 Write a scalar to a file in one step. Automatic gzip compression is supported
-if the IO::Zlib module is installed. Files ending in .gz are assumed to be
+if the Compress::Zlib module is installed. Files ending in .gz are assumed to be
 compressed; otherwise it is possible to force compression by passing the gzip
 => 1 option (or no compression with gzip => 0). Specific compression levels
 between 2 (fastest) and 9 (most compressed) may also be used (e.g., gzip => 9).
@@ -296,10 +308,10 @@ sub snort {
     if (ref $file) {
         $fh = $file;
     } elsif ($opts{gzip} or !defined $opts{gzip} and $file =~ /.gz$/) {
-        eval { require IO::Zlib } or croak "IO::Zlib support not installed";
+        eval { require Compress::Zlib } or croak "Compress::Zlib support not installed";
         my $level = $opts{gzip} || 6;
         $level = 6 if $level == 1;
-        $fh = IO::Zlib->new($file, "wb$level") 
+        $fh = Compress::Zlib->new($file, "wb$level") 
             or croak "Could not open file $file for compressed writing: $!";
     } else {
         $fh = FileHandle->new(">$file") 
@@ -318,7 +330,7 @@ used, the string contained in the scalar is used as an in-memory file.
 
 =cut
 
-Chemistry::Obj::accessor(qw(file fh opts));
+Chemistry::Obj::accessor(qw(file fh opts mols mode));
 
 =back
 
@@ -350,26 +362,48 @@ Opens the file for reading by default, or for writing if $mode eq '>'.
 
 =cut
 
+sub write_header { }
+sub write_footer { }
+
+
 sub open {
     my ($self, $mode) = @_;
     my $fh;
     my $s;
     $mode ||= '<';
+    $self->mode($mode);
     my $file = $self->file;
     if (ref $file eq 'SCALAR') {
+        croak "decompression only supported for files" if $self->{opts}{gzip};
         require IO::String;
         $fh = IO::String->new($$file);
     } elsif (ref $file) {
+        croak "decompression only supported for files" if $self->{opts}{gzip};
         $fh = $file;
     } elsif ($self->{opts}{gzip} 
         or !defined $self->{opts}{gzip} and $file =~ /.gz$/) 
     {
-        eval { require IO::Zlib } or croak "IO::Zlib support not installed";
+        eval { require Compress::Zlib } # Carp
+            or croak "Compress::Zlib not installed!";
+        require File::Temp;
+
+        $fh = File::Temp::tempfile();
         $self->{opts}{gzip} ||= 1;
-        $mode = $mode eq '>' ? 'w' : 'r';
-        $fh = IO::Zlib->new($file, $mode.'b') 
-            or croak "Could not open file $file: $!";
-        #print "open gzip($file)\n";
+        unless ($mode eq '>') { 
+            my $gz = Compress::Zlib::gzopen($file, "rb") 
+                 or die "Cannot open compressed $file: "
+                     . "$Compress::Zlib::gzerrno\n";
+
+            my $buffer;
+            print $fh $buffer while $gz->gzread($buffer) > 0;
+        
+            if ($Compress::Zlib::gzerrno != Compress::Zlib::Z_STREAM_END()) {
+                die "Error reading from $file: $Compress::Zlib::gzerrno"
+                    . ($Compress::Zlib::gzerrno+0) . "\n";
+            }
+            $gz->gzclose();
+            seek $fh, 0, 0;
+        }
     } else {
         $fh = FileHandle->new("$mode$file") 
             or croak "Could not open file $file: $!";
@@ -377,6 +411,35 @@ sub open {
     $self->fh($fh);
     $self;
 }
+
+sub close {
+    my ($self) = @_;
+    my $fh = $self->fh;
+    if ($fh and $self->mode eq '>' and $self->{opts}{gzip}) {
+        my $level = $self->{opts}{gzip} || 6;
+        $level = 6 if $level == 1;
+        my $file = $self->file;
+        if (ref $file) { 
+            croak "compression only supported for files";
+        } else {
+            seek $fh, 0, 0;
+            my $gz = Compress::Zlib::gzopen($file, "wb$level")
+                or die "Cannot open stdout: $Compress::Zlib::gzerrno\n";
+            local $_;
+            while (<$fh>) {
+                $gz->gzwrite($_) 
+                    or die "error writing: $Compress::Zlib::gzerrno\n";
+            }
+            $gz->gzclose;
+        }
+    }
+    if ($self->mode) {
+        if ($fh) { $fh->close or die "$!" };
+        $self->mode('');
+    }
+}
+
+sub DESTROY { shift->close }
 
 =item $self->slurp_mol
 
@@ -387,33 +450,30 @@ are no more molecules in the file.
 =cut
 
 sub slurp_mol {
-    my ($self) = @_;
-    my $fh = $self->fh;
-    if ($self->{opts}{gzip}) {
-        join('', <$fh>);
-    } else {
-        local $/; <$fh>;
-    }
+    my ($self, $fh) = @_;
+    local $/; <$fh>;
 }
 
-=item $file->next_mol
+sub skip_mol { shift->slurp_mol(@_) }
+
+=item $file->read_mol($fh, %opts)
 
 Read the next molecule in the input stream. It returns false if there
-are no more molecules in the file.
-
+are no more molecules in the file. These method should be overridden by
+derived classes; otherwise it will call slurp_mol and parse_string.
 
 =cut
 
-sub next_mol {
-    my ($self) = @_;
-    my $s = $self->slurp_mol;
+sub read_mol {
+    my ($self, $fh, %opts) = @_;
+    my $s = $self->slurp_mol($fh);
     return unless defined $s and length $s;
-    $self->parse_string($s);
+    $self->parse_string($s, %opts, _must_override => 1);
 }
 
 =item $file->read
 
-Read the file. This calls read_header, next_mol until there are no more
+Read the file. This calls read_header, read_mol until there are no more
 molecules left, and finally read_footer.
 
 =cut
@@ -423,11 +483,29 @@ sub read {
     $self->open('<');
     $self->read_header;
     my @mols;
-    while (my $mol = $self->next_mol) {
+    while (my $mol = $self->read_mol($self->fh, %{$self->{opts}})) {
         push @mols, $mol;
     }
     $self->read_footer;
-    wantarray ? @mols : @mols ? $mols[0] : undef;
+    $self->close;
+    $self->mols(\@mols);
+    wantarray ? @mols : $mols[0];
+}
+
+sub write_mol {
+    my ($self, $fh, $mol, %opts) = @_;
+    print $fh $self->write_string($mol, %opts, _must_override => 1);
+}
+
+sub write {
+    my ($self) = @_;
+    $self->open('>');
+    $self->write_header;
+    for my $mol (@{$self->mols}) {
+        $self->write_mol($self->fh, $mol, %{$self->{opts}});
+    }
+    $self->write_footer;
+    $self->close;
 }
 
 1;
@@ -441,7 +519,7 @@ Unix and Windows (either Cygwin or Activestate).
 
 =head1 VERSION
 
-0.26
+0.30
 
 =head1 SEE ALSO
 

@@ -1,8 +1,8 @@
-#use Test::More "no_plan";
-use Test::More tests => 22;
+use Test::More "no_plan";
+#use Test::More tests => 22;
 BEGIN { 
     use_ok('Chemistry::Mol');
-    use_ok('Math::VectorReal');    
+    use_ok('Math::VectorReal');
 };
 
 # Constructors
@@ -45,5 +45,22 @@ $atom3->coords(3,0,4);
 $v2 = $atom3->coords;
 is($v->length, 5, 'atom->coords(list)');
 
+# x3, y3, z3 accessors
+my $x = $atom3->x3;
+is($x, 3, 'x3');
+my $y = $atom3->y3;
+is($y, 0, 'y3');
+my $z = $atom3->z3;
+is($z, 4, 'z3');
+
+$mol = Chemistry::Mol->new;
+$mol->new_atom(symbol => 'O');
+$mol->new_atom(symbol => 'H');
+$mol->new_atom(symbol => 'H');
+ok(abs($mol->mass - 18.01528) < 0.0001, '$mol->mass');
+$mol->atoms(1)->mass(18); 
+ok(abs($mol->mass - 20.015) < 0.01, '$mol->mass');
+
 # Bond methods
 is($bond->length, 5, '$bond->length');
+

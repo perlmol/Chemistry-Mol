@@ -6,8 +6,9 @@ Chemistry::Tutorial - PerlMol Quick Tutorial
 
 The modules in the PerlMol toolkit are designed to simplify the handling of 
 molecules from Perl programs in a general and extensible way. 
-These modules are object-oriented; however, this tutorial assumes little or no
-knowledge of object-oriented programming in Perl.
+These modules are object-oriented; however, this tries to assume little or no
+knowledge of object-oriented programming in Perl. For a general introduction
+about how to use object-oriented modules, see L<HTML::Tree::AboutObjects>.
 
 This document shows some of the more common methods included in the PerlMol
 toolkit, in a reasonable order for a quick introduction. For more details see
@@ -126,9 +127,9 @@ and the molecule. This can be useful for things such as finding the water
 molecules closest to a given atom.
 
 Atoms may also have internal coordinates, which define the position of an atom
-relative to the positions of other atoms by means of a distance, and angle,
-and a dihedral atom. Those coordinates can be accessed through the
-$atom->internal_coords method, which used L<Chemistry::InternalCoords> objects.
+relative to the positions of other atoms by means of a distance, an angle,
+and a dihedral angle. Those coordinates can be accessed through the
+$atom->internal_coords method, which uses L<Chemistry::InternalCoords> objects.
 
 =head1 The Bond object
 
@@ -241,7 +242,7 @@ programming is that classes can be extended. For dealing with macromolecules,
 we have the MacroMol class, which extends the Chemistry::Mol class. This means
 that in practice you can use a MacroMol object exactly as you would use a
 Chemistry::Mol object, but with some added functionality. In fact, the PDB
-reader can return MacroMol instead of Chemistry::Mol objects by just changing
+reader can return MacroMol instead of Chemistry::Mol objects just by changing
 the first example like this:
 
     use Chemistry::MacroMol;
@@ -259,7 +260,7 @@ the atoms in the molecule; in a protein, a domain would be just a residue.
 Note that in principle it is not required that all atoms belong to one and 
 only one domain; you could have atoms that belong to several domains or atoms
 that don't belong to any domain. (But in the case of PDB files, it happens 
-that all atoms belong to one domain.)
+that all atoms belong to one residue.)
 
 You can select domains in a molecule in a way similar to that used for atoms
 and bonds, in this case through the C<domains> method:
@@ -289,13 +290,12 @@ know the residue number and atom name.
 
 =head1 VERSION
 
-0.26
+0.30
 
 =head1 SEE ALSO
 
-The perldoc pages for L<Chemistry::Mol>, L<Chemistry::Atom>,
-L<Chemistry::Bond>, L<Chemistry::File>, L<Chemistry::MacroMol>,
-L<Chemistry::Domain>
+L<Chemistry::Mol>, L<Chemistry::Atom>, L<Chemistry::Bond>, L<Chemistry::File>,
+L<Chemistry::MacroMol>, L<Chemistry::Domain>.
 
 The PerlMol website L<http://www.perlmol.org/>
 

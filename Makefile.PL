@@ -6,9 +6,10 @@ WriteMakefile(
     'NAME'		=> 'Chemistry::Mol',
     'VERSION_FROM'	=> 'Mol.pm', # finds $VERSION
     'PREREQ_PM'		=> {
-        'Math::VectorReal' => 1.0,
-        'Test::Simple' => 0,
-        'Scalar::Util' => 1.01,
+        'Math::VectorReal'  => 1.0,
+        'Test::Simple'      => 0,
+        'Scalar::Util'      => 1.01,
+        #'Compress::Zlib'    => 0
     },
     'PMLIBDIRS'         => ['File'],
 );

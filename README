@@ -1,4 +1,4 @@
-Chemistry/Mol version 0.26
+Chemistry/Mol version 0.30
 ==========================
 
 This toolkit includes basic objects and methods to describe molecules. It
@@ -6,10 +6,7 @@ consists of several modules: Chemistry::Mol, Chemistry::Atom, Chemistry::Bond,
 and Chemistry::File. These are the core modules of the PerlMol toolkit;
 see http://www.perlmol.org/.
 
-CHANGES SINCE VERSION 0.25
-        - Added %S option to $mol->printf
-        - Atom.pm: added total_hydrogens, implicit_hydrogens, explicit_valence,
-          and deprecated hydrogens.
+CHANGES SINCE VERSION 0.26
 
 INSTALLATION
 
