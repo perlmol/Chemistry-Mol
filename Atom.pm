@@ -37,7 +37,7 @@ any parameters. To set the value, use $mol->method($new_value).
 
 =cut
 
-
+use 5.006001;
 use strict;
 use Math::VectorReal;
 use Carp;
@@ -133,6 +133,8 @@ sub symbol {
 =item $atom->coords([$x, $y, $z])
 
 Sets the atom's coordinates, and returns a Math::VectorReal object.
+It can take as a parameter a Math::VectorReal object, a reference to an 
+array, or the list of coordinates.
 
 =cut
 
@@ -140,7 +142,13 @@ sub coords {
     my $self = shift;
 
     if(@_) {
-        return $self->{coords} = vector(@{$_[0]});
+        if (UNIVERSAL::isa($_[0], "Math::VectorReal")) {
+            return $self->{coords} = $_[0];
+        } elsif (ref $_[0] eq "ARRAY") {
+            return $self->{coords} = vector(@{$_[0]});
+        } else {
+            return $self->{coords} = vector(@_);
+        }
     } else {
         return $self->{coords};
     }
@@ -268,7 +276,8 @@ EOF
 
 =head1 SEE ALSO
 
-L<Chemistry::Mol>, L<Chemistry::Bond>, L<Math::VectorReal>
+L<Chemistry::Mol>, L<Chemistry::Bond>, 
+L<Math::VectorReal>, L<Chemistry::Tutorial>
 
 =head1 AUTHOR
 
