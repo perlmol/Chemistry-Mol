@@ -1,4 +1,4 @@
-Chemistry/Mol version 0.33
+Chemistry/Mol version 0.34
 ==========================
 
 This toolkit includes basic objects and methods to describe molecules. It
@@ -6,9 +6,9 @@ consists of several modules: Chemistry::Mol, Chemistry::Atom, Chemistry::Bond,
 and Chemistry::File. These are the core modules of the PerlMol toolkit;
 see http://www.perlmol.org/.
 
-CHANGES SINCE VERSION 0.32
-        - Fixed spurious warnings in sprout_hydrogens (bug 1157393)
-        - Added a test for incompatible Chemistry::File::SMILES versions.
+CHANGES SINCE VERSION 0.33
+        - Fixed $atom->bonds duplication on $mol->separate (bug 1173237)
+        - New method: safe_clone
 
 INSTALLATION
 
@@ -36,7 +36,7 @@ The following modules are optional, but are required by certain functions:
 
 COPYRIGHT AND LICENSE
 
-Copyright (C) 2004 Ivan Tubert-Brohman <itub@cpan.org>
+Copyright (C) 2005 Ivan Tubert-Brohman <itub@cpan.org>
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself. 

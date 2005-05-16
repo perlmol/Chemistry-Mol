@@ -1,5 +1,5 @@
 package Chemistry::File;
-$VERSION = '0.33';
+$VERSION = '0.34';
 
 =head1 NAME
 
@@ -607,7 +607,7 @@ Unix and Windows (either Cygwin or Activestate).
 
 =head1 VERSION
 
-0.33
+0.34
 
 =head1 SEE ALSO
 
@@ -621,7 +621,7 @@ Ivan Tubert-Brohman-Brohman <itub@cpan.org>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2004 Ivan Tubert-Brohman. All rights reserved. This program is
+Copyright (c) 2005 Ivan Tubert-Brohman. All rights reserved. This program is
 free software; you can redistribute it and/or modify it under the same terms as
 Perl itself.
 

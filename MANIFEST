@@ -30,5 +30,6 @@ t/mol.pl.gz
 t/Mol.t
 t/Obj.t
 t/pod.t
+t/safe_clone.t
 t/zlib.t
 Tutorial.pod

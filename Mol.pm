@@ -1,5 +1,5 @@
 package Chemistry::Mol;
-$VERSION = '0.33';
+$VERSION = '0.34';
 # $Id$
 
 =head1 NAME
@@ -27,8 +27,8 @@ only a minimal set of attributes is provided by default, and some attributes
 have very loosely defined meaning. This is because each program and file type
 has different idea of what each concept (such as bond and atom type) means.
 Bonds are defined as a list of atoms (typically two) with an arbitrary type.
-Atoms are defined by a symbol and a Z, and may have 3D and coordinates (2D
-coming soon).
+Atoms are defined by a symbol and a Z, and may have 3D and internal coordinates
+(2D coming soon).
 
 =cut
 
@@ -736,6 +736,33 @@ sub clone {
     $clone->_weaken;
 }
 
+=item my $mol2 = $mol->safe_clone;
+
+Like clone, it makes a deep copy of a molecule. The difference is that the copy
+is not "exact" in that new molecule and its atoms and bonds get assigned new
+IDs. This makes it safe to combine cloned molecules. For example, this is an
+error:
+
+    # XXX don't try this at home!
+    my $mol2 = Chemistry::Mol->combine($mol1, $mol1);
+    # the atoms in $mol1 will clash
+
+But this is ok:
+
+    # the "safe clone" of $mol1 will have new IDs
+    my $mol2 = Chemistry::Mol->combine($mol1, $mol1->safe_clone);
+
+=cut
+
+sub safe_clone {
+    my ($mol) = @_;
+    my $clone = $mol->clone;
+    for ($clone, $clone->atoms, $clone->bonds) {
+        $_->id($_->nextID);
+    }
+    $clone;
+} 
+
 sub _weaken {
     my ($self) = @_;
     for ($self->atoms, $self->bonds) {
@@ -888,7 +915,7 @@ sub collapse_hydrogens {
 
 =head1 VERSION
 
-0.33
+0.34
 
 =head1 SEE ALSO
 
@@ -903,7 +930,7 @@ Ivan Tubert-Brohman E<lt>itub@cpan.orgE<gt>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2004 Ivan Tubert-Brohman. All rights reserved. This program is
+Copyright (c) 2005 Ivan Tubert-Brohman. All rights reserved. This program is
 free software; you can redistribute it and/or modify it under the same terms as
 Perl itself.
 

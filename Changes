@@ -1,7 +1,8 @@
 Revision history for Perl extension Chemistry::Mol.
 
-0.34
+0.34  May 16 2005
         - Fixed $atom->bonds duplication on $mol->separate (bug 1173237)
+        - New method: safe_clone
 
 0.33  Mar 29 2005
         - Fixed spurious warnings in sprout_hydrogens (bug 1157393)

@@ -1,5 +1,5 @@
 package Chemistry::Bond;
-$VERSION = '0.33';
+$VERSION = '0.34';
 # $Id$
 
 =head1 NAME
@@ -220,7 +220,7 @@ sub parent {
 
 =head1 VERSION
 
-0.33
+0.34
 
 =head1 SEE ALSO
 
@@ -234,7 +234,7 @@ Ivan Tubert-Brohman E<lt>itub@cpan.orgE<gt>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2004 Ivan Tubert-Brohman. All rights reserved. This program is
+Copyright (c) 2005 Ivan Tubert-Brohman. All rights reserved. This program is
 free software; you can redistribute it and/or modify it under the same terms as
 Perl itself.
 

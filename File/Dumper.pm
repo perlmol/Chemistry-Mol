@@ -1,5 +1,5 @@
 package Chemistry::File::Dumper;
-$VERSION = '0.33';
+$VERSION = '0.34';
 
 require 5.006;
 use strict;
@@ -103,7 +103,7 @@ sub string_is {
 
 =head1 VERSION
 
-0.33
+0.34
 
 =head1 SEE ALSO
 
@@ -112,6 +112,12 @@ L<Chemistry::Mol>, L<Chemistry::File>, L<Data::Dumper>
 =head1 AUTHOR
 
 Ivan Tubert-Brohman <itub@cpan.org>
+
+=head1 COPYRIGHT
+
+Copyright (c) 2005 Ivan Tubert-Brohman. All rights reserved. This program is
+free software; you can redistribute it and/or modify it under the same terms as
+Perl itself.
 
 =cut
 
