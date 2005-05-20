@@ -1,5 +1,5 @@
 package Chemistry::Mol;
-$VERSION = '0.34';
+$VERSION = '0.35';
 # $Id$
 
 =head1 NAME
@@ -733,7 +733,8 @@ has a pointer to the rest of the universe, the entire universe will be cloned!
 sub clone {
     my ($self) = @_;
     my $clone = dclone $self;
-    $clone->_weaken;
+    $clone->_weaken if Storable->VERSION < 2.14;
+    $clone;
 }
 
 =item my $mol2 = $mol->safe_clone;
@@ -909,13 +910,25 @@ sub collapse_hydrogens {
     }
 }
 
+=item $mol->add_implicit_hydrogens
+
+Use heuristics to figure out how many implicit hydrogens should each atom in 
+the molecule have to satisfy its normal "organic" valence.
+
+=cut
+
+sub add_implicit_hydrogens {
+    my ($self) = @_;
+    $_->add_implicit_hydrogens for $self->atoms;
+}
+
 1;
 
 =back
 
 =head1 VERSION
 
-0.34
+0.35
 
 =head1 SEE ALSO
 

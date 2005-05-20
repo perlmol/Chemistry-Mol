@@ -1,4 +1,4 @@
-Chemistry/Mol version 0.34
+Chemistry/Mol version 0.35
 ==========================
 
 This toolkit includes basic objects and methods to describe molecules. It
@@ -6,9 +6,11 @@ consists of several modules: Chemistry::Mol, Chemistry::Atom, Chemistry::Bond,
 and Chemistry::File. These are the core modules of the PerlMol toolkit;
 see http://www.perlmol.org/.
 
-CHANGES SINCE VERSION 0.33
-        - Fixed $atom->bonds duplication on $mol->separate (bug 1173237)
-        - New method: safe_clone
+CHANGES SINCE VERSION 0.34
+        - Added formal_radical atom property.
+        - Compatibility with Storable-2.14, which already takes care of
+          weak references.
+        - calc_implicit_hydrogens, add_implicit_hydrogens
 
 INSTALLATION
 

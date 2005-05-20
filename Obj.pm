@@ -1,5 +1,5 @@
 package Chemistry::Obj;
-$VERSION = 0.33;
+$VERSION = 0.35;
 # $Id$
 use 5.006;
 
@@ -243,7 +243,7 @@ sub use {
 
 =head1 VERSION
 
-0.33
+0.35
 
 =head1 SEE ALSO
 
@@ -257,7 +257,7 @@ Ivan Tubert-Brohman E<lt>itub@cpan.orgE<gt>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2004 Ivan Tubert-Brohman. All rights reserved. This program is
+Copyright (c) 2005 Ivan Tubert-Brohman. All rights reserved. This program is
 free software; you can redistribute it and/or modify it under the same terms as
 Perl itself.
 

@@ -1,5 +1,5 @@
 package Chemistry::File;
-$VERSION = '0.34';
+$VERSION = '0.35';
 
 =head1 NAME
 
@@ -161,7 +161,7 @@ sub import {
                 my ($pm) = $pmfile =~ m|(Chemistry/File/.*\.pm)$|;
                 #warn "requiring $pm\n";
                 eval { require $pm }; 
-                die "Error in Chemistry::File: '$@'\n" if $@;
+                die "Error in Chemistry::File: '$@'; pmfile='$pmfile'; pm='$pm'\n" if $@;
             }
         } else {
             eval "use ${pack}::$param";
@@ -607,7 +607,7 @@ Unix and Windows (either Cygwin or Activestate).
 
 =head1 VERSION
 
-0.34
+0.35
 
 =head1 SEE ALSO
 

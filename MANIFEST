@@ -11,6 +11,7 @@ META.yml			Module meta-data (added by MakeMaker)
 Mol.pm
 Obj.pm
 README
+t/add_implicit_h.t
 t/Atom.t
 t/Bond.t
 t/change_id.t

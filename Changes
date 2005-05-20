@@ -1,5 +1,11 @@
 Revision history for Perl extension Chemistry::Mol.
 
+0.35  May 20 2005
+        - Added formal_radical atom property.
+        - Compatibility with Storable-2.14, which already takes care of
+          weak references.
+        - calc_implicit_hydrogens, add_implicit_hydrogens
+
 0.34  May 16 2005
         - Fixed $atom->bonds duplication on $mol->separate (bug 1173237)
         - New method: safe_clone

@@ -1,6 +1,6 @@
 package Chemistry::Atom;
 
-$VERSION = '0.34';
+$VERSION = '0.35';
 # $Id$
 
 =head1 NAME
@@ -331,6 +331,14 @@ Set or get the formal charge of the atom.
 
 Chemistry::Obj::accessor('formal_charge');
 
+=item $atom->formal_radical($radical)
+
+Set or get the formal radical multiplicity for the atom.
+
+=cut
+
+Chemistry::Obj::accessor('formal_radical');
+
 =item $atom->implicit_hydrogens($h_count)
 
 Set or get the number of implicit hydrogen atoms bonded to the atom.
@@ -392,6 +400,74 @@ sub collapse_hydrogens {
         $nei->delete, $implicit++ if $nei->symbol eq 'H';
     }
     $self->implicit_hydrogens($implicit);
+}
+
+my %VALENCE_TABLE = (
+    Br => 1, Cl => 1, B => 3, C => 4, N => 3, O => 2, P => 3, S => 2, 
+    F => 1, I => 1,
+);
+
+# to make it easier to test
+sub _calc_implicit_hydrogens {
+    my ($self, $symbol, $valence, $charge, $radical) = @_;
+    no warnings 'uninitialized';
+
+    my $h_count = $VALENCE_TABLE{$symbol} - $valence;
+    # should account for non-kekulized aromatic bonds
+
+    # some common charge situations
+    if (($symbol =~ /^[NOS]$/) && $charge == -1) {
+        $h_count--;
+    } elsif ($symbol =~ /^[NOSP]$/ && $charge == 1) {
+        $h_count++;
+    } elsif ($symbol eq 'C' && $charge) {
+        $h_count--;
+    } elsif ($symbol eq 'B' && $charge == -1) {
+        $h_count++;
+    }
+
+    # some common radical situations
+    if ($radical == 1 or $radical == 3) {
+        $h_count -=2;
+    } elsif ($radical == 2) {
+        $h_count--;
+    }
+
+    $h_count = 0 if $h_count < 0;
+    $h_count;
+}
+
+=item $atom->calc_implicit_hydrogens
+
+Use heuristics to figure out how many implicit hydrogens should the atom have
+to satisfy its normal "organic" valence. Returns the number of hydrogens but
+does not affect the atom object.
+
+=cut
+
+sub calc_implicit_hydrogens {
+    my ($self) = @_;
+    $self->_calc_implicit_hydrogens(
+        $self->symbol, $self->explicit_valence, 
+        $self->formal_charge, $self->formal_radical,
+    );
+}
+
+=item $atom->add_implicit_hydrogens
+
+Similar to calc_implicit_hydrogens, but it also sets the number of implicit
+hydrogens in the atom to the new calculated value. Equivalent to
+
+    $atom->implicit_hydrogens($atom->calc_implicit_hydrogens);
+
+It returns the atom object.
+
+=cut
+
+sub add_implicit_hydrogens {
+    my ($self) = @_;
+    my $h_count = $self->calc_implicit_hydrogens;
+    $self->implicit_hydrogens($h_count);
 }
 
 =item $atom->aromatic($bool)
@@ -762,7 +838,7 @@ sub printf {
 
 =head1 VERSION
 
-0.34
+0.35
 
 =head1 SEE ALSO
 
