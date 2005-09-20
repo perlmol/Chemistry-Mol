@@ -1,5 +1,9 @@
 Revision history for Perl extension Chemistry::Mol.
 
+0.36  Sep 20 2005
+        - Sort formulas in Hill order.
+        - Fixed calc_implicit_hydrogens for halides.
+
 0.35  May 20 2005
         - Added formal_radical atom property.
         - Compatibility with Storable-2.14, which already takes care of

@@ -1,5 +1,5 @@
 package Chemistry::Mol;
-$VERSION = '0.35';
+$VERSION = '0.36';
 # $Id$
 
 =head1 NAME
@@ -498,7 +498,7 @@ Read a file and return a list of Mol objects, or croaks if there was a problem.
 The type of file will be guessed if not specified via the C<format> option.
 
 Note that only registered file readers will be used. Readers may be registered
-using C<register_type()>; modules that include readers (such as
+using C<register_format()>; modules that include readers (such as
 L<Chemistry::File::PDB>) usually register them automatically when they are
 loaded.
 
@@ -587,7 +587,7 @@ following is a hypothetical example for reading MDL rxnfiles.
     $yield     = $rxn->yield;     # a number
 
 Note that only registered file readers will be used. Readers may be registered
-using register_type(); modules that include readers (such as
+using register_format(); modules that include readers (such as
 Chemistry::File::PDB) usually register them automatically.
 
 =cut
@@ -637,7 +637,7 @@ sub register_format {
 =item Chemistry::Mol->formats
 
 Returns a list of the file formats that have been installed by
-register_type()
+register_format()
 
 =cut
 
@@ -922,13 +922,28 @@ sub add_implicit_hydrogens {
     $_->add_implicit_hydrogens for $self->atoms;
 }
 
+
+my %DESCRIPTORS  = ();
+
+sub descriptor {
+    my ($self, $descriptor) = @_;
+    my $sub = $DESCRIPTORS{$descriptor}
+        or croak "unknown descriptor '$descriptor'";
+    return $sub->($self);
+}
+
+sub register_descriptor {
+    my ($self, %opts) = @_;
+    $DESCRIPTORS{$_} = $opts{$_} for keys %opts;
+}
+
 1;
 
 =back
 
 =head1 VERSION
 
-0.35
+0.36
 
 =head1 SEE ALSO
 

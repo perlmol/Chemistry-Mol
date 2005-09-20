@@ -22,7 +22,7 @@ is_deeply( $mol, $mol2, "clone" );
 my @mols = $mol->separate;
 is ( scalar @mols, 2, 'got 2 things' );
 is ( scalar (grep $_->isa('Chemistry::Mol'), @mols), 2, 'separate: two mols' );
-is ( $mols[0]->formula, 'CClH2',    'mol 1 is CClH2' );
+is ( $mols[0]->formula, 'CH2Cl',    'mol 1 is CClH2' );
 is ( $mols[1]->formula, 'CHO2',     'mol 2 is CHO2' );
 my $a1 = $mol->atoms(2);
 my $a2 = $mols[0]->atoms(2);

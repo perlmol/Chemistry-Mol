@@ -1,6 +1,6 @@
 package Chemistry::Atom;
 
-$VERSION = '0.35';
+$VERSION = '0.36';
 # $Id$
 
 =head1 NAME
@@ -416,7 +416,7 @@ sub _calc_implicit_hydrogens {
     # should account for non-kekulized aromatic bonds
 
     # some common charge situations
-    if (($symbol =~ /^[NOS]$/) && $charge == -1) {
+    if (($symbol =~ /^(?:[NOSFI]|Cl|Br)$/) && $charge == -1) {
         $h_count--;
     } elsif ($symbol =~ /^[NOSP]$/ && $charge == 1) {
         $h_count++;
@@ -428,8 +428,10 @@ sub _calc_implicit_hydrogens {
 
     # some common radical situations
     if ($radical == 1 or $radical == 3) {
-        $h_count -=2;
+        # carbene, singlet or triplet
+        $h_count -= 2;
     } elsif ($radical == 2) {
+        # radical (doublet)
         $h_count--;
     }
 
@@ -838,7 +840,7 @@ sub printf {
 
 =head1 VERSION
 
-0.35
+0.36
 
 =head1 SEE ALSO
 

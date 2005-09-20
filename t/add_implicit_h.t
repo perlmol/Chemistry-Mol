@@ -3,8 +3,8 @@ use warnings;
 use Test::More;
 use Chemistry::Mol;
 
-plan 'no_plan';
-#plan tests => 8;
+#plan 'no_plan';
+plan tests => 21;
 
 # low-level test
 # some typical cases
@@ -24,6 +24,10 @@ my @tests = (
     [ N => 2, -1, 0, 0 ],
     [ N => 1, 0, 3, 0 ],
     [ B => 1, -1, 0, 3 ],
+    [ Cl => 0, -1, 0, 0 ],
+    [ Cl => 0, 0, 0, 1 ],
+    [ Cl => 0, 0, 2, 0 ],
+    [ Cl => 0, +1, 0, 1 ],
 );
 
 for my $test (@tests) {

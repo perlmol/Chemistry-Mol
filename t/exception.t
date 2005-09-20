@@ -7,7 +7,7 @@ use Chemistry::File::Dumper;
 
 BEGIN {
     if (eval 'use Test::Exception; 1') {
-        plan tests => 9;
+        plan tests => 10;
         #plan 'no_plan';
     } else {
         plan skip_all => "You don't have Test::Exception installed";
@@ -29,6 +29,9 @@ throws_ok { Chemistry::Mol->read('no_file.mol', format => 'dumper') }
 
 throws_ok { Chemistry::Mol->write('no_file.mol') } 
     qr/guess format/, "unknown format (write)";
+
+throws_ok { Chemistry::Mol->descriptor('bogus') } 
+    qr/unknown descriptor/, "unknown descriptor (bogus)";
 
 ###### ATOM ######
 

@@ -1,5 +1,5 @@
 package Chemistry::File::Formula;
-$VERSION = '0.35';
+$VERSION = '0.36';
 # $Id$
 
 use strict;
@@ -28,10 +28,12 @@ Chemistry::Mol->register_format('formula');
 
 =head1 DESCRIPTION
 
-This module converts a molecule object to a string with the formula. It
-registers the 'formula' format with Chemistry::Mol.
-Besides its obvious use, it is included in the Chemistry::Mol distribution
-because it is a very simple example of a Chemistry::File derived I/O module.
+This module converts a molecule object to a string with the formula and back.
+It registers the 'formula' format with Chemistry::Mol.  Besides its obvious
+use, it is included in the Chemistry::Mol distribution because it is a very
+simple example of a Chemistry::File derived I/O module.
+
+=head2 Writing formulas
 
 The format can be specified as a printf-like string with the following control
 sequences, which are specified with the formula_format parameter to $mol->print
@@ -49,8 +51,8 @@ or $mol->write.
 one
 
 =item %j{substr}  substr is inserted between the formatted string for each
-element. (The 'j' stands for 'joiner'). The format should have only one joiner,
-and its location in the string doesn't matter.
+element. (The 'j' stands for 'joiner'.) The format should have only one joiner,
+but its location in the format string doesn't matter.
 
 =item %% a percent sign
 
@@ -78,6 +80,32 @@ Use a comma followed by a space as a joiner. The output would be
 
 =back
 
+=head3 Symbol Sort Order
+
+The elements in the formula are sorted by default in the "Hill order", which
+means that:
+
+1) if the formula contains carbon, C goes first, followed by H,
+and the rest of the symbols in alphabetical order. For example, "CH2BrF".
+
+2) if there is no carbon, all the symbols (including H) are listed
+alphabetically.  For example, "BrH".
+
+It is possible to supply a custom sorting subroutine with the 'formula_sort'
+option. It expects a subroutine reference that takes a hash reference
+describing the formula (similar to what is returned by parse_formula, discussed
+below), and that returns a list of symbols in the desired order.
+
+For example, this will sort the symbols in reverse asciibetical order:
+
+    my $formula = $mol->print(
+        format          => 'formula',
+        formula_sort    => sub {
+            my $formula_hash = shift;
+            return reverse sort keys %$formula_hash;
+        }
+    );
+
 =head2 Parsing Formulas
 
 Formulas can also be parsed back into Chemistry::Mol objects.
@@ -97,18 +125,14 @@ formula. Some examples of valid formulas:
 
 =over
 
-=item CH3(CH2)3CH3. Equivalent to C5H12.
-
-=item C6H3Me3. Equivalent to C9H12.
-
-=item 2Cu[NH3]4(NO3)2. Equivalent to Cu2H24N12O12.
-
-=item 2C(C[C<C>5]4)3. Equivalent to C152 (kind of silly example...).
-
-=item 2C(C(C(C)5)4)3. Equivalent to C152.
-
-=item C 1 0 H 2 2. Equivalent to C10H22. Note that whitespace is completely
-ignored.
+    Formula              Equivalent to
+    --------------------------------------------------------------
+    CH3(CH2)3CH3         C5H12
+    C6H3Me3              C9H12
+    2Cu[NH3]4(NO3)2      Cu2H24N12O12
+    2C(C[C<C>5]4)3       C152
+    2C(C(C(C)5)4)3       C152
+    C 1 0 H 2 2          C10H22 (whitespace is completely ignored)
 
 =back
 
@@ -116,6 +140,24 @@ When a formula is parsed, a molecule object is created which consists of
 the set of the atoms in the formula (no bonds or coordinates, of course).
 The atoms are created in alphabetical order, so the molecule object for C2H5Br
 would have the atoms in the following sequence: Br, C, C, H, H, H, H, H. 
+
+If you don't want to create a molecule object, but would rather have a simple
+hash with the number of atoms for each element, use the C<parse_formula>
+method:
+
+    my %formula = Chemistry::File::Formula->parse_formula("C2H6O");
+    use Data::Dumper;
+    print Dumper \%formula;
+
+which prints something like
+
+    $VAR1 = {
+              'H' => 6,
+              'O' => 1,
+              'C' => 2
+            };
+
+The C<parse_formula> method is called internally by the C<parse_string> method.
 
 =cut
 
@@ -126,12 +168,7 @@ sub parse_string {
     my $bond_class = $opts{bond_class} || "Chemistry::Bond";
 
     my $mol = $mol_class->new;
-    #$string =~ /^(?:([A-Z][a-z]*)(\d*))+$/ or croak("invalid formula $string\n");
-    #my (%formula) = $string =~ m/([A-Z][a-z]*)(\d*)/g;
-    #for (values %formula) {
-        #$_ = 1 unless length; # Add implicit indices
-    #}
-    my %formula = parse_formula($string);
+    my %formula = $self->parse_formula($string);
     for my $sym (sort keys %formula) {
         for (my $i = 0; $i < $formula{$sym}; ++$i) {
             $mol->add_atom($atom_class->new(symbol => $sym));
@@ -143,12 +180,21 @@ sub parse_string {
 sub write_string {
     my ($self, $mol, %opts) = @_;
     my @formula_parts;
+
     my $format = $opts{formula_format} || "%s%d";   # default format
     my $fh = $mol->formula_hash;
     $format =~ s/%%/\\%/g;                          # escape %% with a \
     my $joiner = "";
     $joiner = $1 if $format =~ s/(?<!\\)%j{(.*?)}//;        # joiner %j{}
-    for my $sym (sort keys %$fh) {
+
+    my @symbols;
+    if ($opts{formula_sort}) {
+        @symbols = $opts{formula_sort}($fh);
+    } else {
+        @symbols = $self->sort_symbols($fh);
+    }
+
+    for my $sym (@symbols) {
         my $s = $format;
         my $n = $fh->{$sym};
         $s =~ s/(?<!\\)%s/$sym/g;                           # %s
@@ -161,6 +207,20 @@ sub write_string {
     return join($joiner, @formula_parts);
 }
 
+sub sort_symbols {
+    my ($self, $formula_hash) = @_;
+    my @symbols = keys %$formula_hash;
+    if ($formula_hash->{C}) {
+        # C and H first, followed by alphabetical order
+        s/^([CH])$/\0$1/ for @symbols;
+        @symbols = sort @symbols;
+        s/^\0([CH])$/$1/ for @symbols;
+        return @symbols;
+    } else {
+        # simple alphabetical order
+        return sort @symbols;
+    }
+}
 
 sub file_is {
     return 0; # no files are identified automatically as having this format
@@ -182,7 +242,7 @@ my %macros = (
 
 
 sub parse_formula {
-    my ($formula) = @_;
+    my ($self, $formula) = @_;
     my (%elements);
 
     #check balancing
@@ -283,11 +343,15 @@ sub ParensBalanced {
 
 =head1 VERSION
 
-0.35
+0.36
 
 =head1 SEE ALSO
 
 L<Chemistry::Mol>, L<Chemistry::File>
+
+For discussion about Hill order, just search the web for C<formula "hill
+order">. The original reference is I<J. Am. Chem. Soc.> B<1900>, I<22>,
+478-494.  L<http://dx.doi.org/10.1021/ja02046a005>.
 
 The PerlMol website L<http://www.perlmol.org/>
 
