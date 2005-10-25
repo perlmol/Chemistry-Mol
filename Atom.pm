@@ -233,7 +233,7 @@ sub mass {
 
 Sets or gets the mass number. The mass number is undefined unless is 
 set explicitly (this module does not try to guess a default mass number based
-on the natural occuring isotope distribution).
+on the natural occurring isotope distribution).
 
 =cut
 

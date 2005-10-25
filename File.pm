@@ -603,7 +603,7 @@ sub write {
 =head1 CAVEATS
 
 The :auto feature may not be entirely portable, but it is known to work under
-Unix and Windows (either Cygwin or Activestate).
+Unix and Windows (either Cygwin or ActiveState).
 
 =head1 VERSION
 

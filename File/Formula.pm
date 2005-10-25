@@ -159,6 +159,21 @@ which prints something like
 
 The C<parse_formula> method is called internally by the C<parse_string> method.
 
+=head3 Non-integer numbers in formulas
+
+The C<parse_formula> method can also accept formulas that contain
+floating-point numbers, such as H1.5N0.5. The numbers must be positive, and
+numbers smaller than one should include a leading zero (e.g., 0.9, not .9).
+
+When formulas with non-integer numbers of atoms are turned into molecule 
+objects as described in the previous section, the number of atoms is always
+B<rounded up>. For example, H1.5N0.5 will produce a molecule object with two
+hydrogen atoms and one nitrogen atom.
+
+There is currently no way of I<producing> formulas with non-integer numbers;
+perhaps a future version will include an "occupancy" property for atoms that
+will result in non-integer formulas.
+
 =cut
 
 sub parse_string {
@@ -260,7 +275,7 @@ sub parse_formula {
     }
 
     # determine initial compound coeficent
-    my $coef = ($formula =~ s/^(\d+)//) ? $1 : 1.0;
+    my $coef = ($formula =~ s/^(\d+\.?\d*)//) ? $1 : 1.0;
 
     # recursively process rest of formula
     return internal_formula_parser($formula, $coef, %elements);
@@ -275,7 +290,7 @@ sub internal_formula_parser {
 
     if (defined($extract) and $extract ne '') {
         $extract =~ s/^\((.*)\)$/$1/;
-        if ($remainder =~ s/^(\d+)(.*)$/$2/) {
+        if ($remainder =~ s/^(\d+\.?\d*)(.*)$/$2/) {
             $tmp_coef = $1 * $coef;
         } else {
             $tmp_coef = $coef;
@@ -303,9 +318,9 @@ sub add_formula_strings {
     my ($formula, $coef, %elements) = @_;
 
 #  print "Getting Formula of $formula\n";
-    $formula =~ /^(?:([A-Z][a-z]*)(\d+)?)+$/o
+    $formula =~ /^(?:([A-Z][a-z]*)(\d+\.?\d*)?)+$/o # XXX new
         or croak "Invalid Portion of Formula $formula";
-    while ($formula =~ m/([A-Z][a-z]*)(\d+)?/go) {
+    while ($formula =~ m/([A-Z][a-z]*)(\d+\.?\d*)?/go) { # XXX new
         my ($elm, $count) = ($1, $2);
         $count = 1 unless defined $count;
         if (defined $elements{$elm}) {
@@ -360,6 +375,8 @@ The PerlMol website L<http://www.perlmol.org/>
 Ivan Tubert-Brohman <itub@cpan.org>.
 
 Formula parsing code contributed by Brent Gregersen.
+
+Patch for non-integer formulas by Daniel Scott.
 
 =head1 COPYRIGHT
 

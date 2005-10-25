@@ -1,5 +1,9 @@
 Revision history for Perl extension Chemistry::Mol.
 
+0.37
+        - Parse non-integer formulas (Daniel Scott).
+        - Fixed some typos.
+
 0.36  Sep 20 2005
         - Sort formulas in Hill order.
         - Fixed calc_implicit_hydrogens for halides.

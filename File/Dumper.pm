@@ -31,7 +31,7 @@ This module hooks the Data::Dumper Perl core module to the Chemistry::File
 API, allowing you to dump and undump Chemistry::Mol objects easily.
 This module automatically registers the "dumper" format with Chemistry::Mol.
 
-For purpuses of automatic file type guessing, this module assumes that
+For purposes of automatic file type guessing, this module assumes that
 dumped files end in C<.pl>.
 
 This module is useful mainly for debugging purposes, as it dumps I<all> the 

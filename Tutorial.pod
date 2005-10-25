@@ -46,7 +46,7 @@ several methods to set several options in one line:
 
     $mol->name("water")->type("wet");
 
-A L<Chemistry::Mol> object contains essentialy a list of atoms, a list of
+A L<Chemistry::Mol> object contains essentially a list of atoms, a list of
 bonds, and a few generic properties such as name, type, and id. The atoms and
 bonds themselves are also objects.
 
@@ -94,7 +94,7 @@ by name is common, a convenience method is available for that purpose.
 
 Since the atom name is not generally unique, even the first example above 
 might match more than one atom. In that case, only the first one found is
-returned. In the second case, since you are asigning to an array, all matching
+returned. In the second case, since you are assigning to an array, all matching
 atoms are returned.
 
 =head1 The atom object
@@ -140,7 +140,7 @@ $atom->internal_coords method, which uses L<Chemistry::InternalCoords> objects.
 A L<Chemistry::Bond> object is a list of atoms with an associated bond order.
 In most cases, a bond has exactly two atoms, but we don't want to exclude
 possibilities such as three-center bonds. You can get the list of atoms in a
-bond by using the C<atoms> method; the bond order is accessed trouht the
+bond by using the C<atoms> method; the bond order is accessed trough the
 C<order> method;
 
     @atoms_in_bond = $bond->atoms;

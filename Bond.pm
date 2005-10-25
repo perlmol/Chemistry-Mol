@@ -31,7 +31,7 @@ Chemistry::Bond - Chemical bonds as objects in molecules
 
 This module includes objects to describe chemical bonds.
 A bond is defined as a list of atoms (typically two), with some
-associated properies.
+associated properties.
 
 =head2 Bond Attributes
 
