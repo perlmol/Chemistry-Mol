@@ -17,6 +17,7 @@ t/Bond.t
 t/change_id.t
 t/compat.t
 t/delete.t
+t/descriptor.t
 t/Dumper.t
 t/empty.mol
 t/exception.t

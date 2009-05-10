@@ -14,7 +14,7 @@ CHANGES SINCE VERSION 0.36
         - Fixed bug where $atom->symbol tried to modify the symbol given
           (which crashed when the symbol was a constant!)
         - Added an undocumented "next_id" method (Liliana Felix Avila).
-        - Document the descriptor methods that existed since 0.36 but were
+        - Documented the descriptor methods that existed since 0.36 but were
           undocumented.
 
 INSTALLATION
