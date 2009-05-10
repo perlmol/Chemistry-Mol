@@ -1,5 +1,5 @@
 package Chemistry::File;
-$VERSION = '0.36';
+$VERSION = '0.37';
 
 =head1 NAME
 
@@ -278,7 +278,7 @@ sub file_is {
     }
 }
 
-=item $class->slurp($file %opts)
+=item $class->slurp
 
 Reads a file into a scalar. Automatic decompression of gzipped files is
 supported if the Compress::Zlib module is installed. Files ending in .gz are
@@ -569,12 +569,12 @@ sub read {
     $self->open('<');
     $self->read_header;
     my @all_mols;
+    $self->mols(\@all_mols);
     while (my @mols = $self->read_mol($self->fh, %{$self->{opts}})) {
         push @all_mols, @mols;
     }
     $self->read_footer;
     $self->close;
-    $self->mols(\@all_mols);
     wantarray ? @all_mols : $all_mols[0];
 }
 
@@ -607,7 +607,7 @@ Unix and Windows (either Cygwin or ActiveState).
 
 =head1 VERSION
 
-0.36
+0.37
 
 =head1 SEE ALSO
 

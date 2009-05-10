@@ -1,6 +1,6 @@
 package Chemistry::Atom;
 
-$VERSION = '0.36';
+$VERSION = '0.37';
 # $Id$
 
 =head1 NAME
@@ -181,9 +181,10 @@ sub symbol {
     my $self = shift;
 
     if(@_) {
-        $_[0] =~ s/ //g;
-        $self->{Z} = $ELEMENTS{$_[0]};
-        $self->{symbol} = $_[0];
+        my $symbol = shift;
+        $symbol =~ s/ //g;
+        $self->{Z} = $ELEMENTS{$symbol};
+        $self->{symbol} = $symbol;
         return $self;
     } else {
         return $self->{symbol};
@@ -840,7 +841,7 @@ sub printf {
 
 =head1 VERSION
 
-0.36
+0.37
 
 =head1 SEE ALSO
 

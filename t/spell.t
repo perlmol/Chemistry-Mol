@@ -39,3 +39,14 @@ pdb
 postprocessing
 pre
 rxnfiles
+aromaticity
+CH
+IDs
+CH
+Chem
+HTML
+Soc
+hydrogens
+multi
+macromolecule
+filename

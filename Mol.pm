@@ -1,5 +1,5 @@
 package Chemistry::Mol;
-$VERSION = '0.36';
+$VERSION = '0.37';
 # $Id$
 
 =head1 NAME
@@ -85,9 +85,10 @@ sub new {
     return $self;
 }
 
-my $N = 0; # atom ID counter
+my $N = 0; # molecule ID counter
 sub nextID { "mol".++$N; }
 sub reset_id { $N = 0; }
+sub next_id { $N = $_[1] }
 
 =item $mol->add_atom($atom, ...)
 
@@ -268,7 +269,7 @@ sub delete_bond {
             $bond = $i;
         } else {
             $bond = $self->bonds($i)
-                or croak "$self->delete_bond: no such bond $i\n";
+                or croak "$self->delete_bond($i): no such bond $i\n";
         }
         $bond->delete;
     }
@@ -277,7 +278,8 @@ sub delete_bond {
 sub _delete_bond {
     my ($self, $bond) = @_;
     my $index = $self->get_bond_index($bond)    
-        or croak "$self->delete_bond: no such bond $bond\n";
+        #or croak "$self->delete_bond: no such bond $bond\n";
+        or return;
     my $id = $bond->id;
     delete $self->{byId}{$id};
     splice @{$self->{bonds}}, $index - 1, 1;
@@ -925,16 +927,44 @@ sub add_implicit_hydrogens {
 
 my %DESCRIPTORS  = ();
 
+=item Chemistry::Mol->register_descriptor($name => $sub_ref)
+
+Adds a callback that can be used to add functionality to the molecule class
+(originally meant to add custom molecule descriptors.) A descriptor is a
+function that takes a molecule object as its only argument and returns a value
+or values. For example, to add a descriptor function that computes the number
+of atoms:
+
+    Chemistry::Mol->register_descriptor(
+        number_of_atoms => sub {
+            my $mol = shift;
+            return scalar $mol->atoms;
+        }
+    );
+
+The descriptor is accessed by name via the C<descriptor> instance method:
+
+    my $n = $mol->descriptor('number_of_atoms');
+
+=cut 
+
+sub register_descriptor {
+    my ($self, %opts) = @_;
+    $DESCRIPTORS{$_} = $opts{$_} for keys %opts;
+}
+
+=item my $value = $mol->descriptor($descriptor_name)
+
+Calls a previously registered descriptor function giving it $mol as an
+argument, as shown above for C<register_descriptor>.
+
+=cut
+
 sub descriptor {
     my ($self, $descriptor) = @_;
     my $sub = $DESCRIPTORS{$descriptor}
         or croak "unknown descriptor '$descriptor'";
     return $sub->($self);
-}
-
-sub register_descriptor {
-    my ($self, %opts) = @_;
-    $DESCRIPTORS{$_} = $opts{$_} for keys %opts;
 }
 
 1;
@@ -943,7 +973,7 @@ sub register_descriptor {
 
 =head1 VERSION
 
-0.36
+0.37
 
 =head1 SEE ALSO
 

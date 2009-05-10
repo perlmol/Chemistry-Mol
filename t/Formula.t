@@ -37,7 +37,7 @@ is_deeply(\%formula_hash, {H => 6, O => 1, C => 2}, 'parse_formula');
 
 # parse_formula with non-integers
 
-my %formula_hash = Chemistry::File::Formula->parse_formula("C2.1H6.5O0.9");
+%formula_hash = Chemistry::File::Formula->parse_formula("C2.1H6.5O0.9");
 is_deeply(\%formula_hash, {H => 6.5, O => 0.9, C => 2.1}, 
     'parse_formula (non-integer)');
 

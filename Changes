@@ -1,8 +1,15 @@
 Revision history for Perl extension Chemistry::Mol.
 
-0.37
+0.37  May 10 2009
         - Parse non-integer formulas (Daniel Scott).
         - Fixed some typos.
+        - Fixed bug in Chemistry::File, where $self->mols wasn't updated
+          during the read loop.
+        - Fixed bug where $atom->symbol tried to modify the symbol given
+          (which crashed when the symbol was a constant!)
+        - Added an undocumented "next_id" method (Liliana Felix Avila).
+        - Document the descriptor methods that existed since 0.36 but were
+          undocumented.
 
 0.36  Sep 20 2005
         - Sort formulas in Hill order.

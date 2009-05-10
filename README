@@ -1,4 +1,4 @@
-Chemistry/Mol version 0.36
+Chemistry/Mol version 0.37
 ==========================
 
 This toolkit includes basic objects and methods to describe molecules. It
@@ -6,9 +6,16 @@ consists of several modules: Chemistry::Mol, Chemistry::Atom, Chemistry::Bond,
 and Chemistry::File. These are the core modules of the PerlMol toolkit;
 see http://www.perlmol.org/.
 
-CHANGES SINCE VERSION 0.35
-        - Sort formulas in Hill order.
-        - Fixed calc_implicit_hydrogens for halides.
+CHANGES SINCE VERSION 0.36
+        - Parse non-integer formulas (Daniel Scott).
+        - Fixed some typos.
+        - Fixed bug in Chemistry::File, where $self->mols wasn't updated
+          during the read loop.
+        - Fixed bug where $atom->symbol tried to modify the symbol given
+          (which crashed when the symbol was a constant!)
+        - Added an undocumented "next_id" method (Liliana Felix Avila).
+        - Document the descriptor methods that existed since 0.36 but were
+          undocumented.
 
 INSTALLATION
 
@@ -36,7 +43,7 @@ The following modules are optional, but are required by certain functions:
 
 COPYRIGHT AND LICENSE
 
-Copyright (C) 2005 Ivan Tubert-Brohman <itub@cpan.org>
+Copyright (C) 2009 Ivan Tubert-Brohman <itub@cpan.org>
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself. 
