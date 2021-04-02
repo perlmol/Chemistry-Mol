@@ -200,7 +200,7 @@ sub write_string {
     my $fh = $mol->formula_hash;
     $format =~ s/%%/\\%/g;                          # escape %% with a \
     my $joiner = "";
-    $joiner = $1 if $format =~ s/(?<!\\)%j{(.*?)}//;        # joiner %j{}
+    $joiner = $1 if $format =~ s/(?<!\\)%j\{(.*?)}//;       # joiner %j{}
 
     my @symbols;
     if ($opts{formula_sort}) {
