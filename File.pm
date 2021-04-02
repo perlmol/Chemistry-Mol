@@ -21,7 +21,8 @@ Chemistry::File - Molecule file I/O base class
 
     package Chemistry::File::Myfile;
     use base qw(Chemistry::File);
-    Chemistry::Mol->register_type("myfile", __PACKAGE__);
+    use Chemistry::Mol;
+    Chemistry::Mol->register_format("myfile", __PACKAGE__);
 
     # override the read_mol method
     sub read_mol {
