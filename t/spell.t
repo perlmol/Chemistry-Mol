@@ -16,6 +16,7 @@ IUPAC
 Khrapov
 MDL
 MacroMol
+Macromolecules
 Maksim
 Mol
 PDB
@@ -28,9 +29,11 @@ attr
 autodetect
 backwards
 coords
+dihedral
 fh
 gz
 indices
+macromolecules
 molfiles
 mols
 namespace
