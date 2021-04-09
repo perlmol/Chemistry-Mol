@@ -1,6 +1,8 @@
 package Chemistry::Obj;
-$VERSION = 0.37;
+
+# VERSION
 # $Id$
+
 use 5.006;
 
 use strict;

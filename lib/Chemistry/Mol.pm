@@ -1,5 +1,6 @@
 package Chemistry::Mol;
-$VERSION = '0.37';
+
+# VERSION
 # $Id$
 
 =head1 NAME

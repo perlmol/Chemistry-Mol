@@ -1,5 +1,6 @@
 package Chemistry::Bond;
-$VERSION = '0.37';
+
+# VERSION
 # $Id$
 
 =head1 NAME

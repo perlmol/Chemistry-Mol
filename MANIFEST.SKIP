@@ -32,4 +32,5 @@ cover_db
 TODO
 .ppd$
 
-
+# Author test
+^t/spell.t$

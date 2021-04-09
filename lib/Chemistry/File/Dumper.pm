@@ -1,5 +1,6 @@
 package Chemistry::File::Dumper;
-$VERSION = '0.37';
+
+# VERSION
 
 require 5.006;
 use strict;

@@ -1,5 +1,6 @@
 package Chemistry::File;
-$VERSION = '0.37';
+
+# VERSION
 
 =head1 NAME
 
