@@ -607,10 +607,6 @@ sub write {
 The :auto feature may not be entirely portable, but it is known to work under
 Unix and Windows (either Cygwin or ActiveState).
 
-=head1 VERSION
-
-0.37
-
 =head1 SEE ALSO
 
 L<Chemistry::Mol>

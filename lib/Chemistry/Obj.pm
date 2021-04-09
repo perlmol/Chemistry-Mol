@@ -243,10 +243,6 @@ sub use {
 
 1;
 
-=head1 VERSION
-
-0.37
-
 =head1 SEE ALSO
 
 L<Chemistry::Atom>, L<Chemistry::Bond>, L<Chemistry::Mol>

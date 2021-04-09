@@ -102,10 +102,6 @@ sub string_is {
 
 1;
 
-=head1 VERSION
-
-0.37
-
 =head1 SEE ALSO
 
 L<Chemistry::Mol>, L<Chemistry::File>, L<Data::Dumper>

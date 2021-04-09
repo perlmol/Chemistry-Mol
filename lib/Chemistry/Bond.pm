@@ -219,10 +219,6 @@ sub parent {
 
 =back
 
-=head1 VERSION
-
-0.37
-
 =head1 SEE ALSO
 
 L<Chemistry::Mol>, L<Chemistry::Atom>, L<Chemistry::Tutorial>
