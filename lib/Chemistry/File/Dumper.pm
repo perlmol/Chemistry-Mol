@@ -102,6 +102,10 @@ sub string_is {
 
 1;
 
+=head1 SOURCE CODE REPOSITORY
+
+L<https://github.com/perlmol/Chemistry-Mol>
+
 =head1 SEE ALSO
 
 L<Chemistry::Mol>, L<Chemistry::File>, L<Data::Dumper>

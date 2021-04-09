@@ -243,11 +243,13 @@ sub use {
 
 1;
 
+=head1 SOURCE CODE REPOSITORY
+
+L<https://github.com/perlmol/Chemistry-Mol>
+
 =head1 SEE ALSO
 
 L<Chemistry::Atom>, L<Chemistry::Bond>, L<Chemistry::Mol>
-
-The PerlMol website L<http://www.perlmol.org/>
 
 =head1 AUTHOR
 

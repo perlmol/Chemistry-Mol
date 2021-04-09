@@ -219,11 +219,13 @@ sub parent {
 
 =back
 
+=head1 SOURCE CODE REPOSITORY
+
+L<https://github.com/perlmol/Chemistry-Mol>
+
 =head1 SEE ALSO
 
 L<Chemistry::Mol>, L<Chemistry::Atom>, L<Chemistry::Tutorial>
-
-The PerlMol website L<http://www.perlmol.org/>
 
 =head1 AUTHOR
 

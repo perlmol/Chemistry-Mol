@@ -357,6 +357,10 @@ sub ParensBalanced {
 
 1;
 
+=head1 SOURCE CODE REPOSITORY
+
+L<https://github.com/perlmol/Chemistry-Mol>
+
 =head1 SEE ALSO
 
 L<Chemistry::Mol>, L<Chemistry::File>
@@ -364,8 +368,6 @@ L<Chemistry::Mol>, L<Chemistry::File>
 For discussion about Hill order, just search the web for C<formula "hill
 order">. The original reference is I<J. Am. Chem. Soc.> B<1900>, I<22>,
 478-494.  L<http://dx.doi.org/10.1021/ja02046a005>.
-
-The PerlMol website L<http://www.perlmol.org/>
 
 =head1 AUTHOR
 

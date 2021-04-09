@@ -299,12 +299,14 @@ know the residue number and atom name.
 
 0.36
 
+=head1 SOURCE CODE REPOSITORY
+
+L<https://github.com/perlmol/Chemistry-Mol>
+
 =head1 SEE ALSO
 
 L<Chemistry::Mol>, L<Chemistry::Atom>, L<Chemistry::Bond>, L<Chemistry::File>,
 L<Chemistry::MacroMol>, L<Chemistry::Domain>.
-
-The PerlMol website L<http://www.perlmol.org/>
 
 =head1 AUTHOR
 

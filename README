@@ -3,8 +3,7 @@ Chemistry/Mol version 0.37
 
 This toolkit includes basic objects and methods to describe molecules. It
 consists of several modules: Chemistry::Mol, Chemistry::Atom, Chemistry::Bond,
-and Chemistry::File. These are the core modules of the PerlMol toolkit;
-see http://www.perlmol.org/.
+and Chemistry::File. These are the core modules of the PerlMol toolkit.
 
 CHANGES SINCE VERSION 0.36
         - Parse non-integer formulas (Daniel Scott).

@@ -607,11 +607,13 @@ sub write {
 The :auto feature may not be entirely portable, but it is known to work under
 Unix and Windows (either Cygwin or ActiveState).
 
+=head1 SOURCE CODE REPOSITORY
+
+L<https://github.com/perlmol/Chemistry-Mol>
+
 =head1 SEE ALSO
 
 L<Chemistry::Mol>
-
-The PerlMol website L<http://www.perlmol.org/>
 
 =head1 AUTHOR
 
