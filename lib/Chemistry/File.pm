@@ -174,7 +174,7 @@ sub import {
 
 =item $class->parse_string($s, %options)
 
-Parse a string $s and return one or mole molecule objects. This is an abstract
+Parse a string $s and return one or more molecule objects. This is an abstract
 method, so it should be provided by all derived classes.
 
 =cut
