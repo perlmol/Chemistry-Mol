@@ -40,6 +40,7 @@ use Chemistry::Atom;
 use Chemistry::Bond;
 use Carp;
 use base qw(Chemistry::Obj Exporter);
+use Clone;
 use Storable 'dclone';
 
 our @EXPORT_OK = qw(read_mol);
@@ -48,7 +49,7 @@ our %EXPORT_TAGS = (
       all  => [@EXPORT, @EXPORT_OK],
 );
 
-
+our $clone_backend = 'Storable';
 
 my %FILE_FORMATS = ();
 
@@ -735,8 +736,15 @@ has a pointer to the rest of the universe, the entire universe will be cloned!
 
 sub clone {
     my ($self) = @_;
-    my $clone = dclone $self;
-    $clone->_weaken if Storable->VERSION < 2.14;
+    my $clone;
+    if ($clone_backend eq "Storable") {
+        $clone = dclone $self;
+        $clone->_weaken if Storable->VERSION < 2.14;
+    } elsif ($clone_backend eq "Clone") {
+        $clone = Clone::clone $self;
+    } else {
+        croak "Unknown clone backend '$clone_backend'";
+    }
     $clone;
 }
 
