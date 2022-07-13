@@ -40,7 +40,6 @@ use Chemistry::Atom;
 use Chemistry::Bond;
 use Carp;
 use base qw(Chemistry::Obj Exporter);
-use Clone;
 use Storable 'dclone';
 
 our @EXPORT_OK = qw(read_mol);
@@ -746,6 +745,7 @@ sub clone {
         $clone = dclone $self;
         $clone->_weaken if Storable->VERSION < 2.14;
     } elsif ($clone_backend eq "Clone") {
+        require Clone;
         $clone = Clone::clone $self;
     } else {
         croak "Unknown clone backend '$clone_backend'";
