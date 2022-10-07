@@ -754,22 +754,27 @@ returned.
 
 sub chirality {
     @_ < 5 or croak "Chemistry::Atom::chirality requires five atoms!\n";
-    my @atoms = @_;
-    my $setting = @atoms == 6 ? pop @atoms : undef;
+    my( $atom, @atoms ) = @_;
+    my $setting = @atoms == 5 ? pop @atoms : undef;
     if (@_ == 6) {
         # set the chirality
-        $atoms[0]->{chirality} = [ @atoms[1..4], $setting ];
-        return $atoms[0];
+        $atom->{chirality} = [ @atoms, $setting ];
+        return $atom;
     } else {
         # get the chirality
-        if( exists $atoms[0]->{chirality} ) {
-            # FIXME: Ensure the same atom order
-            return $atoms[0]->{chirality}[-1];
+        if( exists $atom->{chirality} ) {
+            my $permutation_distance = 0; # ensuring the same atom order
+            for my $pos (0 .. 2) {
+                my( $where ) = grep { $atoms[$_] eq $atom->{chirality}[$pos] } 0 .. 3;
+                $permutation_distance += $where - $pos;
+                @atoms = ( @atoms[0..$pos-1], $atoms[$where], @atoms[$pos..$where-1], @atoms[$where+1..$#atoms] );
+            }
+            return $atom->{chirality}[-1] * ((-1) ** $permutation_distance);
         } else {
-            return unless $atoms[0]->distance( $atoms[1] );
+            return unless $atom->distance( $atoms[0] );
             my( $a, $b, $c ) = map { $_->norm }
-                               map { $_->coords - $atoms[0]->coords }
-                                   @atoms[1..4];
+                               map { $_->coords - $atom->coords }
+                                   @atoms;
             my $volume = $a . ( $b x $c );
             return if abs( $volume ) <= 1e-6; # ignore flat environments
             return int( $volume / abs( $volume ) );
