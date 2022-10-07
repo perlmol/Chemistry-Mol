@@ -746,19 +746,35 @@ sub dihedral_deg {
 
 =item $atom->chirality($atom2, $atom3, $atom4, $atom5)
 
-Returns the sign of the volume of a tetrahedron made by the atoms involved
-with the first atom at its center. For very flat tetrahedra 0 is returned.
+Sets or gets the sign of the volume of a tetrahedron made by the atoms
+involved with the first atom at its center. For very flat tetrahedra 0 is
+returned.
 
 =cut
 
 sub chirality {
-    @_ == 5 or croak "Chemistry::Atom::chirality requires five atoms!\n";
-    return unless $_[0]->distance( $_[1] );
-    my( $a, $b, $c ) = map { $_->norm } map { $_->coords - $_[0]->coords }
-                             @_[1..4];
-    my $volume = $a . ( $b x $c );
-    return if abs( $volume ) <= 1e-6; # ignore flat environments
-    return int( $volume / abs( $volume ) );
+    @_ < 5 or croak "Chemistry::Atom::chirality requires five atoms!\n";
+    my @atoms = @_;
+    my $setting = @atoms == 6 ? pop @atoms : undef;
+    if (@_ == 6) {
+        # set the chirality
+        $atoms[0]->{chirality} = [ @atoms[1..4], $setting ];
+        return $atoms[0];
+    } else {
+        # get the chirality
+        if( exists $atoms[0]->{chirality} ) {
+            # FIXME: Ensure the same atom order
+            return $atoms[0]->{chirality}[-1];
+        } else {
+            return unless $atoms[0]->distance( $atoms[1] );
+            my( $a, $b, $c ) = map { $_->norm }
+                               map { $_->coords - $atoms[0]->coords }
+                                   @atoms[1..4];
+            my $volume = $a . ( $b x $c );
+            return if abs( $volume ) <= 1e-6; # ignore flat environments
+            return int( $volume / abs( $volume ) );
+        }
+    }
 }
 
 =item $atom->print
