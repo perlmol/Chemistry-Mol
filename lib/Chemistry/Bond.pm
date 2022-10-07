@@ -70,6 +70,8 @@ sub new {
         order => 1,
     } , $class;
 
+    # Need to set the type before cistrans
+    $self->type($args{type}) if exists $args{type};
     $self->$_($args{$_}) for (keys %args);
     $self;
 }
@@ -132,7 +134,7 @@ sub cistrans($$$@) {
 
     if(      (grep { $_ eq $atom1 } $atom2->neighbors) &&
              (grep { $_ eq $atom4 } $atom3->neighbors) ) {
-        # OK, nothing to do
+        # OK, nothing to do here
     } elsif( (grep { $_ eq $atom4 } $atom2->neighbors) &&
              (grep { $_ eq $atom1 } $atom3->neighbors) ) {
         ( $atom1, $atom4 ) = ( $atom4, $atom1 );
@@ -142,7 +144,6 @@ sub cistrans($$$@) {
 
     if ($setting) {
         if( !$is_double_bond ) {
-            # FIXME: Make sure type arrives before cistrans in the constructor
             die 'cannot set cis/trans character for non-double bond';
         }
         if( $setting ne 'cis' && $setting ne 'trans' ) {
