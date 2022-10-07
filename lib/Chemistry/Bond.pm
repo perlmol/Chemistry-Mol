@@ -127,12 +127,11 @@ sub aromatic {
 
 sub cistrans {
     my $self = shift;
-    my ($atom1, $atom4, $setting);
     if (scalar @_ == 1) {
-        ($atom1, $atom4, $setting) = @{$_[0]};
-    } else {
-        ($atom1, $atom4, $setting) = @_;
+        @_ = @{$_[0]};
     }
+
+    my ($atom1, $atom4, $setting) = @_;
     my ($atom2, $atom3) = $self->atoms;
 
     if ($setting) {
