@@ -125,6 +125,46 @@ sub aromatic {
     }
 }
 
+sub cistrans($$$@) {
+    my( $self, $atom1, $atom4, $setting ) = @_;
+    my( $atom2, $atom3 ) = $self->atoms;
+    my $is_double_bond = $self->type eq '=';
+
+    if(      (grep { $_ eq $atom1 } $atom2->neighbors) &&
+             (grep { $_ eq $atom4 } $atom3->neighbors) ) {
+        # OK, nothing to do
+    } elsif( (grep { $_ eq $atom4 } $atom2->neighbors) &&
+             (grep { $_ eq $atom1 } $atom3->neighbors) ) {
+        ( $atom1, $atom4 ) = ( $atom4, $atom1 );
+    } else {
+        die 'cannot set/get cis/trans setting for nonbonded atoms';
+    }
+
+    if ($setting) {
+        if( !$is_double_bond ) {
+            # FIXME: Make sure type arrives before cistrans in the constructor
+            die 'cannot set cis/trans character for non-double bond';
+        }
+        if( $setting ne 'cis' && $setting ne 'trans' ) {
+            die "unknown cis/trans character: '$setting";
+        }
+        $self->{cistrans} = [ $atom1, $atom4, $setting ];
+        return $self;
+    } else {
+        return unless $is_double_bond;
+
+        if( $self->{cistrans} ) {
+            my @atoms = @{$self->{cistrans}};
+            my $is_cis = pop( @atoms ) eq 'cis';
+            $is_cis = 1 - $is_cis if $atoms[0] eq $atom1;
+            $is_cis = 1 - $is_cis if $atoms[1] eq $atom4;
+            return $is_cis ? 'cis' : 'trans';
+        } else {
+            return abs $atom1->dihedral_deg( $atom2, $atom3, $atom4 ) < 90 ? 'cis' : 'trans';
+        }
+    }
+}
+
 =item $bond->print
 
 Convert the bond to a string representation. 
