@@ -125,6 +125,15 @@ sub aromatic {
     }
 }
 
+=item $bond->cistrans($atom1, $atom4, $setting)
+
+Set or get cis/trans setting of a double bond. When setting, care has to be
+taken to ensure that $atom1 is bonded to the first atom in $bond and $atom4
+to the second one. This is not enforced in the code as bonds with $atom1 and
+$atom4 may not be present at the time of setting.
+
+=cut
+
 sub cistrans {
     my $self = shift;
     if (scalar @_ == 1) {
