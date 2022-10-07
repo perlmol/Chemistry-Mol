@@ -160,6 +160,12 @@ sub cistrans($$$@) {
             $is_cis = 1 - $is_cis if $atoms[1] eq $atom4;
             return $is_cis ? 'cis' : 'trans';
         } else {
+            # Derive cis/trans setting from coordinates. Some formats do not
+            # have coordinates, thus cis/trans setting is meaningless there.
+            # Currently there is no other way to check for this condition
+            # apart from checking the coordinates.
+            # (see https://rt.cpan.org/Ticket/Display.html?id=144094)
+            return unless $self->length;
             return abs $atom1->dihedral_deg( $atom2, $atom3, $atom4 ) < 90 ? 'cis' : 'trans';
         }
     }
