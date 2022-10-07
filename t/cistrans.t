@@ -2,7 +2,7 @@ use strict;
 use warnings;
 
 use Chemistry::Mol;
-use Test::More tests => 4;
+use Test::More tests => 8;
 
 my $mol = Chemistry::Mol->new;
 
@@ -22,6 +22,13 @@ $mol->new_bond(atoms => [$B, $B2]);
 my $bond = $mol->new_bond(atoms => [$A, $B],
                           cistrans => [$A1, $B1, 'cis'],
                           type => '=');
+
+is ( $bond->cistrans( $A1, $B1 ), 'cis' );
+is ( $bond->cistrans( $A1, $B2 ), 'trans' );
+is ( $bond->cistrans( $A2, $B1 ), 'trans' );
+is ( $bond->cistrans( $A2, $B2 ), 'cis' );
+
+$bond->cistrans( $A1, $B2, 'trans' );
 
 is ( $bond->cistrans( $A1, $B1 ), 'cis' );
 is ( $bond->cistrans( $A1, $B2 ), 'trans' );
