@@ -744,6 +744,23 @@ sub dihedral_deg {
     rad2deg(dihedral(@_));
 }
 
+=item $atom->chirality($atom2, $atom3, $atom4, $atom5)
+
+Returns the sign of the volume of a tetrahedron made by the atoms involved
+with the first atom at its center. For very flat tetrahedra 0 is returned.
+
+=cut
+
+sub chirality {
+    @_ == 5 or croak "Chemistry::Atom::chirality requires five atoms!\n";
+    return unless $_[0]->distance( $_[1] );
+    my( $a, $b, $c ) = map { $_->norm } map { $_->coords - $_[0]->coords }
+                             @_[1..4];
+    my $volume = $a . ( $b x $c );
+    return if abs( $volume ) <= 1e-6; # ignore flat environments
+    return int( $volume / abs( $volume ) );
+}
+
 =item $atom->print
 
 Convert the atom to a string representation (used for debugging).
