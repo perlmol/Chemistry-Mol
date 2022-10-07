@@ -134,11 +134,15 @@ sub cistrans {
     my ($atom1, $atom4, $setting) = @_;
     my ($atom2, $atom3) = $self->atoms;
 
-    if ($setting) {
-        if( $setting ne 'cis' && $setting ne 'trans' ) {
-            die "unknown cis/trans character: '$setting";
+    if (scalar @_ == 3) {
+        if ($setting) {
+            if( $setting ne 'cis' && $setting ne 'trans' ) {
+                die "unknown cis/trans character: '$setting";
+            }
+            $self->{cistrans} = [ $atom1, $atom4, $setting ];
+        } else {
+            delete $self->{cistrans};
         }
-        $self->{cistrans} = [ $atom1, $atom4, $setting ];
         return $self;
     } else {
         return unless $self->type eq '=';
