@@ -70,8 +70,6 @@ sub new {
         order => 1,
     } , $class;
 
-    # Need to set the type before cistrans
-    $self->type($args{type}) if exists $args{type};
     $self->$_($args{$_}) for (keys %args);
     $self;
 }
@@ -127,32 +125,34 @@ sub aromatic {
     }
 }
 
-sub cistrans($$$@) {
-    my( $self, $atom1, $atom4, $setting ) = @_;
-    my( $atom2, $atom3 ) = $self->atoms;
-    my $is_double_bond = $self->type eq '=';
-
-    if(      (grep { $_ eq $atom1 } $atom2->neighbors) &&
-             (grep { $_ eq $atom4 } $atom3->neighbors) ) {
-        # OK, nothing to do here
-    } elsif( (grep { $_ eq $atom4 } $atom2->neighbors) &&
-             (grep { $_ eq $atom1 } $atom3->neighbors) ) {
-        ( $atom1, $atom4 ) = ( $atom4, $atom1 );
+sub cistrans {
+    my $self = shift;
+    my ($atom1, $atom4, $setting);
+    if (scalar @_ == 1) {
+        ($atom1, $atom4, $setting) = @{$_[0]};
     } else {
-        die 'cannot set/get cis/trans setting for nonbonded atoms';
+        ($atom1, $atom4, $setting) = @_;
     }
+    my ($atom2, $atom3) = $self->atoms;
 
     if ($setting) {
-        if( !$is_double_bond ) {
-            die 'cannot set cis/trans character for non-double bond';
-        }
         if( $setting ne 'cis' && $setting ne 'trans' ) {
             die "unknown cis/trans character: '$setting";
         }
         $self->{cistrans} = [ $atom1, $atom4, $setting ];
         return $self;
     } else {
-        return unless $is_double_bond;
+        return unless $self->type eq '=';
+
+        if(      (grep { $_ eq $atom1 } $atom2->neighbors) &&
+                 (grep { $_ eq $atom4 } $atom3->neighbors) ) {
+            # OK, nothing to do here
+        } elsif( (grep { $_ eq $atom4 } $atom2->neighbors) &&
+                 (grep { $_ eq $atom1 } $atom3->neighbors) ) {
+            ( $atom1, $atom4 ) = ( $atom4, $atom1 );
+        } else {
+            die 'cannot get cis/trans setting for nonbonded atoms';
+        }
 
         if( $self->{cistrans} ) {
             my @atoms = @{$self->{cistrans}};
