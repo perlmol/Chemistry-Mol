@@ -40,6 +40,7 @@ use Chemistry::Atom;
 use Chemistry::Bond;
 use Carp;
 use base qw(Chemistry::Obj Exporter);
+use Set::Object;
 use Storable 'dclone';
 
 our @EXPORT_OK = qw(read_mol);
@@ -868,20 +869,32 @@ each one with a CH3.
 # returns a list of molecules. Does not touch the original copy.
 sub separate {
     my ($self) = @_;
-    $self = $self->clone;
-    $self->{_paint_tab} = {};
-    my $color = 0;
-    for my $atom ($self->atoms) {
-        next if defined $self->{_paint_tab}{$atom->id};
-        $self->_paint($atom, $color++);
-    }
+    my $unseen = Set::Object->new($self->atoms);
+    my $open = Set::Object->new;
     my @mols;
-    push @mols, $self->new for (1 .. $color);
-    for my $atom ($self->atoms) {
-        $mols[$self->{_paint_tab}{$atom->id}]->add_atom($atom);
-    }
-    for my $bond ($self->bonds) {
-        $mols[$self->{_paint_tab}{$bond->id}]->add_bond($bond);
+    while (!$unseen->is_null) {
+        my ($first) = $unseen->members;
+        $unseen->remove($first);
+        $open->insert($first);
+        my $mol = $self->new;
+        $mol->add_atom($first); # atoms in $open are already in $mol
+        while (!$open->is_null) {
+            my ($atom) = $open->members;
+            $open->remove($atom);
+
+            my $neighbors = Set::Object->new($atom->neighbors);
+            my $newly_opened_atoms = $unseen * Set::Object->new($atom->neighbors);
+            $unseen -= $newly_opened_atoms;
+            $open += $newly_opened_atoms;
+
+            $mol->add_atom($_) for ($newly_opened_atoms->members);
+            for my $bond ($atom->bonds) {
+                my ($other_atom) = grep { $_ != $atom } $bond->atoms;
+                next unless $newly_opened_atoms->contains($other_atom);
+                $mol->add_bond($bond);
+            }
+        }
+        push @mols, $mol;
     }
     @mols;
 }
