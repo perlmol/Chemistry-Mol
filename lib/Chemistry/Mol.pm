@@ -899,19 +899,6 @@ sub separate {
     @mols;
 }
 
-# this method fills the _paint_tab attribute for every atom connected
-# to the given start atom $atom with $color. Used for separating
-# connected fragments. Uses a depth-first search
-sub _paint {
-    my ($self, $atom, $color) = @_;
-    return if defined $self->{_paint_tab}{$atom->id};
-    $self->{_paint_tab}{$atom->id} = $color;
-    $self->{_paint_tab}{$_->id}    = $color for ($atom->bonds);
-    for my $neighbor ($atom->neighbors) {
-        $self->_paint($neighbor, $color);
-    }
-}
-
 =item $mol->sprout_hydrogens
 
 Convert all the implicit hydrogen atoms in the molecule to explicit atoms.
