@@ -867,6 +867,7 @@ each one with a CH3.
 
 # splits a molecule into connected fragments
 # returns a list of molecules. Does not touch the original copy.
+# FIXME: Make sure atoms are fully copied and no longer tied to the original.
 sub separate {
     my ($self) = @_;
     my $unseen = Set::Object->new($self->atoms);
