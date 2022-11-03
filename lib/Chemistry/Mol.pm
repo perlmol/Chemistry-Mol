@@ -883,14 +883,14 @@ sub separate {
             $open->remove($atom);
 
             my $neighbors = Set::Object->new($atom->neighbors);
-            my $newly_opened_atoms = $unseen * Set::Object->new($atom->neighbors);
+            my $newly_opened_atoms = $unseen * $neighbors;
             $unseen -= $newly_opened_atoms;
             $open += $newly_opened_atoms;
 
             $mol->add_atom($_) for ($newly_opened_atoms->members);
             for my $bond ($atom->bonds) {
                 my ($other_atom) = grep { $_ != $atom } $bond->atoms;
-                next unless $newly_opened_atoms->contains($other_atom);
+                next unless $open->contains($other_atom);
                 $mol->add_bond($bond);
             }
         }
