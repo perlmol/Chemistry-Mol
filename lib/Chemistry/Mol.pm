@@ -874,13 +874,13 @@ sub separate {
     my $open = Set::Object->new;
     my @mols;
     while (!$unseen->is_null) {
-        my ($first) = $unseen->members;
+        my ($first) = sort {$a->id cmp $b->id} $unseen->members;
         $unseen->remove($first);
         $open->insert($first);
         my $mol = $self->new;
         $mol->add_atom($first); # atoms in $open are already in $mol
         while (!$open->is_null) {
-            my ($atom) = $open->members;
+            my ($atom) = sort {$a->id cmp $b->id} $open->members;
             $open->remove($atom);
 
             my $neighbors = Set::Object->new($atom->neighbors);
