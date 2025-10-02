@@ -867,35 +867,47 @@ each one with a CH3.
 
 # splits a molecule into connected fragments
 # returns a list of molecules. Does not touch the original copy.
-# FIXME: Make sure atoms are fully copied and no longer tied to the original.
 sub separate {
     my ($self) = @_;
+    $self = $self->clone;
     my $unseen = Set::Object->new($self->atoms);
     my $open = Set::Object->new;
-    my @mols;
+    my %colors;
+    my $color = 0;
     while (!$unseen->is_null) {
-        my ($first) = sort {$a->id cmp $b->id} $unseen->members;
+        my ($first) = $unseen->members;
         $unseen->remove($first);
         $open->insert($first);
-        my $mol = $self->new;
-        $mol->add_atom($first); # atoms in $open are already in $mol
         while (!$open->is_null) {
-            my ($atom) = sort {$a->id cmp $b->id} $open->members;
+            my ($atom) = $open->members;
+            $colors{$atom->id} = $color;
             $open->remove($atom);
 
             my $neighbors = Set::Object->new($atom->neighbors);
             my $newly_opened_atoms = $unseen * $neighbors;
             $unseen -= $newly_opened_atoms;
             $open += $newly_opened_atoms;
-
-            $mol->add_atom($_) for ($newly_opened_atoms->members);
-            for my $bond ($atom->bonds) {
-                my ($other_atom) = grep { $_ != $atom } $bond->atoms;
-                next unless $open->contains($other_atom);
-                $mol->add_bond($bond);
-            }
         }
-        push @mols, $mol;
+        $color++;
+    }
+
+    $color = 0;
+    my %map;
+    for my $atom ($self->atoms) {
+        next if exists $map{$colors{$atom->id}};
+        $map{$colors{$atom->id}} = $color;
+        $color++;
+    }
+    $colors{$_} = $map{$colors{$_}} for (keys %colors);
+
+    my @mols;
+    push @mols, $self->new for (0 .. $color-1);
+    for my $atom ($self->atoms) {
+        $mols[$colors{$atom->id}]->add_atom($atom);
+    }
+    for my $bond ($self->bonds) {
+        my ($atom) = $bond->atoms;
+        $mols[$colors{$atom->id}]->add_bond($bond);
     }
     @mols;
 }
