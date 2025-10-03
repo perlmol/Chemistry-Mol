@@ -40,7 +40,7 @@ use Chemistry::Atom;
 use Chemistry::Bond;
 use Carp;
 use base qw(Chemistry::Obj Exporter);
-use Set::Object;
+use Set::Object qw(set);
 use Storable 'dclone';
 
 our @EXPORT_OK = qw(read_mol);
@@ -870,8 +870,8 @@ each one with a CH3.
 sub separate {
     my ($self) = @_;
     $self = $self->clone;
-    my $unseen = Set::Object->new($self->atoms);
-    my $open = Set::Object->new;
+    my $unseen = set($self->atoms);
+    my $open = set;
     my %colors;
     my $color = 0;
     while (!$unseen->is_null) {
@@ -883,7 +883,7 @@ sub separate {
             $colors{$atom->id} = $color;
             $open->remove($atom);
 
-            my $neighbors = Set::Object->new($atom->neighbors);
+            my $neighbors = set($atom->neighbors);
             my $newly_opened_atoms = $unseen * $neighbors;
             $unseen -= $newly_opened_atoms;
             $open += $newly_opened_atoms;
